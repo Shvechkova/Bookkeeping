@@ -1,0 +1,21 @@
+django==4.0.10
+django-debug-toolbar
+django-environ
+pymysql
+djlint
+djangorestframework==3.13.1
+celery
+redis
+
+# django-phonenumber-field[phonenumbers]==7.0
+# django-static-precompiler==2.1
+# celery
+# # flower
+# # pillow
+# # psycopg2
+# pymysql
+# # pytz
+# redis
+# opencv-python-headless==4.7.0.72
+# pytesseract==0.3.10
+# yookassa==2.4.0

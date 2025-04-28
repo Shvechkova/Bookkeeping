@@ -1,0 +1,10 @@
+django==5.2
+django-debug-toolbar
+django-environ
+# pymysql
+djlint
+djangorestframework==3.16.0
+celery
+redis
+mysqlclient==2.2.7
+
