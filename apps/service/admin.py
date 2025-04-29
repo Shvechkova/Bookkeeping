@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.service.models import Service
+
+
+admin.site.register(Service)
