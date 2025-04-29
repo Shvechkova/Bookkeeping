@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-bb67#^@15v$iaa5pc%s5d79m5c=95!b4n5np@6c$gj1qm=1)z!
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DJANGO_ALLOWED_HOSTS = "localhost 127.0.0.1 [::1]  bookkeeping.shvechkova.ru"
+DJANGO_ALLOWED_HOSTS = "localhost 127.0.0.1 [::1]  bookkeeping.shvechkova.ru 92.53.96.41"
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "bookkeeping.shvechkova.ru", "92.53.96.41"]
 
 
@@ -100,16 +100,19 @@ WSGI_APPLICATION = 'project.wsgi.application'
         
 #     }
 # }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "shvechkova_bookk",
         "USER": "shvechkova_bookk",
         "PASSWORD": "HEXX5EDa",
-        "HOST": "92.53.96.41",
+        "HOST": "bookkeeping.shvechkova.ru",
+        "PORT": "3306",
         
     }
 }
+
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
