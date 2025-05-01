@@ -1,0 +1,18 @@
+
+<ul class="header_nav">
+    {% for c in service %}
+    <li class="header_nav-link">
+   
+      {% url 'service:service_one' c.name as the_url %} 
+  
+      {% if request.path == the_url  %}
+      <span class="menu-active menu-active_service ">{{ c.name }}</span>
+  
+      {% else %}
+  
+      <a class="menu_service" href="{% url 'service:service_one' c.name %}">{{ c.name }}</a>
+      {% endif %}
+    </li>
+{% endfor %}
+  </ul>
+  

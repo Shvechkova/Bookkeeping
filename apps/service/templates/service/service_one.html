@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% load category_service %}
+{% block content %}
+{% include "service/includes/service_menu.html" %}
+{% include "service/includes/modal/add_contract_new.html" %}
+<input type="hidden" id="page_name" value="{{ title }}" />
+<input type="hidden" id="page_name_abc" value="{{ title_name }}" />
+
+<div class="open-modal btn_month_bill" data-name="modal-add-bill" data-cat-service="{{ title }}">+</div>  
+
+<div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
+    <h3>Период</h3>
+    <div class = "btn_sorting_month" data-sort-month="1">Сейчас</div>
+    <div class = "btn_sorting_month" data-sort-month="2">Прошлый месяц</div>
+    <div class = "btn_sorting_month" data-sort-month="3">3 месяца</div>
+    <div class = "btn_sorting_month" data-sort-month="12">Год</div>
+    <div class = "btn_sorting_month" data-sort-month="999">Все время</div>
+  </div>
+
+{{service_month_invoice}}
+
+{% for month, service_month_invoices in service_month_invoice %}
+<h3>{{ month }}</h3>
+<table>
+    {% for service_month_invoice_one in service_month_invoices %}
+    <tr>
+        <td>{{ service_month_invoice_one.client }}</td>
+        
+    </tr>
+    {% endfor %}
+</table>
+{% endfor %}
+{% endblock content %}

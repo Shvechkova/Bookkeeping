@@ -1,0 +1,61 @@
+<header class="header">
+    <ul class="header_nav">
+      <li class="header_nav-link">
+        {% url 'service:index' as the_url %}
+        {% if request.get_full_path == the_url or type_url ==  "service" %}
+          <span class="menu-active">Услуги</span>
+        {% else %}
+          <a class="" href="{% url 'service:service_all' %}">Услуги</a>
+        {% endif %}
+      </li>
+  
+      {% comment %} <li class="header_nav-link">
+        {% url 'operation:operation_outside' as the_url %}
+        {% if request.get_full_path == the_url %}
+          <span class="menu-active">Внешние счета</span>
+        {% else %}
+          <a class="" href="{% url 'operation:operation_outside' %}">Внешние счета</a>
+        {% endif %}
+      </li> {% endcomment %}
+  
+      {% comment %} <li class="header_nav-link">
+        {% url 'operation:operation_inside' as the_url %}
+        {% if request.get_full_path == the_url or type_url ==  "operation_inside" %}
+          <span class="menu-active">Внутренние счета</span>
+        {% else %}
+          <a class="" href="{% url 'operation:operation_inside' %}">Внутренние счета</a>
+        {% endif %}
+      </li> {% endcomment %}
+  
+      {% comment %} <li class="header_nav-link">
+        {% url 'operation:operation_storage' as the_url %}
+        {% if request.get_full_path == the_url %}
+          <span class="menu-active">Хранилище</span>
+        {% else %}
+          <a class="" href="{% url 'operation:operation_storage' %}">Хранилище</a>
+        {% endif %}
+      </li> {% endcomment %}
+
+      <li class="header_nav-link">
+        {% url 'client:clients' as the_url %}
+        {% if request.get_full_path == the_url %}
+          <span class="menu-active">Клиенты</span>
+        {% else %}
+          <a class="" href="{% url 'client:clients' %}">Клиенты</a>
+        {% endif %}
+      </li>
+    </ul>
+
+    {% comment %} <ul class="header_nav_tech">
+      <li class="header_nav-link">
+        {% url 'core:tech' as the_url %}
+        {% if request.get_full_path == the_url %}
+          <span class="menu-active">Тех.раздел</span>
+        {% else %}
+          <a class="" href="{% url 'core:tech' %}">Тех.раздел</a>
+        {% endif %}
+      </li>
+    </ul> {% endcomment %}
+  </nav>
+  </header>
+  

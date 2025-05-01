@@ -1,0 +1,12 @@
+
+{% extends "core/base.html" %}
+ {% load category_service %}
+
+
+{% block content %}
+
+
+ {% get_category_service %} 
+ {% comment %} {% include "service/month.html" %} {% endcomment %}
+
+{% endblock content %}

@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+{% block content %}
+  {% include "client/includes/modal_client_contract.html" %}
+
+  <section class="clients">
+    <div>
+      <div class="bill-sorting-operation client_sorting"
+           data-sort-operation="0"
+           bill-sorting-oper="0">
+        <h3>Сортирoвка</h3>
+        {% for servises in servise %}
+          <div class = "btn_client_sort" data-sort-client='{{ servises.name }}'>{{ servises.name }}</div>
+        {% endfor %}
+        <button class="open-modal button_black_client modal-add-client"
+                data-name="modal-add-client">Добавить клиента</button>
+      </div>
+      <div class="clients_item_wrapp">
+        <div class="df">
+          <div class="client_client_meneger">
+            <div class="client_client_meneger_client-name_count-title">
+              <span></span>
+            </div>
+            <div class="client_client_meneger_client-name">
+              <h3>Клиент</h3>
+            </div>
+            <div class="client_client_meneger_manager">
+              <h3>Менеджер</h3>
+            </div>
+          </div>
+          <div class="client_contract">
+            <div class="client_contract_service">
+              <h3>Услуга</h3>
+            </div>
+            <div class="client_contract_contract_name">
+              <h3>Договор</h3>
+            </div>
+            <div class="client_contract_data">
+              <h3>Подписан</h3>
+            </div>
+            <div class="client_contract_sum">
+              <h3>Сумма</h3>
+            </div>
+            <div class="client_contract_sum client_contract_sum_ot">
+              <h3>Ответственный</h3>
+            </div>
+          </div>
+        </div>
+        {% regroup contracts by client as ordered_contracts_list %}
+        {% for client in ordered_contracts_list %}
+          <div class="client_table">
+            <div class="client_client_meneger">
+              <div data-name="modal-add-client"
+                   data-client-id="{{ client.grouper.id }}"
+                   data-client-name="{{ client.grouper.name }}"
+                   class="upd_info change_btn">
+                <svg width="16"
+                     height="16"
+                     viewBox="0 0 16 16"
+                     fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" fill="black" stroke="black" />
+                  <path d="M6.98755 10.222H5.79512V8.88838M5.39236 9.2873L10.4677 4.2604C10.8182 3.9132 11.3865 3.9132 11.7371 4.2604C12.0876 4.6076 12.0876 5.17052 11.7371 5.51772L6.58694 10.6188C6.34635 10.8571 6.22606 10.9762 6.09289 11.0786C5.9746 11.1696 5.84886 11.2507 5.71696 11.321C5.56848 11.4001 5.40978 11.4608 5.09238 11.5822L4 12L4.35147 10.9555C4.47142 10.5991 4.5314 10.4208 4.61482 10.2544C4.68891 10.1066 4.77668 9.96592 4.87701 9.83416C4.98999 9.68583 5.12411 9.553 5.39236 9.2873Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="client_client_meneger_client-name_count">
+                <span>{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}.</span>
+              </div>
+              <div class="client_client_meneger_client-name">
+                <p>{{ client.grouper.name }}</p>
+              </div>
+              <div class="client_client_meneger_manager">
+                <p>{{ client.grouper.manager.last_name }}</p>
+              </div>
+            </div>
+            <div class="client_contract_fx">
+              {% for contract in client.list %}
+                <div class="client_contract">
+                  <div class="client_contract_service">{{ contract.service.name }}</div>
+                  <div class="client_contract_contract_name">{{ contract.contract_number }}</div>
+                  <div class="client_contract_data">{{ contract.date_start|date:"d E Y" }}</div>
+                  <div class="client_contract_sum">{{ contract.contract_sum }} ₽</div>
+                  {% comment %} <div class="client_contract_sum">  {% ifchanged contract.manager.last_name %} {{ contract.manager.last_name }} {% endifchanged %}
+                  </div>  {% endcomment %}
+                  <div class="client_contract_sum">{{ contract.manager.last_name }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+</section>
+{% endblock content %}
