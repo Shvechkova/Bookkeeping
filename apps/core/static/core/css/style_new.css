@@ -1,0 +1,96 @@
+
+.invoice_month_title{
+    color: rgb(0, 0, 0);
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 33px;
+    display: flex;
+    background: none;
+}
+
+
+.invoice_month_line{
+    display: flex;
+}
+.invoice_wrap_len{
+    display: flex;
+}
+.invoice_wrap{
+    padding: 20px 16.5px;
+    margin-left: 40px;
+}
+.invoice_month_counter {
+    width:15px ;
+}
+.invoice_month_client_name{
+    width: 120px;
+}
+.invoice_month_contract_name{
+    width: 110px;
+}
+.invoice_month_summ_invoce{
+    width: 100px;
+}
+.invoice_month_in_main{
+    width: 120px;
+}
+.invoice_month_in_additional{
+    width: 100px;
+}
+.invoice_month_out_main{
+    width: 120px;
+}
+.invoice_month_out_additional{
+    width: 100px;
+}
+.bg_green_round_first{
+    background-color: rgb(243, 252, 242);
+     border-top-left-radius: 25px;
+    border-top-right-radius: 25px;  
+    
+}
+.bg_green{
+    background-color: rgb(243, 252, 242);
+    
+}
+.bg_green_round_last{
+    background-color: rgb(243, 252, 242); 
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px; 
+    
+}
+.bg_red{
+    background-color: rgb(255, 237, 237);
+    
+}
+.bg_red_round_first{
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;  
+    background-color: rgb(255, 237, 237);
+}
+.bg_red_round_last{
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px; 
+    background-color: rgb(255, 237, 237);
+}
+
+.btn_month_invoce-shrink {
+    height: 20px;
+    margin-left: 5px;
+    color: rgb(255, 255, 255);
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    background: rgb(0, 0, 0);
+    border-radius: 50%;
+}
+.invoice_month_out_main_title{
+    display: flex;
+}
