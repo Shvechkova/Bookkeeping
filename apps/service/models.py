@@ -15,7 +15,7 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
-    
+
 class ServicesClientMonthlyInvoice(models.Model):
     client = models.ForeignKey(
         Client,  on_delete=models.PROTECT,verbose_name="Клиент", blank=True, null=True)
@@ -39,18 +39,21 @@ class ServicesClientMonthlyInvoice(models.Model):
 
     contract_sum = models.PositiveIntegerField("Сумма контракта", default="0")
     operations_add_all = models.PositiveIntegerField("Сумма прихода вся", default="0", blank=True, null=True)
+    operations_add_diff_all = models.PositiveIntegerField(
+        "Сумма прихода остаток", default="0", blank=True, null=True
+    )
     operations_add_ip = models.PositiveIntegerField("Сумма прихода ИП", default=None, blank=True, null=True)
     operations_add_ооо = models.PositiveIntegerField("Сумма прихода ООО", default=None, blank=True, null=True)
     operations_add_nal = models.PositiveIntegerField("Сумма прихода нал", default=None, blank=True, null=True)
-    
+
     operations_out_all = models.PositiveIntegerField("Сумма расхода вся", default="0", blank=True, null=True)
+    operations_out_diff_all = models.PositiveIntegerField(
+        "Сумма прихода остаток", default="0", blank=True, null=True
+    )
     operations_out_ip = models.PositiveIntegerField("Сумма расхода ИП", default=None, blank=True, null=True)
     operations_out_ооо = models.PositiveIntegerField("Сумма расхода ООО", default=None, blank=True, null=True)
     operations_out_nal = models.PositiveIntegerField("Сумма расхода нал", default=None, blank=True, null=True)
-    
-    
-    
-    
+
     adv_all_sum = models.PositiveIntegerField(
         "Сумма ведения для ADV", default=None, blank=True, null=True)
     diff_sum = models.PositiveIntegerField(
@@ -70,4 +73,15 @@ class ServicesClientMonthlyInvoice(models.Model):
     # chekin_add_subcontr = models.BooleanField(
     #     "чекин есть ли распределение денег по субподрядам", default=False
     # )
-  
+
+
+class AdvPlatform(models.Model):
+    name = models.CharField("Название площадки", max_length=200, blank=True, null=True)
+    
+    class Meta:
+        verbose_name = "Рекламная площадка"
+        verbose_name_plural = "Рекламные площадки"
+        
+    
+    def __str__(self):
+        return self.name

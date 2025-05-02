@@ -152,6 +152,7 @@ function addMonthBill(dataBill, elem) {
     data.append("contract", contractId);
     data.append("contract_sum", contract_sum);
     data.append("diff_sum", diff_sum);
+    
     // суммы адв для категорий
     if (service_name == "1") {
 
@@ -160,6 +161,7 @@ function addMonthBill(dataBill, elem) {
      
       data.append("adv_all_sum", 0);
     }
+    data.append("operations_add_diff_all", contract_sum)
 
     let object = {};
     data.forEach((value, key) => (object[key] = value));
@@ -235,7 +237,7 @@ function updBillChange(idBill, service_name, elem) {
   replaceNam ()
   const battonAddchange = document.querySelector(".client-contract_change");
   battonAddchange.addEventListener("click", () => {
-    const endpoint = "/service/api/month_bill/" + idBill + "/";
+    const endpoint = "/api/v1/service_month_client/" + idBill + "/";
     const data = new FormData();
 
     let nameClientBillModal = document.querySelector(
@@ -294,11 +296,13 @@ if (btnDelBill) {
  
       // preloaderModal(isLoading=false,isLoaded=true)
       const idBill = element.getAttribute("data-id-bill");
-      endpoint = "/service/api/month_bill/" + idBill + "/";
+      let csrfToken = getCookie("csrftoken");
+      endpoint = "/api/v1/service_month_client/" + idBill + "/";
       fetch(endpoint, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
         },
       }).then((response) => {
         if (response.ok === true) {

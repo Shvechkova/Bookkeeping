@@ -815,11 +815,6 @@ input[type="date"]:before {
 
 .add-operation-entry {
   cursor: pointer;
-  width: 120px;
-
-  height: 100%;
-
-  margin-top: 33px;
 }
 .add-operation-storage {
   cursor: pointer;
@@ -1472,7 +1467,7 @@ input[type="radio"]:checked {
   position: relative;
 }
 .last-loop-modal-add-client {
-  margin-top: 34px;
+  
 }
 
 .month_bill {

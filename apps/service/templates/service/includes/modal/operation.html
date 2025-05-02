@@ -1,0 +1,60 @@
+<div id="modal-add-operation-entry" class="modal">
+  <div class="modal-wrapper">
+    <div class="modal-items">
+      <div class="modal_close modal_close_modal-add-operation-entry">+</div>
+      <div class="modal-items-wrap">
+        <div class="modal_adv_buget">
+          <h3>Ожидаемые поступления:</h3>
+          <h3 class="operation_entry_sum_all"></h3>
+        </div>
+        <div class="operation">
+          <p class="operation_entry_client-name"></p>
+          <p class="operation_entry_contract-name"></p>
+          <p class="operation_entry_data"></p>
+        </div>
+        <div class="previous_operation"></div>
+        <div class="bank_date_wrapper">
+          <div class="" id="bank_cheked">
+            <h3>Куда оплатили?</h3>
+            <div class="input_bank_wrap_one_add">
+              <input type="radio" id="OOO" name="bank" value="1" />
+              <label for="OOO">ООО</label>
+              <input type="radio" id="IP" name="bank" value="2" />
+              <label for="IP">ИП</label>
+              <input type="radio" id="$" name="bank" value="3" />
+              <label for="$">$</label>
+            </div>
+          </div>
+          <div class="date_operation">
+            <input type="date" id="date-operation" class=" input-130" placeholder="">
+          </div>
+        </div>
+        <div id="sum_cheked" data-step="1">
+          <h3>Сколько оплатили?</h3>
+          <div class="input_bank_wrap_add">
+            <input type="radio" id="100" name="sum" value="100" />
+            <label for="100">100%</label>
+            <input type="radio" id="50" name="sum" value="50" />
+            <label for="50">50%</label>
+            <input type="radio" id="other_sum" name="sum" value="1" />
+            <input data-validate="0"
+                   placeholder="Другая сумма"
+                   type="number"
+                   id="other_sum_namber"
+                   name=""
+                   value="" />
+          </div>
+        </div>
+        <div class="operation_entry_comment">
+          <h3>Комментарий</h3>
+          <input data-validate="0"
+                 type="hidden"
+                 name="operation_comment_entry"
+                 value="" />
+          <textarea name="text" id="operation_comment" name="operation_comment_entry"></textarea>
+        </div>
+        <button disabled class="operation_add button_black">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>

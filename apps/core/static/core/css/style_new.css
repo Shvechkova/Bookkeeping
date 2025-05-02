@@ -34,8 +34,14 @@
 .invoice_month_summ_invoce{
     width: 100px;
 }
+.invoice_month_summ_adv{
+    width: 110px;
+}
 .invoice_month_in_main{
     width: 120px;
+}
+.invoice_month_suborder_main{
+    width: 150px;
 }
 .invoice_month_in_additional{
     width: 100px;
@@ -93,4 +99,21 @@
 }
 .invoice_month_out_main_title{
     display: flex;
+}
+
+.bg_gray_round_first{
+    background-color: rgb(244, 244, 244);
+     border-top-left-radius: 25px;
+    border-top-right-radius: 25px;  
+    
+}
+.bg_gray{
+    background-color: rgb(244, 244, 244);
+    
+}
+.bg_gray_round_last{
+    background-color: rgb(244, 244, 244); 
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px; 
+    
 }

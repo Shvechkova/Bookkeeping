@@ -5,7 +5,7 @@ from django.core.cache import cache
 from django.db.models.functions import TruncMonth
 
 
-from apps.service.models import Service, ServicesClientMonthlyInvoice
+from apps.service.models import AdvPlatform, Service, ServicesClientMonthlyInvoice
 
 
 # Create your views here.
@@ -19,8 +19,12 @@ def service_all(request):
 
 def service_one(request, slug):
     import locale
-
     locale.setlocale(locale.LC_ALL, "")
+
+    category_service = Service.objects.get(name=slug)
+    type_url = "service"
+    title = category_service.id
+    title_name = category_service.name
 
     # locale.setlocale(locale.LC_ALL, "russian")
     # общая функция кешировани
@@ -87,9 +91,11 @@ def service_one(request, slug):
         year = 1990
 
     service_month_invoice = (
-        ServicesClientMonthlyInvoice.objects.all()
-        .select_related("client", "service", "contract")
+        ServicesClientMonthlyInvoice.objects.select_related(
+            "client", "service", "contract"
+        )
         .prefetch_related()
+        .filter(service=category_service.id)
         .order_by("-month")
     )
     import pymorphy3
@@ -109,10 +115,13 @@ def service_one(request, slug):
     ]
     print(service_month_invoice)
     # все счета
-    category_service = Service.objects.get(name=slug)
-    type_url = "service"
-    title = category_service.id
-    title_name = category_service.name
+    if title_name == "ADV":
+        platform = AdvPlatform.objects.all()
+    else:
+        platform =  None
+
+    print(platform)
+
     context = {
         "title": title,
         "service": service,
@@ -131,6 +140,7 @@ def service_one(request, slug):
         # "bill_now_mohth_name": bill_now_mohth_name,
         # "bill_month": bill_month
         "service_month_invoice": service_month_invoice,
+        "platform": platform,
     }
 
     return render(request, "service/service_one.html", context)
