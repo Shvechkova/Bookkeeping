@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.client.models import Client, Contract
+from apps.employee.models import CategoryEmployee, Employee
 
 # Create your models here.
 class Service(models.Model):
@@ -59,9 +60,7 @@ class ServicesClientMonthlyInvoice(models.Model):
     diff_sum = models.PositiveIntegerField(
         "сумма для распределения по скбподряду адв", default="0"
     )
-    # diff_sum = models.PositiveIntegerField(
-    #     "сумма для распределения по скбподряду адв", default="0"
-    # )
+
 
     # chekin_sum_entrees = models.BooleanField(
     #     "чекин получения полной оплаты от клиента", default=False
@@ -73,6 +72,49 @@ class ServicesClientMonthlyInvoice(models.Model):
     # chekin_add_subcontr = models.BooleanField(
     #     "чекин есть ли распределение денег по субподрядам", default=False
     # )
+
+
+class SubcontractMonth(models.Model):
+    employee = models.ForeignKey(
+        Employee,
+        verbose_name="Сотрудник",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    category_employee = models.ForeignKey(
+        CategoryEmployee,
+        verbose_name="Отдел",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    platform = models.ForeignKey(
+        "AdvPlatform",
+        verbose_name="Рекламная площадка",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    # other = models.ForeignKey(
+    #     "SubcontractOther",
+    #     verbose_name="Тип субподряда",
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    # )
+
+    created_timestamp = models.DateField(
+        auto_now_add=True, verbose_name="Дата добавления"
+    )
+    # Запланированные траты
+    amount = models.PositiveIntegerField("сумма субподряд", default="0")
+    month_bill = models.ForeignKey(
+        ServicesClientMonthlyInvoice, on_delete=models.CASCADE, blank=True, null=True
+    )
 
 
 class AdvPlatform(models.Model):

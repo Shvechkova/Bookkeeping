@@ -52,6 +52,9 @@
 .invoice_month_out_additional{
     width: 100px;
 }
+.invoice_month_suborder_additional{
+    width: 100px;
+}
 .bg_green_round_first{
     background-color: rgb(243, 252, 242);
      border-top-left-radius: 25px;
@@ -117,3 +120,13 @@
     border-bottom-right-radius: 25px; 
     
 }
+.invoice_month_item{
+    position: relative;
+}
+.invoice_month_item_text{
+    position: relative;
+    width: fit-content;
+
+}
+
+    

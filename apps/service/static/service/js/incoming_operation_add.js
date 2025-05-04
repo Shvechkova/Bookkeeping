@@ -148,7 +148,7 @@ function addFetchOperationEntry(element, endpoint, elem) {
     // form.append("meta_categ", "entrering");
 
     form.append("data", data_select);
-    form.append("bank_in", "4");
+    form.append("bank_in", "5");
     form.append("bank_to", bankChecked);
     form.append("amount", sumChecked);
     form.append("comment", commentOperation);
@@ -227,7 +227,7 @@ function getOldOperation(element, elem) {
       "monthly_bill": +billId,
       "data_month": +data_month,
       "data_year": +data_year,
-      "bank_in": 4,
+      "bank_in": 5,
 
     };
 
