@@ -3,11 +3,11 @@ services:
 
   web:
     build: ./python/
-    command: python ./Bookkeeping/manage.py runserver 0.0.0.0:8000
+    command: python ./Bookkeeping/manage.py runserver 0.0.0.0:3000
     volumes:
       - ../:/home/sites/Bookkeeping/
     ports:
-      - 8000:8000
+      - 3000:3000
     # env_file:
     #   - ./.env
 

@@ -3,7 +3,7 @@ from django.db import models
 from datetime import datetime
 
 from apps.bank.models import Bank
-from apps.service.models import ServicesClientMonthlyInvoice
+from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
 
 
 # Create your models here.
@@ -39,13 +39,13 @@ class Operation(models.Model):
         blank=True,
         null=True,
     )
-    # suborder = models.ForeignKey(
-    #     SubcontractMonth,
-    #     on_delete=models.PROTECT,
-    #     verbose_name="Субподряд для оплат",
-    #     blank=True,
-    #     null=True,
-    # )
+    suborder = models.ForeignKey(
+        SubcontractMonth,
+        on_delete=models.PROTECT,
+        verbose_name="Субподряд для оплат",
+        blank=True,
+        null=True,
+    )
     # name = models.ForeignKey(
     #     NameOperation,
     #     on_delete=models.PROTECT,
@@ -95,3 +95,11 @@ class Operation(models.Model):
         ("none", "none"),
     ]
     meta_categ = models.CharField(max_length=20, choices=META_CATEGORY, default="none")
+    class Meta:
+        verbose_name = "Операция"
+        verbose_name_plural = "Операции"
+        
+    def save(self, *args, **kwargs):
+        if self.comment == "":
+            self.comment = None
+        super().save(*args, **kwargs)

@@ -2,7 +2,10 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import routers, serializers, viewsets, mixins, status
-
+from django.db.models import Prefetch, OuterRef
+from django.db.models import Avg, Count, Min, Sum
+from django.db.models import Q, F, OrderBy, Case, When, Value
+from sql_util.utils import SubquerySum
 
 from apps.client.api.serializers import ClientSerializer
 from apps.client.models import Client
@@ -27,47 +30,53 @@ class ОperationViewSet(viewsets.ModelViewSet):
         try:
             data = request.data
             # СОХПРАНЕНИЕ ОПЕРАЦИИ
+            if data["comment"] == "" or data["comment"] == "null":
+                data['comment'] = None
             serializer = self.serializer_class(data=data)
             if serializer.is_valid():
                 obj = serializer.save()
+                print(obj)
 
-            # операциоо по услагам счетов
-            if "monthly_bill" in data:
-                servise_month = ServicesClientMonthlyInvoice.objects.get(
-                    id=data["monthly_bill"]
-                )
-                # входящая операция
-                if data["bank_in"] == "4":
-                    servise_month.operations_add_all = (
-                        servise_month.operations_add_all + float(data["amount"])
+                # операциоо по услагам счетов
+                if "monthly_bill" in data:
+                    servise_month = ServicesClientMonthlyInvoice.objects.get(
+                        id=data["monthly_bill"]
                     )
-                    servise_month.operations_add_diff_all = (
-                        servise_month.operations_add_diff_all + float(data["amount"])
-                    )
-                    if data["bank_to"] == "1":
-                        if servise_month.operations_add_ip:
-                            servise_month.operations_add_ip = (
-                                servise_month.operations_add_ip + float(data["amount"])
-                            )
-                        else:
-                            servise_month.operations_add_ip = float(data["amount"])
+                    # входящая операция
+                    if data["bank_in"] == "5":
+                        servise_month.operations_add_all = (
+                            servise_month.operations_add_all + float(data["amount"])
+                        )
+                        servise_month.operations_add_diff_all = (
+                            servise_month.operations_add_diff_all + float(data["amount"])
+                        )
+                        if data["bank_to"] == "1":
+                            if servise_month.operations_add_ip:
+                                servise_month.operations_add_ip = (
+                                    servise_month.operations_add_ip + float(data["amount"])
+                                )
+                            else:
+                                servise_month.operations_add_ip = float(data["amount"])
 
-                    elif data["bank_to"] == "2":
-                        if servise_month.operations_add_ооо:
-                            servise_month.operations_add_ооо = (
-                                servise_month.operations_add_ооо + float(data["amount"])
-                            )
-                        else:
-                            servise_month.operations_add_ооо = float(data["amount"])
-                    elif data["bank_to"] == "3":
-                        if servise_month.operations_add_nal:
-                            servise_month.operations_add_nal = (
-                                servise_month.operations_add_nal + float(data["amount"])
-                            )
-                        else:
-                            servise_month.operations_add_nal = float(data["amount"])
-                    servise_month.save()
-
+                        elif data["bank_to"] == "2":
+                            if servise_month.operations_add_ооо:
+                                servise_month.operations_add_ооо = (
+                                    servise_month.operations_add_ооо + float(data["amount"])
+                                )
+                            else:
+                                servise_month.operations_add_ооо = float(data["amount"])
+                        elif data["bank_to"] == "3":
+                            if servise_month.operations_add_nal:
+                                servise_month.operations_add_nal = (
+                                    servise_month.operations_add_nal + float(data["amount"])
+                                )
+                            else:
+                                servise_month.operations_add_nal = float(data["amount"])
+                        servise_month.save()
+                    # исходящая операция оплаты
+                    elif data["bank_to"] == "5":
+                        pass
+                    
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
@@ -103,6 +112,30 @@ class ОperationViewSet(viewsets.ModelViewSet):
             monthly_bill=data["monthly_bill"],
             bank_in=data["bank_in"],
         )
+        print(queryset)
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=["post"], url_path=r"operation_out_filter")
+    def operation_out_filter(self, request, *args, **kwargs):
+        data = request.data
+        print(data)
+        if "platform" in data:
+            print(data)
+            queryset = Operation.objects.filter(
+            suborder = data['id']
+            )
+        elif "category_employee" in data:
+             queryset = Operation.objects.filter(
+            monthly_bill = data['monthly_bill'],suborder__category_employee__isnull=False
+            )
+        elif "storage" in data:
+            queryset = Operation.objects.filter(
+            monthly_bill = data['monthly_bill'],bank_to_id=4,
+            )
+        else:
+            pass
         print(queryset)
         serializer = self.serializer_class(queryset, many=True)
 

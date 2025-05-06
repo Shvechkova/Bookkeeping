@@ -36,6 +36,13 @@ class SubcontractMonthViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
     
+    @action(detail=False, methods=["get"], url_path=r"(?P<pk>\d+)/subcontract_list_category_employee")
+    def subcontract_list_category_employee(self, request, pk):
+        # pk = self.kwargs["pk"]
+        queryset = SubcontractMonth.objects.filter(month_bill=pk,category_employee__isnull = False)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+    
     @action(detail=False, methods=["post", "put"], url_path=r"upd_subs")
     def upd_contracts(
         self,

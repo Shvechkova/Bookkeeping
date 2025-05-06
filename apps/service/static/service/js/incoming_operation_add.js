@@ -137,10 +137,9 @@ function addFetchOperationEntry(element, endpoint, elem) {
       });
     }
 
-    const commentOperation = document.getElementById("operation_comment").value;
+    let commentOperation = document.getElementById("operation_comment").value;
     const data_select = document.getElementById("date-operation").value;
     const form = new FormData();
-
 
 
     // 
@@ -151,12 +150,14 @@ function addFetchOperationEntry(element, endpoint, elem) {
     form.append("bank_in", "5");
     form.append("bank_to", bankChecked);
     form.append("amount", sumChecked);
+    
     form.append("comment", commentOperation);
     form.append("monthly_bill", billId);
 
 
 
     let object = {};
+   
     form.forEach((value, key) => (object[key] = value));
     const dataJson = JSON.stringify(object);
 
@@ -291,7 +292,8 @@ function getOldOperation(element, elem) {
           let prevOperationComm = document.createElement("div");
           prevOperationComm.className = "previous_operation_comment";
           prevOperationiNoComm.append(prevOperationComm);
-          if (comment != "") {
+          if ( comment != null & comment != "") {
+            
             prevOperationComm.innerHTML = "Комментарий: " + comment;
           }
           st -= +sumoperation;

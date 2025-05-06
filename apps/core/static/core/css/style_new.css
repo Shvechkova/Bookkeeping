@@ -128,5 +128,21 @@
     width: fit-content;
 
 }
+.text_red{
+    color: red;
+}
 
+.display_none{
+    display: none;
+}
+.opacity_0{
+    opacity:0 ;
+}
+.visibility_hidden{
+    visibility: hidden
+}
+.result_not_after_green{
+    color: green;
+    top: 100%;
+}
     

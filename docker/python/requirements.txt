@@ -8,3 +8,4 @@ celery
 redis
 mysqlclient==2.2.7
 pymorphy3==2.0.3
+django-sql-utils==0.7.0
