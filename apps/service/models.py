@@ -38,26 +38,26 @@ class ServicesClientMonthlyInvoice(models.Model):
         auto_now_add=True, verbose_name="Дата добавления"
     )
 
-    contract_sum = models.PositiveIntegerField("Сумма контракта", default="0")
-    operations_add_all = models.PositiveIntegerField("Сумма прихода вся", default="0", blank=True, null=True)
-    operations_add_diff_all = models.PositiveIntegerField(
+    contract_sum = models.FloatField("Сумма контракта", default="0")
+    operations_add_all = models.FloatField("Сумма прихода вся", default="0", blank=True, null=True)
+    operations_add_diff_all = models.FloatField(
         "Сумма прихода остаток", default="0", blank=True, null=True
     )
-    operations_add_ip = models.PositiveIntegerField("Сумма прихода ИП", default=None, blank=True, null=True)
-    operations_add_ооо = models.PositiveIntegerField("Сумма прихода ООО", default=None, blank=True, null=True)
-    operations_add_nal = models.PositiveIntegerField("Сумма прихода нал", default=None, blank=True, null=True)
+    operations_add_ip = models.FloatField("Сумма прихода ИП", default=None, blank=True, null=True)
+    operations_add_ооо = models.FloatField("Сумма прихода ООО", default=None, blank=True, null=True)
+    operations_add_nal = models.FloatField("Сумма прихода нал", default=None, blank=True, null=True)
 
-    operations_out_all = models.PositiveIntegerField("Сумма расхода вся", default="0", blank=True, null=True)
-    operations_out_diff_all = models.PositiveIntegerField(
+    operations_out_all = models.FloatField("Сумма расхода вся", default="0", blank=True, null=True)
+    operations_out_diff_all = models.FloatField(
         "Сумма прихода остаток", default="0", blank=True, null=True
     )
-    operations_out_ip = models.PositiveIntegerField("Сумма расхода ИП", default=None, blank=True, null=True)
-    operations_out_ооо = models.PositiveIntegerField("Сумма расхода ООО", default=None, blank=True, null=True)
-    operations_out_nal = models.PositiveIntegerField("Сумма расхода нал", default=None, blank=True, null=True)
+    operations_out_ip = models.FloatField("Сумма расхода ИП", default=None, blank=True, null=True)
+    operations_out_ооо = models.FloatField("Сумма расхода ООО", default=None, blank=True, null=True)
+    operations_out_nal = models.FloatField("Сумма расхода нал", default=None, blank=True, null=True)
 
-    adv_all_sum = models.PositiveIntegerField(
+    adv_all_sum = models.FloatField(
         "Сумма ведения для ADV", default=None, blank=True, null=True)
-    diff_sum = models.PositiveIntegerField(
+    diff_sum = models.FloatField(
         "сумма для распределения по скбподряду адв", default="0"
     )
 
@@ -111,7 +111,7 @@ class SubcontractMonth(models.Model):
         auto_now_add=True, verbose_name="Дата добавления"
     )
     # Запланированные траты
-    amount = models.PositiveIntegerField("сумма субподряд", default="0")
+    amount = models.FloatField("сумма субподряд", default="0")
     month_bill = models.ForeignKey(
         ServicesClientMonthlyInvoice, on_delete=models.CASCADE, blank=True, null=True
     )

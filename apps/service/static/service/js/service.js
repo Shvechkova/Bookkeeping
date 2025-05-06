@@ -14,7 +14,7 @@ if (addBill) {
         advWrap.style.display = "none";
         const advSum = document.querySelector("#adv_all_sum");
         advSum.value = 0;
-       
+
       }
       // имя страницы для фильтрации доступных клиентов
       const pageName = document.getElementById("page_name").value;
@@ -35,7 +35,7 @@ if (addBill) {
       );
 
       modal(elem, battonAdd);
-     
+
       getClientFilterCategory(pageName, dataBill, elem);
       addMonthBill(dataBill, elem);
 
@@ -73,7 +73,7 @@ function getClientFilterCategory(pageName, dataBill, elem) {
           value.name
         ).appendTo(select);
       });
-      
+
       // при выборе клиента заполнение остальнох инпутов доступно инфой из контракта
       select.addEventListener("change", (event) => {
         let clientId = select.value;
@@ -109,9 +109,9 @@ function getClientFilterCategory(pageName, dataBill, elem) {
               choiceColor();
               const contractSum = document.querySelector(".modal-contract_sum");
               contractSum.value = value.contract_sum;
-              replaceNam ()
+              replaceNam()
             });
-          modalWindows.click();
+            modalWindows.click();
             // иммитация лика для валидации не адв
           });
       });
@@ -152,13 +152,13 @@ function addMonthBill(dataBill, elem) {
     data.append("contract", contractId);
     data.append("contract_sum", contract_sum);
     data.append("diff_sum", diff_sum);
-    
+
     // суммы адв для категорий
     if (service_name == "1") {
 
       data.append("adv_all_sum", adv_sum);
     } else {
-     
+
       data.append("adv_all_sum", 0);
     }
     data.append("operations_add_diff_all", contract_sum)
@@ -180,14 +180,14 @@ function addMonthBill(dataBill, elem) {
         const windowContent = document.getElementById(elem);
         alertSuccess(windowContent);
         const timerId = setTimeout(() => {
-           location.reload();
+          location.reload();
         }, 200);
       } else {
         const windowContent = document.getElementById(elem);
         console.log(windowContent);
         alertError(windowContent);
         const timerId = setTimeout(() => {
-           location.reload();
+          location.reload();
         }, 200);
       }
     });
@@ -204,7 +204,7 @@ if (changeBill) {
       advWrap.style.display = "none";
     }
     el.addEventListener("click", () => {
-  
+
       let elem = el.getAttribute("data-name");
       let idBill = el.getAttribute("data-id-bill");
       let idBillName = el.getAttribute("data-bill-month-client-name");
@@ -227,14 +227,14 @@ if (changeBill) {
       nameClientBillModal.value = nameClientBill;
       sumBillModal.value = +sumBillStr;
       sumAdvBillModal.value = +sumAdvBillStr;
-     
+
       updBillChange(idBill, service_name, elem);
     });
   });
 }
 // изменение счета функции
 function updBillChange(idBill, service_name, elem) {
-  replaceNam ()
+  replaceNam()
   const battonAddchange = document.querySelector(".client-contract_change");
   battonAddchange.addEventListener("click", () => {
     const endpoint = "/api/v1/service_month_client/" + idBill + "/";
@@ -293,7 +293,7 @@ const btnDelBill = document.querySelectorAll(".btn_month_bill-del");
 if (btnDelBill) {
   btnDelBill.forEach((element) => {
     element.addEventListener("click", () => {
- 
+
       // preloaderModal(isLoading=false,isLoaded=true)
       const idBill = element.getAttribute("data-id-bill");
       let csrfToken = getCookie("csrftoken");
@@ -309,8 +309,8 @@ if (btnDelBill) {
           const itemWrap = element.parentElement;
           itemWrap.parentElement.parentElement.remove();
           location.reload();
-        }else {
-       
+        } else {
+
           let allarm = document.createElement("div");
           allarm.className = "allarm";
           allarm.innerHTML = "нельзя удалить";
@@ -318,10 +318,31 @@ if (btnDelBill) {
           const timerId = setTimeout(() => {
             allarm.remove()
           }, 700);
-      
-          
+
+
         }
       });
     });
   });
+}
+
+// спрятать коммента не адв если нет 
+const noAdvPeople = document.querySelectorAll(".invoice_month_item_no_adv_people");
+if (noAdvPeople) {
+  noAdvPeople.forEach((elementComm) => {
+    wrap_comment = elementComm.querySelector(".comment_operation_hidden_wrap")
+    console.log(wrap_comment)
+    if (wrap_comment === null) {
+
+
+
+
+    } else {
+      q_elem = elementComm.querySelector(".comment_operation")
+
+      if (wrap_comment.childNodes.length < 2) {
+        q_elem.style.display = "none"
+      }
+    }
+  })
 }

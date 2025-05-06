@@ -1,5 +1,4 @@
-
-.invoice_month_title{
+.invoice_month_title {
     color: rgb(0, 0, 0);
     font-family: Montserrat;
     font-size: 20px;
@@ -12,77 +11,96 @@
 }
 
 
-.invoice_month_line{
+.invoice_month_line {
     display: flex;
 }
-.invoice_wrap_len{
+
+.invoice_wrap_len {
     display: flex;
 }
-.invoice_wrap{
+
+.invoice_wrap {
     padding: 20px 16.5px;
     margin-left: 40px;
 }
+
 .invoice_month_counter {
-    width:15px ;
+    width: 15px;
 }
-.invoice_month_client_name{
+
+.invoice_month_client_name {
     width: 120px;
 }
-.invoice_month_contract_name{
+
+.invoice_month_contract_name {
     width: 110px;
 }
-.invoice_month_summ_invoce{
+
+.invoice_month_summ_invoce {
     width: 100px;
 }
-.invoice_month_summ_adv{
+
+.invoice_month_summ_adv {
     width: 110px;
 }
-.invoice_month_in_main{
+
+.invoice_month_in_main {
     width: 120px;
 }
-.invoice_month_suborder_main{
+
+.invoice_month_suborder_main {
     width: 150px;
 }
-.invoice_month_in_additional{
+
+.invoice_month_in_additional {
     width: 100px;
 }
-.invoice_month_out_main{
+
+.invoice_month_out_main {
     width: 120px;
 }
-.invoice_month_out_additional{
+
+.invoice_month_out_additional {
     width: 100px;
 }
-.invoice_month_suborder_additional{
+
+.invoice_month_suborder_additional {
     width: 100px;
 }
-.bg_green_round_first{
+
+.bg_green_round_first {
     background-color: rgb(243, 252, 242);
-     border-top-left-radius: 25px;
-    border-top-right-radius: 25px;  
-    
-}
-.bg_green{
-    background-color: rgb(243, 252, 242);
-    
-}
-.bg_green_round_last{
-    background-color: rgb(243, 252, 242); 
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px; 
-    
-}
-.bg_red{
-    background-color: rgb(255, 237, 237);
-    
-}
-.bg_red_round_first{
     border-top-left-radius: 25px;
-    border-top-right-radius: 25px;  
+    border-top-right-radius: 25px;
+
+}
+
+.bg_green {
+    background-color: rgb(243, 252, 242);
+
+}
+
+.bg_green_round_last {
+    background-color: rgb(243, 252, 242);
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+
+}
+
+.bg_red {
+    background-color: rgb(255, 237, 237);
+
+}
+
+.bg_red_round_first {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
     background-color: rgb(255, 237, 237);
 }
-.bg_red_round_last{
+
+.bg_red_round_last {
     border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px; 
+    border-bottom-right-radius: 25px;
     background-color: rgb(255, 237, 237);
 }
 
@@ -90,8 +108,7 @@
     height: 20px;
     margin-left: 5px;
     color: rgb(255, 255, 255);
-    display: flex
-;
+    display: flex;
     justify-content: center;
     align-items: center;
     font-size: 25px;
@@ -100,49 +117,61 @@
     background: rgb(0, 0, 0);
     border-radius: 50%;
 }
-.invoice_month_out_main_title{
+
+.invoice_month_out_main_title {
     display: flex;
 }
 
-.bg_gray_round_first{
+.bg_gray_round_first {
     background-color: rgb(244, 244, 244);
-     border-top-left-radius: 25px;
-    border-top-right-radius: 25px;  
-    
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+
 }
-.bg_gray{
+
+.bg_gray {
     background-color: rgb(244, 244, 244);
-    
+
 }
-.bg_gray_round_last{
-    background-color: rgb(244, 244, 244); 
+
+.bg_gray_round_last {
+    background-color: rgb(244, 244, 244);
     border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px; 
-    
+    border-bottom-right-radius: 25px;
+
 }
-.invoice_month_item{
+
+.invoice_month_item {
     position: relative;
 }
-.invoice_month_item_text{
+
+.invoice_month_item_text {
     position: relative;
     width: fit-content;
 
 }
-.text_red{
+
+.text_red {
     color: red;
 }
 
-.display_none{
+.display_none {
     display: none;
 }
-.opacity_0{
-    opacity:0 ;
+
+.opacity_0 {
+    opacity: 0;
 }
-.visibility_hidden{
+
+.visibility_hidden {
     visibility: hidden
 }
-.result_not_after_green{
+
+.visibility {
+    visibility: visible;
+}
+
+.result_not_after_green {
     color: green;
     top: 100%;
 }
-    

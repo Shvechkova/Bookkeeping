@@ -29,7 +29,7 @@ class Operation(models.Model):
         null=True,
     )
 
-    amount = models.PositiveIntegerField("Сумма",default="0")
+    amount = models.FloatField("Сумма",default="0")
     comment = models.TextField("Комментарий", blank=True, null=True)
 
     monthly_bill = models.ForeignKey(

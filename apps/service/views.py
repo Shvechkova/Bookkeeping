@@ -137,7 +137,7 @@ def service_one(request, slug):
                     "operation__comment",
                     filter=Q(operation__bank_to=1)
                     & Q(operation__bank_in=5)
-                    & Q(operation__monthly_bill__id=OuterRef("pk"))
+                    & Q(operation__monthly_bill__id=OuterRef("pk")),
                 )
             ),
             operation_amount_ip=(
@@ -149,9 +149,12 @@ def service_one(request, slug):
                     default=0,
                 )
             ),
-            operation_amount_ip_comment=Count("operation__comment",filter=Q(operation__bank_to=2)
-                    & Q(operation__bank_in=5)
-                    & Q(operation__monthly_bill__id=OuterRef("pk")),),            
+            operation_amount_ip_comment=Count(
+                "operation__comment",
+                filter=Q(operation__bank_to=2)
+                & Q(operation__bank_in=5)
+                & Q(operation__monthly_bill__id=OuterRef("pk")),
+            ),
             operation_amount_nal=(
                 Sum(
                     "operation__amount",
@@ -166,41 +169,51 @@ def service_one(request, slug):
                     "operation__comment",
                     filter=Q(operation__bank_to=3)
                     & Q(operation__bank_in=5)
-                    & Q(operation__monthly_bill__id=OuterRef("pk"))
+                    & Q(operation__monthly_bill__id=OuterRef("pk")),
                 )
             ),
         )
-
         .annotate(
-            sum_subcontractmonth=SubquerySum("subcontractmonth__amount", default=0),    
+            sum_subcontractmonth=SubquerySum("subcontractmonth__amount", default=0),
             target=(
-                    SubquerySum(
-                        "subcontractmonth__amount", filter=Q(platform__name="Таргет"),
-                        default=0,
-                    )
-                ),
-            operation_amount_target_comment=Count("operation__comment",filter=Q(operation__suborder__platform__name="Таргет")
-                        & Q(operation__bank_to=5)
-                        & Q(operation__monthly_bill__id=OuterRef("pk")),),           
+                SubquerySum(
+                    "subcontractmonth__amount",
+                    filter=Q(platform__name="Таргет"),
+                    default=0,
+                )
+            ),
+            operation_amount_target_comment=Count(
+                "operation__comment",
+                filter=Q(operation__suborder__platform__name="Таргет")
+                & Q(operation__bank_to=5)
+                & Q(operation__monthly_bill__id=OuterRef("pk")),
+            ),
             yandex=(
-                    SubquerySum(
-                        "subcontractmonth__amount", filter=Q(platform__name="Я.Директ"),
-                        default=0,
-                    )
-                ),
-            operation_amount_yandex_comment=Count("operation__comment",filter=Q(operation__suborder__platform__name="Я.Директ")
-                        & Q(operation__bank_to=5)
-                        & Q(operation__monthly_bill__id=OuterRef("pk")),),       
+                SubquerySum(
+                    "subcontractmonth__amount",
+                    filter=Q(platform__name="Я.Директ"),
+                    default=0,
+                )
+            ),
+            operation_amount_yandex_comment=Count(
+                "operation__comment",
+                filter=Q(operation__suborder__platform__name="Я.Директ")
+                & Q(operation__bank_to=5)
+                & Q(operation__monthly_bill__id=OuterRef("pk")),
+            ),
             employee_all=(
-                    SubquerySum(
-                        "subcontractmonth__amount", filter=Q(category_employee__isnull=False),
-                    
-                        default=0,
-                    )
-                ),
-            operation_amount_employee_all_comment=Count("operation__comment",filter=Q(operation__suborder__category_employee__isnull=False)
-                    & Q(operation__bank_to=5)
-                    & Q(operation__monthly_bill__id=OuterRef("pk")),),
+                SubquerySum(
+                    "subcontractmonth__amount",
+                    filter=Q(category_employee__isnull=False),
+                    default=0,
+                )
+            ),
+            operation_amount_employee_all_comment=Count(
+                "operation__comment",
+                filter=Q(operation__suborder__category_employee__isnull=False)
+                & Q(operation__bank_to=5)
+                & Q(operation__monthly_bill__id=OuterRef("pk")),
+            ),
         )
         .annotate(
             operation_amount_out_all=Sum(
@@ -225,7 +238,7 @@ def service_one(request, slug):
                     "operation__comment",
                     filter=Q(operation__bank_to=5)
                     & Q(operation__bank_in=1)
-                    & Q(operation__monthly_bill__id=OuterRef("pk"))
+                    & Q(operation__monthly_bill__id=OuterRef("pk")),
                 )
             ),
             operation_amount_out_ip=(
@@ -237,9 +250,12 @@ def service_one(request, slug):
                     default=0,
                 )
             ),
-            operation_amount_out_ip_comment=Count("operation__comment",filter=Q(operation__bank_to=5)
-                    & Q(operation__bank_in=2)
-                    & Q(operation__monthly_bill__id=OuterRef("pk")),),            
+            operation_amount_out_ip_comment=Count(
+                "operation__comment",
+                filter=Q(operation__bank_to=5)
+                & Q(operation__bank_in=2)
+                & Q(operation__monthly_bill__id=OuterRef("pk")),
+            ),
             operation_amount_out_nal=(
                 Sum(
                     "operation__amount",
@@ -254,15 +270,14 @@ def service_one(request, slug):
                     "operation__comment",
                     filter=Q(operation__bank_to=5)
                     & Q(operation__bank_in=3)
-                    & Q(operation__monthly_bill__id=OuterRef("pk"))
+                    & Q(operation__monthly_bill__id=OuterRef("pk")),
                 )
             ),
-        
         )
         .annotate(
             operation_amount_out_all_and_storage=Sum(
                 "operation__amount",
-                filter=Q(operation__bank_to__in=[5,4])
+                filter=Q(operation__bank_to__in=[5, 4])
                 & Q(operation__monthly_bill__id=OuterRef("pk")),
                 default=0,
             ),
@@ -273,19 +288,19 @@ def service_one(request, slug):
                 default=0,
             ),
             operation_amount_out_all_and_storage_diff=F("diff_sum")
-            - (F("operation_amount_out_all_and_storage"))
-            
+            - (F("operation_amount_out_all_and_storage")),
         )
-
         .order_by("-month")
     )
 
+    suborders = (
+        SubcontractMonth.objects.select_related(
+            "month_bill", "month_bill__service", "platform","category_employee"
+        )
+        .prefetch_related()
+        .filter(month_bill__service=category_service.id)
+    )
 
-    suborders = SubcontractMonth.objects.select_related(
-            "month_bill", "month_bill__service","platform"
-        ).prefetch_related(
-        ).filter(month_bill__service=category_service.id)
-    
     import pymorphy3
 
     morph = pymorphy3.MorphAnalyzer(lang="ru")
@@ -297,107 +312,117 @@ def service_one(request, slug):
             t.month.strftime("%Y"),
         ],
     )
-    # for i in service_month_invoice:
-    #     pass
-    #     # i = list(i)
-    #     # totals = ["12545"]
-    #     # i.append(totals)
-        
-    print(service_month_invoice)
+
+  
     # service_month_invoice = [
     #     (grouper, list(values)) for grouper, values in service_month_invoice
-            
+
     # ]
     service_month_invoice_new = []
     for grouper, values in service_month_invoice:
-        
+
         total = {
-            "total_contract_sum":0,
-            "total_adv_all_sum":0,
-            "total_sum_subcontractmonth":0,
-            "total_sum_subcontractmonth_target":0,
-            "total_sum_subcontractmonth_yandex":0,
-            "total_sum_subcontractmonth_category_employee":0,
-            
-            "total_operation_amount_to_all":0,
-            "total_operation_amount_to_all_diff":0,
-            "total_operation_amount_ooo":0,
-            "total_operation_amount_ip":0,
-            "total_operation_amount_nal":0,
-            
-            "total_operation_amount_out_all_and_storage":0,
-            "total_operation_amount_storage_all":0,
-            "total_operation_amount_out_all_and_storage_diff":0,
-            
-            "total_operation_amount_out_all":0,
-            "total_operation_amount_out_ooo":0,
-            "total_operation_amount_out_ip":0,
-            "total_operation_operation_amount_out_nal":0,
-            
-            
-            
-            
+            "total_contract_sum": 0,
+            "total_adv_all_sum": 0,
+            "total_sum_subcontractmonth": 0,
+            "total_sum_subcontractmonth_target": 0,
+            "total_sum_subcontractmonth_yandex": 0,
+            "total_sum_subcontractmonth_category_employee": 0,
+            "total_operation_amount_to_all": 0,
+            "total_operation_amount_to_all_diff": 0,
+            "total_operation_amount_ooo": 0,
+            "total_operation_amount_ip": 0,
+            "total_operation_amount_nal": 0,
+            "total_operation_amount_out_all_and_storage": 0,
+            "total_operation_amount_storage_all": 0,
+            "total_operation_amount_out_all_and_storage_diff": 0,
+            "total_operation_amount_out_all": 0,
+            "total_operation_amount_out_ooo": 0,
+            "total_operation_amount_out_ip": 0,
+            "total_operation_operation_amount_out_nal": 0,
+            "total_sum_subcontractmonth_no_adv": 0,
         }
         val = list(values)
-        
-        for v in val :
-            total['total_contract_sum'] = total['total_contract_sum'] + v.contract_sum
-            total['total_adv_all_sum'] = total['total_adv_all_sum'] + v.adv_all_sum
-            total['total_sum_subcontractmonth'] = total['total_sum_subcontractmonth'] + v.diff_sum
-            if v.target:
-                total['total_sum_subcontractmonth_target'] = total['total_sum_subcontractmonth_target'] + v.target
-            if v.yandex:
-                total['total_sum_subcontractmonth_yandex'] = total['total_sum_subcontractmonth_yandex'] + v.yandex
-            if v.employee_all:
-                total['total_sum_subcontractmonth_category_employee'] = total['total_sum_subcontractmonth_category_employee'] + v.employee_all
-            
-            total['total_operation_amount_to_all'] = total['total_operation_amount_to_all'] + v.operation_amount_to_all
-            total['total_operation_amount_to_all_diff'] = total['total_operation_amount_to_all_diff'] + v.operation_amount_to_all_diff
-            total['total_operation_amount_ooo'] = total['total_operation_amount_ooo'] + v.operation_amount_ooo
-            total['total_operation_amount_ip'] = total['total_operation_amount_ip'] + v.operation_amount_ip
-            total['total_operation_amount_nal'] = total['total_operation_amount_nal'] + v.operation_amount_nal
-            
-            total['total_operation_amount_out_all_and_storage'] = total['total_operation_amount_out_all_and_storage'] + v.operation_amount_out_all_and_storage
-            total['total_operation_amount_storage_all'] = total['total_operation_amount_storage_all'] + v.operation_amount_storage_all
-            if v.operation_amount_out_all_and_storage_diff:
-                total['total_operation_amount_out_all_and_storage_diff'] = total['total_operation_amount_out_all_and_storage_diff'] + v.operation_amount_out_all_and_storage_diff
-            
-            total['total_operation_amount_out_all'] = total['total_operation_amount_out_all'] + v.operation_amount_out_all
-            total['total_operation_amount_out_ooo'] = total['total_operation_amount_out_ooo'] + v.operation_amount_out_ooo
-            total['total_operation_amount_out_ip'] = total['total_operation_amount_out_ip'] + v.operation_amount_out_ip
-            total['total_operation_operation_amount_out_nal'] = total['total_operation_operation_amount_out_nal'] + v.operation_amount_out_nal
 
-        
-        item =[grouper, val,total]
+        for v in val:
+            total["total_contract_sum"] = total["total_contract_sum"] + v.contract_sum
+            total["total_adv_all_sum"] = total["total_adv_all_sum"] + v.adv_all_sum
+            total["total_sum_subcontractmonth"] = (
+                total["total_sum_subcontractmonth"] + v.diff_sum
+            )
+            if v.target:
+                total["total_sum_subcontractmonth_target"] = (
+                    total["total_sum_subcontractmonth_target"] + v.target
+                )
+            if v.yandex:
+                total["total_sum_subcontractmonth_yandex"] = (
+                    total["total_sum_subcontractmonth_yandex"] + v.yandex
+                )
+            if v.employee_all:
+                total["total_sum_subcontractmonth_category_employee"] = (
+                    total["total_sum_subcontractmonth_category_employee"]
+                    + v.employee_all
+                )
+
+            total["total_operation_amount_to_all"] = (
+                total["total_operation_amount_to_all"] + v.operation_amount_to_all
+            )
+            total["total_operation_amount_to_all_diff"] = (
+                total["total_operation_amount_to_all_diff"]
+                + v.operation_amount_to_all_diff
+            )
+            total["total_operation_amount_ooo"] = (
+                total["total_operation_amount_ooo"] + v.operation_amount_ooo
+            )
+            total["total_operation_amount_ip"] = (
+                total["total_operation_amount_ip"] + v.operation_amount_ip
+            )
+            total["total_operation_amount_nal"] = (
+                total["total_operation_amount_nal"] + v.operation_amount_nal
+            )
+
+            total["total_operation_amount_out_all_and_storage"] = (
+                total["total_operation_amount_out_all_and_storage"]
+                + v.operation_amount_out_all_and_storage
+            )
+            total["total_operation_amount_storage_all"] = (
+                total["total_operation_amount_storage_all"]
+                + v.operation_amount_storage_all
+            )
+            if v.operation_amount_out_all_and_storage_diff:
+                total["total_operation_amount_out_all_and_storage_diff"] = (
+                    total["total_operation_amount_out_all_and_storage_diff"]
+                    + v.operation_amount_out_all_and_storage_diff
+                )
+
+            total["total_operation_amount_out_all"] = (
+                total["total_operation_amount_out_all"] + v.operation_amount_out_all
+            )
+            total["total_operation_amount_out_ooo"] = (
+                total["total_operation_amount_out_ooo"] + v.operation_amount_out_ooo
+            )
+            total["total_operation_amount_out_ip"] = (
+                total["total_operation_amount_out_ip"] + v.operation_amount_out_ip
+            )
+            total["total_operation_operation_amount_out_nal"] = (
+                total["total_operation_operation_amount_out_nal"]
+                + v.operation_amount_out_nal
+            )
+            if v.operation_amount_out_all_diff:
+                total["total_sum_subcontractmonth_no_adv"] = (
+                    total["total_sum_subcontractmonth_no_adv"]
+                    + v.operation_amount_out_all_diff
+                )
+
+        item = [grouper, val, total]
         service_month_invoice_new.append(item)
-        print (item)
-    
-    # print(type(service_month_invoice))
-    # service_month_invoice = list(service_month_invoice)
-    # print(type(service_month_invoice))
-    # it = 0
-    # for i in service_month_invoice:
         
-    #     print(type(i))
-    #     i = list(i)
-        
-    #     print(type(i))
-    #     totals = "12545"
-    #     # for t in i[1]:
-    #     #     totals["total_all_sum"] =  t.contract_sum
-    #     i.insert(2, "orange")
-    #     i.append(totals)
-        
-    #     print(i)
-    #     it += 1
-        
-    # print(service_month_invoice)
+
     # все счета
     if title_name == "ADV":
         platform = AdvPlatform.objects.all()
     else:
         platform = None
-
 
     context = {
         "title": title,
@@ -418,7 +443,7 @@ def service_one(request, slug):
         # "bill_month": bill_month
         "service_month_invoice": service_month_invoice_new,
         "platform": platform,
-        "suborders":suborders,
+        "suborders": suborders,
         # "subcontract_month_item": subcontract_month_item,
     }
 

@@ -818,11 +818,6 @@ input[type="date"]:before {
 }
 .add-operation-storage {
   cursor: pointer;
-  width: 120px;
-
-  height: 100%;
-
-  margin-top: 33px;
 }
 
 .bill-month-client-suborder_diff {

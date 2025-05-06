@@ -24,7 +24,7 @@ class Contract(models.Model):
         Client, on_delete=models.PROTECT, verbose_name="Клиент")
 
     contract_number = models.CharField("название номер контракта", max_length=200)
-    contract_sum = models.PositiveIntegerField("сумма контракта", default="0")
+    contract_sum = models.FloatField("сумма контракта", default="0")
     
     date_start = models.DateField("Дата начала действия", blank=True, null=True)
     date_end = models.DateField("Дата окончания", blank=True, null=True)

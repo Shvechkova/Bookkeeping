@@ -29,6 +29,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
     def operation_save(self, request, *args, **kwargs):
         try:
             data = request.data
+            print(data)
             # СОХПРАНЕНИЕ ОПЕРАЦИИ
             if data["comment"] == "" or data["comment"] == "null":
                 data['comment'] = None
@@ -77,7 +78,10 @@ class ОperationViewSet(viewsets.ModelViewSet):
                     elif data["bank_to"] == "5":
                         pass
                     
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                print(serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
