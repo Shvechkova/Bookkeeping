@@ -2,49 +2,8 @@
 {% block content %}
 <input type="hidden" id="page_name" value="{{ title }}" />
 {% include "bank/inside/includes/header_inside.html" %}
-{% comment %} <section class="oper_account">
-{% for category in operations %}
-    <div class="category">
-        <h2>{{ category.category_name }}</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Услуга</th>
-                    {% for month in months %}
-                        <th>{{ month }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for account in category.accounts %}
-                    <tr>
-                        <td>{{ forloop.counter|stringformat:"02d" }}.</td>
-                        <td>{{ account.name }}</td>
-                        {% for month in account.months %}
-                            <td>
-                                {% if month.total > 0 %}
-                                    {{ month.total|floatformat:0 }} ₽
-                                {% else %}
-                                    0 ₽
-                                {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-                <tr style="font-weight:bold;">
-                    <td colspan="2">Итого</td>
-                    {% for total in category.totals_by_month %}
-                        <td>{{ total|floatformat:0 }} ₽</td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
-    </div>
-{% endfor %}
-
-
-</section> {% endcomment %}
+{% include "bank/inside/includes/modal/modal_add_category_office.html" %}
+{% include "bank/inside/includes/modal/modal_add_operation_oper_account.html" %}
 <section class="oper_account">
 
 {% for category in operations %}
@@ -54,12 +13,14 @@
             <!-- Заголовки -->
             <div class="oper-account-row oper-account-header">
                 <div class="oper-account-cell oper-account-num"></div>
+                {{category}}
                 <div class="oper-account-cell oper-account-service">{{ category.category_name }}
                     <button class="btn_add_category_oper_account"
                         data-name="modal-add_category_oper_account"
-                        data-meta="oper_account"
-                        data-sub-cat="{{ category.sub_categ }}"
-                        data-cat="{{ sub_categ.grouper }}">+</button>
+                        {% comment %} data-meta="oper_account" {% endcomment %}
+                        data-meta="{{category.category_id}}"
+                        data-sub-cat="{{ category.category_id}}"
+                        data-cat="{{ category.category_name }}">+</button>
                                             
                 </div>
                 {% for month in months %}
@@ -74,7 +35,7 @@
                     {% for month in account.months %}
                         <div class="oper-account-cell oper-account-value">
                             {% if month.total > 0 %}
-                                {{ month.total|floatformat:0 }} ₽
+                                {{ month.total }} ₽
                             {% else %}
                                 0 ₽
                             {% endif %}

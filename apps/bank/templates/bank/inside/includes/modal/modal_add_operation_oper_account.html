@@ -1,0 +1,67 @@
+<div id="modal-add_operation_oper_account" class="modal">
+    <div class="modal-wrapper">
+      <div class="modal-items">
+        <div class="modal_close modal_close_modal-add_operation_oper_account">+</div>
+        <div class="modal-items-wrap">
+          <div class="modal_oper_account_title">
+            <h3 class="oper_account_title_sub_categ"></h3>
+            <h3 class="oper_account_title_categ"></h3>
+            <h3 class="oper_account_title_sub_categ_sum"></h3>
+           
+          </div>
+           <div class="oper_account_period">
+            <h3 class="oper_account_period_title">Период:</h3>
+            <p class="oper_account_period_data"></p>
+          
+          </div> 
+          <div class="previous_operation_oper_acc"></div>
+          
+          <div class="bank_date_wrapper">
+            <div class="" id="bank_cheked_out">
+              <h3>Откуда оплатили?</h3>
+              <div class="input_bank_wrap_operacc">
+                <input type="radio" id="OOO_out" name="bank" value="1" />
+                <label for="OOO_out">ООО</label>
+                <input type="radio" id="IP_out" name="bank" value="2" />
+                <label for="IP_out">ИП</label>
+                <input type="radio" id="$_out" name="bank" value="3" />
+                <label for="$_out">$</label>
+              </div>
+            </div>
+            <div class="date_operation date_operation-hidden">
+              <input type="date" id="date-operation_operacc" class=" input-130" placeholder="">
+            </div> 
+          </div>
+  
+          <div id="sum_cheked_out_oper_account" data-step="1">
+            <h3>Сколько оплатили?</h3>
+            <div class="input_bank_wrap_oper_account">
+             
+              <input type="radio" id="other_sum_out_oper_account" name="sum" value="1" />
+              {% comment %} <label for="other_sum_oper_account"></label> {% endcomment %}
+
+              <input data-validate="0"
+                     type="text"
+                     class = "pyb"
+                     id="other_sum_namber_oper_account"
+                     name=""
+                     value=""
+                     placeholder="Cумма" />
+            </div>
+          </div>
+          <div class="operation_entry_comment">
+            <h3>Комментарий</h3>
+            {% comment %} <input data-validate="0"
+                   type="hidden"
+                   id="operation_comment_oper_account"
+                   class"operation_comment_oper_account"
+                   name="operation_comment_entry"
+                   value="" /> {% endcomment %}
+            <textarea name="text"  id="operation_comment" class="operation_comment_oper_account" id="operation_comment_out_oper_account" name="operation_comment_entry"></textarea>
+          </div>
+          <button disabled class="add_operation_oper_account_btn button_black">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
