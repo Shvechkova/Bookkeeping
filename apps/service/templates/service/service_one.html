@@ -31,6 +31,7 @@
 
     {% endfor %} {% endcomment %}
     <section class="bill-month">
+        {{service_month_invoice}}
         {% for date_invoice, service_month_invoices, total in service_month_invoice %}
             <div class="bill_month_one-wrap">
                 {% comment %} <input type="hidden" id="date_invoce" value="{{ date_invoice}}" /> {% endcomment %}

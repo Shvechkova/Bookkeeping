@@ -17,24 +17,24 @@
           <a class="" href="{% url 'operation:operation_outside' %}">Внешние счета</a>
         {% endif %}
       </li> {% endcomment %}
-  
-      {% comment %} <li class="header_nav-link">
-        {% url 'operation:operation_inside' as the_url %}
-        {% if request.get_full_path == the_url or type_url ==  "operation_inside" %}
+
+       <li class="header_nav-link">
+        {% url 'bank:inside' as the_url %}
+        {% if request.get_full_path == the_url or type_url ==  "inside" %}
           <span class="menu-active">Внутренние счета</span>
         {% else %}
-          <a class="" href="{% url 'operation:operation_inside' %}">Внутренние счета</a>
+          <a class="" href="{% url 'bank:inside' %}">Внутренние счета</a>
         {% endif %}
-      </li> {% endcomment %}
-  
-      {% comment %} <li class="header_nav-link">
-        {% url 'operation:operation_storage' as the_url %}
+      </li> 
+
+      <li class="header_nav-link">
+        {% url 'bank:storage' as the_url %}
         {% if request.get_full_path == the_url %}
           <span class="menu-active">Хранилище</span>
         {% else %}
-          <a class="" href="{% url 'operation:operation_storage' %}">Хранилище</a>
+          <a class="" href="{% url 'bank:storage' %}">Хранилище</a>
         {% endif %}
-      </li> {% endcomment %}
+      </li>  
 
       <li class="header_nav-link">
         {% url 'client:clients' as the_url %}

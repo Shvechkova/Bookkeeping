@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 from datetime import datetime
 
-from apps.bank.models import Bank
+from apps.bank.models import Bank, GroupeOperaccount
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
 
 
@@ -43,6 +43,13 @@ class Operation(models.Model):
         SubcontractMonth,
         on_delete=models.PROTECT,
         verbose_name="Субподряд для оплат",
+        blank=True,
+        null=True,
+    )
+    operaccount = models.ForeignKey(
+        GroupeOperaccount,
+        on_delete=models.PROTECT,
+        verbose_name="По оперсчету",
         blank=True,
         null=True,
     )

@@ -8,12 +8,14 @@ from apps.client.urls import router as client_router
 from apps.employee.urls import router as employee_router
 from apps.service.urls import router as service_router
 from apps.operation.urls import router as operation_router
+from apps.bank.urls import router as bank_router
 
 router = routers.DefaultRouter()
 router.registry.extend(client_router.registry)
 router.registry.extend(employee_router.registry)
 router.registry.extend(service_router.registry)
 router.registry.extend(operation_router.registry)
+router.registry.extend(bank_router.registry)
 
 
 urlpatterns = [
@@ -24,6 +26,7 @@ urlpatterns = [
     path("employee/", include("apps.employee.urls", namespace="employee")),
     path("service/", include("apps.service.urls", namespace="service")),
     path("operation/", include("apps.operation.urls", namespace="operation")),
+     path("bank/", include("apps.bank.urls", namespace="bank")),
     path("api/", include(router.urls)),
 ]
 if settings.DEBUG:

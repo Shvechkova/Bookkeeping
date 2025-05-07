@@ -1,0 +1,32 @@
+
+<ul class="header_nav">
+
+    <li class="header_nav-link">
+          {% url 'bank:oper_accaunt'  as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">Оперсчет</span>
+          {% else %}
+                <a class="menu_service"
+                   href="{% url 'bank:oper_accaunt'  %}">Оперсчет</a>
+          {% endif %}
+    </li>
+     {% comment %} <li class="header_nav-link">
+          {% url 'operation:nalog'  as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">Налоги</span>
+          {% else %}
+                <a class="menu_service"
+                   href="{% url 'operation:nalog'  %}">Налоги</a>
+          {% endif %}
+    </li> {% endcomment %}
+    <li class="header_nav-link">
+          {% url 'bank:salary'  as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">ЗП</span>
+          {% else %}
+                <a class="menu_service"
+                   href="{% url 'bank:salary'  %}">ЗП</a>
+          {% endif %}
+    </li> 
+
+</ul>

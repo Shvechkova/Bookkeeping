@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+{% block content %}
+    {% comment %} {% include "operation/includes/category_operation_inside.html" %}
+    {% include "operation/includes/modal/salary/modal_add_employee.html" %} {% endcomment %}
+    <input type="hidden" id="page_name" value="{{ title }}" />
+    {% include "bank/inside/includes/header_inside.html" %}
+    
+    <section class="salary">
+        <div class="salary_title">
+            <div class="oper_account_category_count">
+                <h3>0 1.</h3>
+            </div>
+            <div class="salary_title_categ">
+                <h3>Сотрудник</h3>
+                <button class="btn_add_employee"
+                        data-name="modal-btn_add_employee"
+                        data-meta="salary"
+                        data-type="EXTERNAL"
+                        data-step="1"
+                        data-cat="null">+</button>
+            </div>
+            <div class="salary_title_months">
+                {% for month in month_names %}
+                    <h3 class="salary_title_month">{{ month.name_month }}  {{ data|date:"Y" }}</h3>
+                {% endfor %}
+            </div>
+
+        </div>
+        
+    </section>
+ 
+{% endblock content %}

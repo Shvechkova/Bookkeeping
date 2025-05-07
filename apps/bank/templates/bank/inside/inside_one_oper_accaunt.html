@@ -1,0 +1,98 @@
+{% extends "core/base.html" %}
+{% block content %}
+<input type="hidden" id="page_name" value="{{ title }}" />
+{% include "bank/inside/includes/header_inside.html" %}
+{% comment %} <section class="oper_account">
+{% for category in operations %}
+    <div class="category">
+        <h2>{{ category.category_name }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Услуга</th>
+                    {% for month in months %}
+                        <th>{{ month }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in category.accounts %}
+                    <tr>
+                        <td>{{ forloop.counter|stringformat:"02d" }}.</td>
+                        <td>{{ account.name }}</td>
+                        {% for month in account.months %}
+                            <td>
+                                {% if month.total > 0 %}
+                                    {{ month.total|floatformat:0 }} ₽
+                                {% else %}
+                                    0 ₽
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr style="font-weight:bold;">
+                    <td colspan="2">Итого</td>
+                    {% for total in category.totals_by_month %}
+                        <td>{{ total|floatformat:0 }} ₽</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endfor %}
+
+
+</section> {% endcomment %}
+<section class="oper_account">
+
+{% for category in operations %}
+    <div class="category-block">
+        {% comment %} <div class="category-title">{{ category.category_name }}</div> {% endcomment %}
+        <div class="oper-account-grid">
+            <!-- Заголовки -->
+            <div class="oper-account-row oper-account-header">
+                <div class="oper-account-cell oper-account-num"></div>
+                <div class="oper-account-cell oper-account-service">{{ category.category_name }}
+                    <button class="btn_add_category_oper_account"
+                        data-name="modal-add_category_oper_account"
+                        data-meta="oper_account"
+                        data-sub-cat="{{ category.sub_categ }}"
+                        data-cat="{{ sub_categ.grouper }}">+</button>
+                                            
+                </div>
+                {% for month in months %}
+                    <div class="oper-account-cell oper-account-month">{{ month }}</div>
+                {% endfor %}
+            </div>
+            <!-- Услуги -->
+            {% for account in category.accounts %}
+                <div class="oper-account-row">
+                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                    <div class="oper-account-cell oper-account-service">{{ account.name }}</div>
+                    {% for month in account.months %}
+                        <div class="oper-account-cell oper-account-value">
+                            {% if month.total > 0 %}
+                                {{ month.total|floatformat:0 }} ₽
+                            {% else %}
+                                0 ₽
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <!-- Итого -->
+            <div class="oper-account-row oper-account-total">
+                <div class="oper-account-cell oper-account-num"></div>
+                <div class="oper-account-cell oper-account-service">Итого</div>
+                {% for total in category.totals_by_month %}
+                    <div class="oper-account-cell oper-account-value"><b>{{ total|floatformat:0 }} ₽</b></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+</section>
+{% endblock content %}
