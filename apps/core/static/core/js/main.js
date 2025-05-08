@@ -439,29 +439,87 @@ function replaceNamDot() {
   });
 }
 
+// document.addEventListener('DOMContentLoaded', _ => {
+//   const elems = document.querySelectorAll('.invoice_month_out_additional')
+//   if (elems) {
+//     console.log("elems", elems)
+//     elems.forEach((elementItem, i) => {
+//       const dataShrinkDateItem = elementItem.getAttribute("data-attr-shrink-item");
+//       console.log("dataShrinkDateItem", dataShrinkDateItem)
+//       if (localStorage.getItem(dataShrinkDateItem)) {
+//         elementItem.style.display = 'none';
+//         const btnShr = document.querySelector(`[data-attr-shrink=${dataShrinkDateItem}]`)
+//         btnShr.style.transform = 'rotate(' + 180 + 'deg)';
+//         // localStorage.setItem(dataShrinkDateItem, 0)
+//       }
+//     })
+
+//     // if (localStorage.getItem('elem'))
+
+
+//     const btn = document.querySelectorAll('.btn_month_invoce-shrink')
+//     btn.forEach((element, i) => {
+//       element.addEventListener("click", () => {
+//         const dataShrinkDate = element.getAttribute("data-attr-shrink");
+//         console.log(dataShrinkDate)
+//         const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`)
+//         if (localStorage.getItem(dataShrinkDate)) {
+//           console.log(99999)
+//           shrinkElem.forEach((elementSr, i) => {
+//             elementSr.style.display = 'block';
+//           })
+//           localStorage.removeItem(dataShrinkDate)
+//           element.style.transform = 'rotate(' + 0 + 'deg)';
+
+
+//         } else {
+//           shrinkElem.forEach((elementSr, i) => {
+//             elementSr.style.display = 'none';
+//           })
+//           localStorage.setItem(dataShrinkDate, 1)
+//           element.style.transform = 'rotate(' + 180 + 'deg)';
+//         }
+
+
+//       })
+
+//     })
+//   }
+//   // if (localStorage.getItem('elem')) elem.disabled = true;
+//   // const btn = document.querySelector('.btn_month_invoce-shrink')
+//   // console.log(btn)
+//   // btn.addEventListener("click", function() {
+//   //   elem.disabled = true;
+//   //   localStorage.setItem('elem', 1)
+//   // })
+// })
+
 document.addEventListener('DOMContentLoaded', _ => {
-  const elems = document.querySelectorAll('.invoice_month_out_additional')
+  const elems = document.querySelectorAll('.shrink-item')
   if (elems) {
+    console.log("elems", elems)
     elems.forEach((elementItem, i) => {
-      const dataShrinkDateItem = elementItem.getAttribute("data-attr-shrink-item");
+      const dataShrinkDateItem = elementItem.getAttribute("data-attr-shrink-name");
+      console.log("dataShrinkDateItem", dataShrinkDateItem)
       if (localStorage.getItem(dataShrinkDateItem)) {
-        elementItem.style.display = 'none';
-        const btnShr = document.querySelector(`[data-attr-shrink=${dataShrinkDateItem}]`)
-        btnShr.style.transform = 'rotate(' + 180 + 'deg)';
-        // localStorage.setItem(dataShrinkDateItem, 0)
+        const shrinkElem = document.querySelectorAll(`.${dataShrinkDateItem}`)
+        shrinkElem.forEach((elementSr, i) => {
+          elementSr.style.display = 'none';
+          const btnShr = document.querySelector(`[data-attr-shrink=${dataShrinkDateItem}]`)
+          btnShr.style.transform = 'rotate(' + 180 + 'deg)';
+          elementSr.style.background = 'none';
+          // localStorage.setItem(dataShrinkDateItem, 0)
+          })
       }
     })
 
-    // if (localStorage.getItem('elem'))
-
-    console.log(elems)
 
 
     const btn = document.querySelectorAll('.btn_month_invoce-shrink')
     btn.forEach((element, i) => {
       element.addEventListener("click", () => {
-        const dataShrinkDate = element.getAttribute("data-attr-shrink");
-        console.log(dataShrinkDate)
+        const dataShrinkDate = element.getAttribute("data-attr-shrink-name");
+        console.log("dataShrinkDate", dataShrinkDate)
         const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`)
         if (localStorage.getItem(dataShrinkDate)) {
           console.log(99999)

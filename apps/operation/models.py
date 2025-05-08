@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 from datetime import datetime
 
-from apps.bank.models import Bank, GroupeOperaccount
+from apps.bank.models import Bank, GroupeOperaccount, GroupeSalary
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
 
 
@@ -50,6 +50,13 @@ class Operation(models.Model):
         GroupeOperaccount,
         on_delete=models.PROTECT,
         verbose_name="По оперсчету",
+        blank=True,
+        null=True,
+    )
+    salary = models.ForeignKey(
+        GroupeSalary,
+        on_delete=models.PROTECT,
+        verbose_name="По зарплатам",
         blank=True,
         null=True,
     )
@@ -105,7 +112,7 @@ class Operation(models.Model):
     class Meta:
         verbose_name = "Операция"
         verbose_name_plural = "Операции"
-        
+
     def save(self, *args, **kwargs):
         if self.comment == "":
             self.comment = None

@@ -43,16 +43,29 @@ def oper_accaunt(request):
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
-
+    # куки для сортировки
+    if (
+        request.COOKIES.get("sortOperAccount")
+        and request.COOKIES.get("sortOperAccount") != "0"
+    ):
+        bank_id = request.COOKIES["sortOperAccount"]
+        bank_id = [int(bank_id)]
+    else:
+        bank_id = [1, 2, 3]
+    print(bank_id)
     # Получаем операции
     operations = (
-        Operation.objects.filter(operaccount__isnull=False, data__year__gte=year_now)
+        Operation.objects.filter(
+            operaccount__isnull=False, data__year__gte=year_now, bank_in__in=bank_id
+        )
         .select_related("operaccount")
         .prefetch_related()
         .order_by("-data")
     )
     operations_old = (
-        Operation.objects.filter(operaccount__isnull=False, data__year__lt=year_now)
+        Operation.objects.filter(
+            operaccount__isnull=False, data__year__lt=year_now, bank_in__in=bank_id
+        )
         .select_related("operaccount")
         .prefetch_related()
         .order_by("-data")

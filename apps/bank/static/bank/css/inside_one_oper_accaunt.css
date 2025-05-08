@@ -1,0 +1,163 @@
+/* Стили для таблицы операций (актуальные и старые) */
+.oper_account,
+.oper_account_old {
+  margin-top: 30px;
+}
+
+.category-block,
+.year-block {
+  margin-bottom: 32px;
+}
+
+.oper-account-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.oper-account-row {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+.oper-account-header {
+  font-weight: 600;
+  font-size: 18px;
+  /* background: #fff;
+  border-bottom: 2px solid #eee; */
+}
+
+.oper-account-cell {
+  /* padding: 8px 16px; */
+  min-width: 120px;
+  text-align: left;
+  font-size: 16px;
+  /* background: #fff; */
+}
+
+.oper-account-num {
+  min-width: 40px;
+  
+  font-weight: 400;
+}
+
+.oper-account-service {
+  min-width: 200px;
+  font-weight: 500;
+}
+
+.oper-account-month {
+  min-width: 120px;
+  text-align: left;
+  color: #222;
+  font-weight: 500;
+}
+
+.oper-account-value {
+  min-width: 120px;
+  text-align: left;
+  font-weight: 400;
+}
+
+.oper-account-total {
+  font-weight: 700;
+  /* background: #fff;
+  border-top: 2px solid #000; */
+}
+
+.year-block,
+.category-block.year-total-block {
+  /* background: #f5f5f7;
+  border-radius: 16px; */
+  /* margin: 24px 16px 8px 16px;
+  margin-bottom: 24px; */
+}
+
+.year-block h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .oper-account-cell,
+  .oper-account-month,
+  .oper-account-value {
+    min-width: 80px;
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+  .oper-account-service {
+    min-width: 120px;
+  }
+}
+
+.section_oper_wr {
+  display: flex;
+  gap: 50px;
+}
+.oper-account-service {
+  width: 283px;
+}
+/* .oper-account-grid{
+    width: 100%;
+}
+.oper-account-row{
+    width: 100%;
+} */
+.oper_account_old {
+  /* background: #f5f5f7; */
+}
+
+.oper_account_old .category-block {
+  /* background: #f5f5f7;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  padding: 0 0 8px 0; */
+}
+.oper_account_old .oper-account-cell {
+  /* background: #f5f5f7; */
+}
+.oper_account_old .oper-account-header {
+  /* background-color: rgb(243, 252, 242);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px; */
+}
+.oper_account_old .oper-account-service {
+  background: #f5f5f7;
+}
+.oper_account_old .oper-account-row {
+  background: #f5f5f7;
+  padding-left: 20px;
+  position: relative;
+  left: -40px;
+  /* padding-right: 10px; */
+  
+}
+.oper-account-cell_wr{
+    display: flex;
+    /* border-top-left-radius: 25px;
+    border-top-right-radius: 25px; */
+}
+.br-r-top{
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    /* margin: -20px;*/
+    /* padding: 20px;  */
+}
+.br-r-bb{
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+.oper-account-cell{
+    padding-left: 10px;
+    font-size: 20px; 
+    font-family: Montserrat; 
+    font-weight: 400;
+}
+.oper-account-header .oper-account-cell{
+    font-size: 20px; 
+    font-family: Montserrat; 
+    font-weight: 700;
+}

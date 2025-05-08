@@ -15,6 +15,7 @@
     <div class="open-modal btn_month_bill"
          data-name="modal-add-bill"
          data-cat-service="{{ title }}">+</div>
+         {{title}}
     {% comment %} <div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
         <h3>Период</h3>
         <div class = "btn_sorting_month" data-sort-month="1">Сейчас</div>
@@ -29,7 +30,7 @@
 
     {% endfor %} {% endcomment %}
     <section class="bill-month">
-        {{ service_month_invoice }}
+
         {% for date_invoice, service_month_invoices, total in service_month_invoice %}
             <div class="bill_month_one-wrap">
                 {% comment %} <input type="hidden" id="date_invoce" value="{{ date_invoice}}" /> {% endcomment %}
@@ -94,8 +95,10 @@
                                     {% if forloop.first %}
                                         <div class="invoice_month_title">
                                             Субподряд
-                                            <div class="btn_month_invoce-shrink"
-                                                 data-attr-shrink='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
+                                            <div class="btn_month_invoce-shrink shrink-item"
+                                                 data-attr-shrink='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'
+                                                 data-attr-shrink-name='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'
+                                                 >
                                                 <svg width="16"
                                                      height="16"
                                                      viewBox="0 0 16 16"
@@ -137,8 +140,8 @@
                                 </div>
                                 {% if platform %}
                                     {% for platform_item in platform %}
-                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
+                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                             {% if forloop.parentloop.first %}<div class="invoice_month_title">{{ platform_item.name }}</div>{% endif %}
                                             <div class="invoice_month_item suborder_out_operation"
                                                  data-sub-type="1"
@@ -196,8 +199,8 @@
                                             </div>
                                         </div>
                                     {% endfor %}
-                                    <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
+                                    <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                         {% if forloop.first %}<div class="invoice_month_title">Премии</div>{% endif %}
                                         <div class="invoice_month_item suborder_out_operation_people"
                                              data-sub-type="2"
@@ -234,8 +237,8 @@
                                     </div>
                                 {% else %}
                                     {% for suborder in suborders %}
-                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
+                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                             {% if forloop.parentloop.first %}
                                                 <div class="invoice_month_title">{{ suborder.category_employee.name }}</div>
                                             {% endif %}
@@ -283,8 +286,10 @@
                                     {% if forloop.first %}
                                         <div class="invoice_month_title">
                                             Приход
-                                            <div class="btn_month_invoce-shrink"
-                                                 data-attr-shrink='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
+                                            <div class="btn_month_invoce-shrink shrink-item"
+                                                 data-attr-shrink='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'
+                                                 data-attr-shrink-name='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'
+                                                 >
                                                 <svg width="16"
                                                      height="16"
                                                      viewBox="0 0 16 16"
@@ -396,9 +401,12 @@
                                     {% if forloop.first %}
                                         <div class="invoice_month_title">
                                             Расход
-                                            <div class="btn_month_invoce-shrink"
-                                                 data-attr-shrink='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
-                                                <svg width="16"
+                                            
+                                            <div class="btn_month_invoce-shrink shrink-item"
+                                                 data-attr-shrink='invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}'
+                                                data-attr-shrink-name='invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                                
+                                                 <svg width="16"
                                                      height="16"
                                                      viewBox="0 0 16 16"
                                                      fill="none"
@@ -459,8 +467,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                <div class="invoice_month_out_additional shrink-item invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                     {% if forloop.first %}<div class="invoice_month_title">ООО</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
@@ -487,8 +495,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                <div class="invoice_month_out_additional invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                     {% if forloop.first %}<div class="invoice_month_title">ИП</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
@@ -515,8 +523,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                     {% if forloop.first %}<div class="invoice_month_title">$</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
@@ -711,24 +719,24 @@
                                             {% endif %}
                                         </div>
                                     </div>
-                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                         <div class="invoice_month_item">
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">{{ total.total_operation_amount_out_ooo }}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                         <div class="invoice_month_item">
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">{{ total.total_operation_amount_out_ip }}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_out_additional_{{ date_invoice|join:"_" }}'>
+                                    <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                         <div class="invoice_month_item">
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">{{ total.total_operation_operation_amount_out_nal }}</div>

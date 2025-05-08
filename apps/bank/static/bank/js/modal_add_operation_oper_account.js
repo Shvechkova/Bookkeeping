@@ -206,7 +206,7 @@ function getSumOldOperAccountOperation(element, elem) {
                 month: "long",
                 year: "numeric",
               };
-              var d = new Date(item.data);
+              var d = new Date(item.created_timestamp);
               const sumoperation = item.amount;
               let dataOperation = d.toLocaleString("ru", options);
               var num = +sumoperation;
