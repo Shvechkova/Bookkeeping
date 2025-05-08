@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -6,6 +7,7 @@ from django.db.models import Prefetch, OuterRef
 from django.db.models import Avg, Count, Min, Sum
 from django.db.models import Q, F, OrderBy, Case, When, Value
 from sql_util.utils import SubquerySum
+from dateutil.relativedelta import relativedelta
 
 from apps.client.api.serializers import ClientSerializer
 from apps.client.models import Client
@@ -77,7 +79,9 @@ class ОperationViewSet(viewsets.ModelViewSet):
                     # исходящая операция оплаты
                     elif data["bank_to"] == "5":
                         pass
-                    
+                
+                elif "operaccount" in data:
+                    pass                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 print(serializer.errors)
@@ -120,7 +124,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=["post"], url_path=r"operation_out_filter")
     def operation_out_filter(self, request, *args, **kwargs):
         data = request.data
@@ -131,13 +135,30 @@ class ОperationViewSet(viewsets.ModelViewSet):
             suborder = data['id']
             )
         elif "category_employee" in data:
-             queryset = Operation.objects.filter(
+            queryset = Operation.objects.filter(
             monthly_bill = data['monthly_bill'],suborder__category_employee__isnull=False
             )
         elif "storage" in data:
             queryset = Operation.objects.filter(
             monthly_bill = data['monthly_bill'],bank_to_id=4,
             )
+        elif "operaccount" in data:
+            if "old" in data:
+                date_str = data["start_date"]
+                date_obj = datetime.datetime.strptime(date_str, "%d-%m-%Y")
+                prev_month = date_obj - relativedelta(months=1)
+                print(prev_month)
+                queryset = Operation.objects.filter(
+                    operaccount=data["categ_id"],
+                    data__year=prev_month.year,
+                    data__month=prev_month.month,
+                )
+            else:
+                queryset = Operation.objects.filter(
+                    operaccount=data["categ_id"],
+                    data__year=data["year"],
+                    data__month=data["month"],
+                )
         else:
             pass
         print(queryset)

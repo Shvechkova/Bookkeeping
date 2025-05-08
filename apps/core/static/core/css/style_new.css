@@ -1,179 +1,170 @@
 .invoice_month_title {
-    color: rgb(0, 0, 0);
-    font-family: Montserrat;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    margin-bottom: 33px;
-    display: flex;
-    background: none;
+  color: rgb(0, 0, 0);
+  font-family: Montserrat;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 33px;
+  display: flex;
+  background: none;
 }
 
-
 .invoice_month_line {
-    display: flex;
+  display: flex;
 }
 
 .invoice_wrap_len {
-    display: flex;
+  display: flex;
 }
 
 .invoice_wrap {
-    padding: 20px 16.5px;
-    margin-left: 40px;
+  padding: 20px 16.5px;
+  margin-left: 40px;
 }
 
 .invoice_month_counter {
-    width: 15px;
+  width: 15px;
 }
 
 .invoice_month_client_name {
-    width: 120px;
+  width: 120px;
 }
 
 .invoice_month_contract_name {
-    width: 110px;
+  width: 110px;
 }
 
 .invoice_month_summ_invoce {
-    width: 100px;
+  width: 100px;
 }
 
 .invoice_month_summ_adv {
-    width: 110px;
+  width: 110px;
 }
 
 .invoice_month_in_main {
-    width: 120px;
+  width: 120px;
 }
 
 .invoice_month_suborder_main {
-    width: 150px;
+  width: 150px;
 }
 
 .invoice_month_in_additional {
-    width: 100px;
+  width: 100px;
 }
 
 .invoice_month_out_main {
-    width: 120px;
+  width: 120px;
 }
 
 .invoice_month_out_additional {
-    width: 100px;
+  width: 100px;
 }
 
 .invoice_month_suborder_additional {
-    width: 100px;
+  width: 100px;
 }
 
 .bg_green_round_first {
-    background-color: rgb(243, 252, 242);
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-
+  background-color: rgb(243, 252, 242);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .bg_green {
-    background-color: rgb(243, 252, 242);
-
+  background-color: rgb(243, 252, 242);
 }
 
 .bg_green_round_last {
-    background-color: rgb(243, 252, 242);
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-
+  background-color: rgb(243, 252, 242);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 
 .bg_red {
-    background-color: rgb(255, 237, 237);
-
+  background-color: rgb(255, 237, 237);
 }
 
 .bg_red_round_first {
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-    background-color: rgb(255, 237, 237);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background-color: rgb(255, 237, 237);
 }
 
 .bg_red_round_last {
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    background-color: rgb(255, 237, 237);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background-color: rgb(255, 237, 237);
 }
 
 .btn_month_invoce-shrink {
-    height: 20px;
-    margin-left: 5px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-    cursor: pointer;
-    font-weight: 500;
-    background: rgb(0, 0, 0);
-    border-radius: 50%;
+  height: 20px;
+  margin-left: 5px;
+  color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  background: rgb(0, 0, 0);
+  border-radius: 50%;
 }
 
 .invoice_month_out_main_title {
-    display: flex;
+  display: flex;
 }
 
 .bg_gray_round_first {
-    background-color: rgb(244, 244, 244);
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-
+  background-color: rgb(244, 244, 244);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .bg_gray {
-    background-color: rgb(244, 244, 244);
-
+  background-color: rgb(244, 244, 244);
 }
 
 .bg_gray_round_last {
-    background-color: rgb(244, 244, 244);
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-
+  background-color: rgb(244, 244, 244);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 
 .invoice_month_item {
-    position: relative;
+  position: relative;
 }
 
 .invoice_month_item_text {
-    position: relative;
-    width: fit-content;
-
+  position: relative;
+  width: fit-content;
 }
 
 .text_red {
-    color: red;
+  color: red;
 }
 
 .display_none {
-    display: none;
+  display: none;
 }
 
 .opacity_0 {
-    opacity: 0;
+  opacity: 0;
 }
 
 .visibility_hidden {
-    visibility: hidden
+  visibility: hidden;
 }
 
 .visibility {
-    visibility: visible;
+  visibility: visible;
 }
 
 .result_not_after_green {
-    color: green;
-    top: 100%;
+  color: green;
+  top: 100%;
 }
 
 /* .oper_account table {
@@ -199,72 +190,72 @@
 } */
 
 .oper_account {
-    /* margin: 0 auto; */
-    max-width: max-content;
+  /* margin: 0 auto; */
+  max-width: max-content;
 }
 .category-block {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
 }
 .category-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 .oper-account-grid {
-    display: flex;
-    flex-direction: column;
-    /* border-radius: 12px; */
-    overflow: hidden;
-    /* box-shadow: 0 2px 8px rgba(0,0,0,0.03); */
-    /* border: 1px solid #eaeaea; */
+  display: flex;
+  flex-direction: column;
+  /* border-radius: 12px; */
+  overflow: hidden;
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.03); */
+  /* border: 1px solid #eaeaea; */
 }
 .oper-account-row {
-    display: flex;
-    align-items: stretch;
-    min-height: 40px;
+  display: flex;
+  align-items: stretch;
+  min-height: 40px;
 }
 .oper-account-header {
-    /* background: #fafbfc; */
-    font-weight: 600;
-    color: #222;
-    border-bottom: 1px solid #eaeaea;
+  /* background: #fafbfc; */
+  font-weight: 600;
+  color: #222;
+  border-bottom: 1px solid #eaeaea;
 }
 .oper-account-cell {
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    border-right: 1px solid #eaeaea;
-    font-size: 15px;
-    min-width: 110px;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-right: 1px solid #eaeaea;
+  font-size: 15px;
+  min-width: 110px;
+  justify-content: flex-end;
 }
 .oper-account-cell:last-child {
-    border-right: none;
+  border-right: none;
 }
 .oper-account-num {
-    min-width: 40px;
-    justify-content: flex-start;
-    color: #888;
+  min-width: 40px;
+  justify-content: flex-start;
+  color: #888;
 }
 .oper-account-service {
-    min-width: 180px;
-    justify-content: flex-start;
-    font-weight: 500;
+  min-width: 180px;
+  justify-content: flex-start;
+  font-weight: 500;
 }
 .oper-account-month {
-    text-align: right;
-    font-weight: 500;
+  text-align: right;
+  font-weight: 500;
 }
 .oper-account-value {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 .oper-account-total {
-    /* background: #f5f5f5; */
-    font-weight: 700;
-    border-top: 1px solid #eaeaea;
+  /* background: #f5f5f5; */
+  font-weight: 700;
+  border-top: 1px solid #eaeaea;
 }
 .oper-account-total .oper-account-cell {
-    font-weight: 700;
-    /* background: #f5f5f5; */
+  font-weight: 700;
+  /* background: #f5f5f5; */
 }

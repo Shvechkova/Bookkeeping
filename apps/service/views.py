@@ -295,7 +295,7 @@ def service_one(request, slug):
 
     suborders = (
         SubcontractMonth.objects.select_related(
-            "month_bill", "month_bill__service", "platform","category_employee"
+            "month_bill", "month_bill__service", "platform", "category_employee"
         )
         .prefetch_related()
         .filter(month_bill__service=category_service.id)
@@ -313,7 +313,6 @@ def service_one(request, slug):
         ],
     )
 
-  
     # service_month_invoice = [
     #     (grouper, list(values)) for grouper, values in service_month_invoice
 
@@ -416,7 +415,6 @@ def service_one(request, slug):
 
         item = [grouper, val, total]
         service_month_invoice_new.append(item)
-        
 
     # все счета
     if title_name == "ADV":

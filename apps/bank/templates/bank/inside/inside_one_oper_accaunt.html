@@ -1,59 +1,137 @@
 {% extends "core/base.html" %}
 {% block content %}
-<input type="hidden" id="page_name" value="{{ title }}" />
-{% include "bank/inside/includes/header_inside.html" %}
-{% include "bank/inside/includes/modal/modal_add_category_office.html" %}
-{% include "bank/inside/includes/modal/modal_add_operation_oper_account.html" %}
-<section class="oper_account">
-
-{% for category in operations %}
-    <div class="category-block">
-        {% comment %} <div class="category-title">{{ category.category_name }}</div> {% endcomment %}
-        <div class="oper-account-grid">
-            <!-- Заголовки -->
-            <div class="oper-account-row oper-account-header">
-                <div class="oper-account-cell oper-account-num"></div>
-                {{category}}
-                <div class="oper-account-cell oper-account-service">{{ category.category_name }}
-                    <button class="btn_add_category_oper_account"
-                        data-name="modal-add_category_oper_account"
-                        {% comment %} data-meta="oper_account" {% endcomment %}
-                        data-meta="{{category.category_id}}"
-                        data-sub-cat="{{ category.category_id}}"
-                        data-cat="{{ category.category_name }}">+</button>
-                                            
-                </div>
-                {% for month in months %}
-                    <div class="oper-account-cell oper-account-month">{{ month }}</div>
-                {% endfor %}
-            </div>
-            <!-- Услуги -->
-            {% for account in category.accounts %}
-                <div class="oper-account-row">
-                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                    <div class="oper-account-cell oper-account-service">{{ account.name }}</div>
-                    {% for month in account.months %}
-                        <div class="oper-account-cell oper-account-value">
-                            {% if month.total > 0 %}
-                                {{ month.total }} ₽
-                            {% else %}
-                                0 ₽
-                            {% endif %}
+    <input type="hidden" id="page_name" value="{{ title }}" />
+    {% include "bank/inside/includes/header_inside.html" %}
+    {% include "bank/inside/includes/modal/modal_add_category_office.html" %}
+    {% include "bank/inside/includes/modal/modal_add_operation_oper_account.html" %}
+    <!-- Актуальные операции -->
+    <section class="oper_account">
+        {% for category in operations %}
+            <div class="category-block">
+                {% comment %} <div class="category-title">{{ category.category_name }}</div> {% endcomment %}
+                <div class="oper-account-grid">
+                    <!-- Заголовки -->
+                    <div class="oper-account-row oper-account-header">
+                        <div class="oper-account-cell oper-account-num"></div>
+                        {{ category }}
+                        <div class="oper-account-cell oper-account-service">
+                            {{ category.category_name }}
+                            <button class="btn_add_category_oper_account"
+                                    data-name="modal-add_category_oper_account"
+                                    {% comment %}
+                                    data-meta="oper_account"
+                                    {% endcomment %}
+                                    data-meta="{{ category.category_id }}"
+                                    data-sub-cat="{{ category.category_id }}"
+                                    data-cat="{{ category.category_name }}">+</button>
+                        </div>
+                        {% for month in months %}<div class="oper-account-cell oper-account-month">{{ month }}</div>{% endfor %}
+                    </div>
+                    <!-- Услуги -->
+                    {% for account in category.accounts %}
+                        <div class="oper-account-row">
+                            <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                            <div class="oper-account-cell oper-account-service">{{ account.name }}</div>
+                            {% for month in account.months %}
+                                <div class="oper-account-cell oper-account-value add_operation_oper_account"
+                                     data-name="modal-add_operation_oper_account"
+                                     data-categ-name="{{ category.category_name }}"
+                                     data-sub-categ-name="{{ account.name }}"
+                                     data-categ-id="{{ account.account_id }}"
+                                     data-operation-data="{{ month }} {{ data|date:"Y" }}"
+                                     data-operation-sum="{{ month.total }}"
+                                     data-operation-data-start="{{ month.date_start|date:"F Y" }}"
+                                     data-operation-data-start-all_2="{{ month.date_start|date:"Y-m-d" }}"
+                                     data-operation-data-start-all="{{ month.date_start|date:"d-m-Y" }}"
+                                     data-operation-data-month="{{ month.month_number }}"
+                                     data-operation-data-year="{{ data|date:"Y" }}"
+                                     data-operation-old-id="">
+                                    {% if month.total > 0 %}
+                                        {{ month.total }} ₽
+                                    {% else %}
+                                        0 ₽
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
                     {% endfor %}
+                    <!-- Итого -->
+                    <div class="oper-account-row oper-account-total">
+                        <div class="oper-account-cell oper-account-num"></div>
+                        <div class="oper-account-cell oper-account-service">Итого</div>
+                        {% for total in category.totals_by_month %}
+                            <div class="oper-account-cell oper-account-value">
+                                <b>{{ total|floatformat:0 }} ₽</b>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endfor %}
-            <!-- Итого -->
-            <div class="oper-account-row oper-account-total">
-                <div class="oper-account-cell oper-account-num"></div>
-                <div class="oper-account-cell oper-account-service">Итого</div>
-                {% for total in category.totals_by_month %}
-                    <div class="oper-account-cell oper-account-value"><b>{{ total|floatformat:0 }} ₽</b></div>
-                {% endfor %}
             </div>
-        </div>
-    </div>
-{% endfor %}
-
-</section>
+        {% endfor %}
+    </section>
+    <!-- Старые операции -->
+    <section class="oper_account_old">
+        <h2>История операций</h2>
+        {% for year_data in operations_old %}
+            <div class="year-block">
+                <h3>{{ year_data.year }} год (Итого: {{ year_data.total_year|floatformat:0 }} ₽)</h3>
+                {% for category in year_data.categories %}
+                    <div class="category-block">
+                        <div class="oper-account-grid">
+                            <!-- Заголовки -->
+                            <div class="oper-account-row oper-account-header">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">
+                                    {{ category.category_name }} (Итого: {{ category.total_category|floatformat:0 }} ₽)
+                                </div>
+                                {% for month in all_months %}<div class="oper-account-cell oper-account-month">{{ month }}</div>{% endfor %}
+                            </div>
+                            <!-- Услуги -->
+                            {% for account in category.accounts %}
+                                <div class="oper-account-row">
+                                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                                    <div class="oper-account-cell oper-account-service">
+                                        {{ account.name }} (Итого: {{ account.total_account|floatformat:0 }} ₽)
+                                    </div>
+                                    {% for month in account.months %}
+                                        <div class="oper-account-cell oper-account-value">
+                                            {% if month.total > 0 %}
+                                                {{ month.total }} ₽
+                                            {% else %}
+                                                0 ₽
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <!-- Итого по месяцам для категории -->
+                            <div class="oper-account-row oper-account-total">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">Итого по категории</div>
+                                {% for total in category.totals_by_month %}
+                                    <div class="oper-account-cell oper-account-value">
+                                        <b>{{ total|floatformat:0 }} ₽</b>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <!-- Итого по месяцам за год -->
+                <div class="category-block">
+                    <div class="oper-account-grid">
+                        <div class="oper-account-row oper-account-total">
+                            <div class="oper-account-cell oper-account-num"></div>
+                            <div class="oper-account-cell oper-account-service">Итого за {{ year_data.year }} год</div>
+                            {% for total in year_data.totals_by_month %}
+                                <div class="oper-account-cell oper-account-value">
+                                    <b>{{ total|floatformat:0 }} ₽</b>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
 {% endblock content %}
