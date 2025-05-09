@@ -52,8 +52,4 @@ class GroupeSalary(models.Model):
     def __str__(self):
         return self.name
 
-    def get_category_name(self):
-        for choice in CATEGORY_OPERACCOUNT:
-            if choice[0] == self.category:
-                return choice[1]
-        return ""
+

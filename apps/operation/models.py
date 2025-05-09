@@ -3,6 +3,7 @@ from django.db import models
 from datetime import datetime
 
 from apps.bank.models import Bank, GroupeOperaccount, GroupeSalary
+from apps.employee.models import Employee
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
 
 
@@ -29,7 +30,7 @@ class Operation(models.Model):
         null=True,
     )
 
-    amount = models.FloatField("Сумма",default="0")
+    amount = models.FloatField("Сумма", default="0")
     comment = models.TextField("Комментарий", blank=True, null=True)
 
     monthly_bill = models.ForeignKey(
@@ -57,6 +58,13 @@ class Operation(models.Model):
         GroupeSalary,
         on_delete=models.PROTECT,
         verbose_name="По зарплатам",
+        blank=True,
+        null=True,
+    )
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        verbose_name="Сотрудник",
         blank=True,
         null=True,
     )
@@ -109,6 +117,7 @@ class Operation(models.Model):
         ("none", "none"),
     ]
     meta_categ = models.CharField(max_length=20, choices=META_CATEGORY, default="none")
+
     class Meta:
         verbose_name = "Операция"
         verbose_name_plural = "Операции"
