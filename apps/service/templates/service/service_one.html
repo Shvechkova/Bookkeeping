@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load category_service %}
+{% load format_filters %}
 {% load convert_list_to_string %}
 {% block content %}
     {% include "service/includes/service_menu.html" %}
@@ -12,26 +13,28 @@
     {% include "service/includes/modal/add_operation_storage.html" %}
     <input type="hidden" id="page_name" value="{{ title }}" />
     <input type="hidden" id="page_name_abc" value="{{ title_name }}" />
-    <div class="open-modal btn_month_bill"
-         data-name="modal-add-bill"
-         data-cat-service="{{ title }}">+</div>
-         {{title}}
-    {% comment %} <div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
+
+      
+  <div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
         <h3>Период</h3>
         <div class = "btn_sorting_month" data-sort-month="1">Сейчас</div>
-        <div class = "btn_sorting_month" data-sort-month="2">Прошлый месяц</div>
+        <div class = "btn_sorting_month" data-sort-month="2">2 месяца</div>
         <div class = "btn_sorting_month" data-sort-month="3">3 месяца</div>
         <div class = "btn_sorting_month" data-sort-month="12">Год</div>
         <div class = "btn_sorting_month" data-sort-month="999">Все время</div>
-    </div> {% endcomment %}
-    {% comment %} {% for month, service_month_invoices in service_month_invoice %}
-<h3>{{ month }}</h3>
-    {% for service_month in service_month_invoice %}{{service_month}}{% endfor %}
+    </div> 
+      <div class="bill-sorting-operation"
+       data-sort-operation="0"
+       bill-sorting-oper="0">
+    <h3>Сортирoвка</h3>
+    <div class = "btn_sorting_operation" data-sort-operation="1">долги</div>
+    <div class = "btn_sorting_operation" data-sort-operation="2">неоплаченные субподряды</div>
+  </div>
 
-    {% endfor %} {% endcomment %}
     <section class="bill-month">
 
         {% for date_invoice, service_month_invoices, total in service_month_invoice %}
+
             <div class="bill_month_one-wrap">
                 {% comment %} <input type="hidden" id="date_invoce" value="{{ date_invoice}}" /> {% endcomment %}
                 <h3 class="bill_month-title">{{ date_invoice|join:" " }}</h3>
@@ -40,7 +43,9 @@
                         <div class="invoice_month_line">
                             <div class="btn_bill">
                                 {% if forloop.first %}<div class="invoice_month_title">&nbsp;</div>{% endif %}
-                                <div class="bill-month-client-del {% if forloop.last %}last-loop-btn-del{% endif %}">
+                                
+                                <div class="btn_bill_wrp">
+                                <div class="bill-month-client-del bill-month-client-del_invose">
                                     <button class=" btn_month_bill btn_month_bill-del "
                                             data-name=""
                                             data-id-bill="{{ service_month_invoices.id }}"
@@ -52,9 +57,9 @@
                                      data-cat-service="{{ title }}"
                                      data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                      data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                     data-bill-month-sum="{{ service_month_invoices.contract_sum }}"
-                                     data-bill-month-sum-adv="{{ service_month_invoices.adv_all_sum }}"
-                                     class="change_btn change_btn_bill  {% if forloop.last %}last-loop-modal-add-client{% endif %}">
+                                     data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }}"
+                                     data-bill-month-sum-adv="{{ service_month_invoices.adv_all_sum|format_rub  }}"
+                                     class="change_btn change_btn_invose change_btn_bill  {% if forloop.last %}last-loop-modal-add-client{% endif %}">
                                     <svg width="16"
                                          height="16"
                                          viewBox="0 0 16 16"
@@ -63,32 +68,39 @@
                                         <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" fill="black" stroke="black" />
                                         <path d="M6.98755 10.222H5.79512V8.88838M5.39236 9.2873L10.4677 4.2604C10.8182 3.9132 11.3865 3.9132 11.7371 4.2604C12.0876 4.6076 12.0876 5.17052 11.7371 5.51772L6.58694 10.6188C6.34635 10.8571 6.22606 10.9762 6.09289 11.0786C5.9746 11.1696 5.84886 11.2507 5.71696 11.321C5.56848 11.4001 5.40978 11.4608 5.09238 11.5822L4 12L4.35147 10.9555C4.47142 10.5991 4.5314 10.4208 4.61482 10.2544C4.68891 10.1066 4.77668 9.96592 4.87701 9.83416C4.98999 9.68583 5.12411 9.553 5.39236 9.2873Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
-                                </div>
+                                </div></div>
                             </div>
                             <div class="invoice_month_counter invoice_wrap">
-                                {% if forloop.first %}<div class="invoice_month_title">&nbsp;</div>{% endif %}
-                                <div class="invoice_month_item">
-                                    {% if forloop.counter < 9 %}0{% endif %}
-                                    {{ forloop.counter }}.
+                            <div class="invoice_month_counter-main"> {% if forloop.first %}<div class="invoice_month_title">&nbsp;</div>{% endif %}
+                                <div class="invoice_month_item"> {{ forloop.counter|stringformat:"02d" }}.</div>
                                 </div>
+                               
+                                
                             </div>
                             <div class="invoice_month_client_name invoice_wrap">
+                            <div class="invoice_month_client_name-main">
                                 {% if forloop.first %}<div class="invoice_month_title">Клиент</div>{% endif %}
                                 <div class="invoice_month_item">{{ service_month_invoices.client.name }}</div>
-                            </div>
+                            </div></div>
                             <div class="invoice_month_contract_name invoice_wrap">
+                            <div class="invoice_month_contract_name-main">
                                 {% if forloop.first %}<div class="invoice_month_title">Договор</div>{% endif %}
                                 <div class="invoice_month_item">{{ service_month_invoices.contract.contract_number }}</div>
-                            </div>
+                            </div></div>
                             <div class="invoice_month_summ_invoce invoice_wrap">
-                                {% if forloop.first %}<div class="invoice_month_title">Счёт</div>{% endif %}
-                                <div class="invoice_month_item">{{ service_month_invoices.contract_sum }}</div>
-                            </div>
+                            <div class="invoice_month_summ_invoce-main">
+                                {% if forloop.first %}<div class="invoice_month_title">Счёт <div class="open-modal btn_month_bill"
+                                        data-name="modal-add-bill"
+                                        data-date="{{date_invoice|join:" "}}"
+                                        data-cat-service="{{ title }}">+</div></div> {% endif %}
+                                <div class="invoice_month_item">{{ service_month_invoices.contract_sum|format_rub  }}</div>
+                            </div></div>
                             {% if title_name == "ADV" %}
                                 <div class="invoice_month_summ_adv invoice_wrap">
+                                <div class="invoice_month_summ_adv-main">
                                     {% if forloop.first %}<div class="invoice_month_title">Ведение</div>{% endif %}
-                                    <div class="invoice_month_item">{{ service_month_invoices.adv_all_sum }}</div>
-                                </div>
+                                    <div class="invoice_month_item">{{ service_month_invoices.adv_all_sum|format_rub  }}</div>
+                                </div></div>
                             {% endif %}
                             <div class="invoice_month_suborder invoice_wrap invoice_wrap_len {% if forloop.first %}bg_gray_round_first{% else %}bg_gray{% endif %} {% if  forloop.last %}bg_gray_round_last{% else %}bg_gray{% endif %} ">
                                 <div class="invoice_month_suborder_main">
@@ -111,65 +123,67 @@
                                             </div>
                                         </div>
                                     {% endif %}
-                                    <div class="invoice_month_item add_sabcontactor"
+                                    <div class="invoice_month_item add_sabcontactor "
                                          data-name="modal-add-subcontract"
                                          {% if title_name == "ADV" %} data-type-suborder="suborder" {% else %} data-type-suborder="awords" {% endif %}
                                          data-bill-month-id="{{ service_month_invoices.id }}"
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
-                                         data-bill-month-adv="{{ service_month_invoices.diff_sum }}"
+                                         data-bill-month-adv="{{ service_month_invoices.diff_sum|format_rub }}"
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                         data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}">
+                                         data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}">
                                         {% if title_name == "ADV" %}
                                             {% if service_month_invoices.sum_subcontractmonth %}
                                                 {% if  service_month_invoices.sum_subcontractmonth == service_month_invoices.diff_sum %}
-                                                    {{ service_month_invoices.sum_subcontractmonth }}
+                                                    {{ service_month_invoices.sum_subcontractmonth|format_rub }} ₽
                                                 {% else %}
-                                                    <div class="text_red">{{ service_month_invoices.diff_sum }}</div>
+                                                    <div class="text_red">{{ service_month_invoices.diff_sum|format_rub }} ₽</div>
                                                 {% endif %}
                                             {% else %}
-                                                <div class="text_red">{{ service_month_invoices.diff_sum }}</div>
+                                                <div class="text_red">{{ service_month_invoices.diff_sum|format_rub }} ₽</div>
                                             {% endif %}
                                         {% else %}
                                             {% if service_month_invoices.sum_subcontractmonth %}
-                                                {{ service_month_invoices.sum_subcontractmonth }}
+                                                {{ service_month_invoices.sum_subcontractmonth|format_rub    }}
                                             {% else %}
-                                                0
+                                                0 ₽
                                             {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
                                 {% if platform %}
                                     {% for platform_item in platform %}
-                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                        <div class=" invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                              data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
-                                            {% if forloop.parentloop.first %}<div class="invoice_month_title">{{ platform_item.name }}</div>{% endif %}
-                                            <div class="invoice_month_item suborder_out_operation"
+                                            {% if forloop.parentloop.first %}<div class="invoice_month_title small_bold">{{ platform_item.name }}</div>{% endif %}
+                                            <div class="invoice_month_item suborder_out_operation small"
                                                  data-sub-type="1"
                                                  data-name="modal-suborder_out_operation"
                                                  data-bill-month-id="{{ service_month_invoices.id }}"
-                                                 data-bill-month-adv="{{ service_month_invoices.diff_sum }}"
+                                                 data-bill-month-adv="{{ service_month_invoices.diff_sum|format_rub }}"
                                                  data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                                  data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                                 data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}"
+                                                 data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}"
                                                  data-name-sub=" {{ platform_item.name }}"
                                                  data-idName-sub=" {{ platform_item.id }}"
                                                  data-idsuborder-sub="{% for suborder in suborders %} {% if suborder.month_bill.id == service_month_invoices.id and suborder.platform.id == platform_item.id %} {{ suborder.id }} {% else %} {% endif %} {% endfor %}"
-                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth %}"
+                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth|format_rub %}"
                                                  {% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }} {% elif platform_item.name == "Я.Директ" %} {{ service_month_invoices.yandex }} {% else %} 0 {% endif %}
                                                  {% else %}
                                                  0
                                                  {% endif %}
                                                  data-id-sub=" {% if service_month_invoices.sum_subcontractmonth %} {% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }} {% elif platform_item.name == "Я.Директ" %} {{ service_month_invoices.yandex }} {% else %} 0 {% endif %} {% else %}0  {% endif %}">
+                                                <div class="invoice_month_item_text">
                                                 {% if service_month_invoices.sum_subcontractmonth %}
                                                     {% if platform_item.name == "Таргет" %}
-                                                        {{ service_month_invoices.target }}
+                                                    <p class="small">{{ service_month_invoices.target|format_rub }} ₽</p>
+                                                        
                                                         {% if service_month_invoices.operation_amount_target_comment %}
                                                             <div class="comment_operation">?</div>
                                                             <div class="comment_operation_hidden_wrap">
                                                                 {% for operation in service_month_invoices.operation_set.all %}
                                                                     {% if operation.bank_to.id == 5 and operation.suborder.platform.name == "Таргет" and operation.comment %}
                                                                         <div class="comment_operation_hidden">
-                                                                            <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                            <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                             <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                         </div>
                                                                     {% endif %}
@@ -177,14 +191,15 @@
                                                             </div>
                                                         {% endif %}
                                                     {% elif platform_item.name == "Я.Директ" %}
-                                                        {{ service_month_invoices.yandex }}
+                                                    <p class="small">{{ service_month_invoices.yandex|format_rub }} ₽</p>
+                                                        
                                                         {% if service_month_invoices.operation_amount_yandex_comment %}
                                                             <div class="comment_operation">?</div>
                                                             <div class="comment_operation_hidden_wrap">
                                                                 {% for operation in service_month_invoices.operation_set.all %}
                                                                     {% if operation.bank_to.id == 5 and operation.suborder.platform.name == "Я.Директ" and operation.comment %}
                                                                         <div class="comment_operation_hidden">
-                                                                            <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                            <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                             <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                         </div>
                                                                     {% endif %}
@@ -194,36 +209,39 @@
                                                     {% else %}
                                                     {% endif %}
                                                 {% else %}
-                                                    <div class="text_red">n/a</div>
+                                                    <div class="text_red small">n/a</div>
                                                 {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     {% endfor %}
                                     <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                          data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
-                                        {% if forloop.first %}<div class="invoice_month_title">Премии</div>{% endif %}
-                                        <div class="invoice_month_item suborder_out_operation_people"
+                                        {% if forloop.first %}<div class="invoice_month_title small_bold">Премии</div>{% endif %}
+                                        <div class="invoice_month_item suborder_out_operation_people small"
                                              data-sub-type="2"
                                              data-name="modal-suborder_out_operation_people"
                                              data-bill-month-id="{{ service_month_invoices.id }}"
-                                             data-bill-month-adv="{{ service_month_invoices.diff_sum }}"
+                                             data-bill-month-adv="{{ service_month_invoices.diff_sum|format_rub }}"
                                              data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                              data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                             data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}"
+                                             data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}"
                                              data-name-sub="Премии"
                                              data-idName-sub=" {{ platform_item.id }}"
                                              data-idsuborder-sub=""
-                                             data-id-sub-amount="{{ service_month_invoices.employee_all }}"
+                                             data-id-sub-amount="{{ service_month_invoices.employee_all|format_rub }}"
                                              data-id-sub="">
+                                            <div class="invoice_month_item_text">
                                             {% if service_month_invoices.sum_subcontractmonth %}
-                                                {{ service_month_invoices.employee_all }}
+                                            <p class="small">{{ service_month_invoices.employee_all|format_rub }} ₽</p>
+                                       
                                                 {% if service_month_invoices.operation_amount_employee_all_comment %}
                                                     <div class="comment_operation">?</div>
                                                     <div class="comment_operation_hidden_wrap">
                                                         {% for operation in service_month_invoices.operation_set.all %}
                                                             {% if operation.bank_to.id == 5 and operation.suborder.category_employee != None and operation.comment %}
                                                                 <div class="comment_operation_hidden">
-                                                                    <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                    <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                     <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                 </div>
                                                             {% endif %}
@@ -233,6 +251,7 @@
                                             {% else %}
                                                 <div class="text_red">n/a</div>
                                             {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -240,23 +259,24 @@
                                         <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                              data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                             {% if forloop.parentloop.first %}
-                                                <div class="invoice_month_title">{{ suborder.category_employee.name }}</div>
+                                                <div class="invoice_month_title small_bold">{{ suborder.category_employee.name }}</div>
                                             {% endif %}
-                                            <div class="invoice_month_item  invoice_month_item_no_adv_people  {% if suborder.month_bill.id == service_month_invoices.id %}suborder_out_operation_people{% endif %} "
+                                            <div class=" small invoice_month_item  invoice_month_item_no_adv_people  {% if suborder.month_bill.id == service_month_invoices.id %}suborder_out_operation_people{% endif %} "
                                                  data-sub-type="2"
                                                  data-name="modal-suborder_out_operation_people"
                                                  data-bill-month-id="{{ service_month_invoices.id }}"
-                                                 data-bill-month-adv="{{ service_month_invoices.diff_sum }}"
+                                                 data-bill-month-adv="{{ service_month_invoices.diff_sum|format_rub }}"
                                                  data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                                  data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                                 data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}"
+                                                 data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}"
                                                  data-name-sub="Премии"
                                                  data-idName-sub=" {{ platform_item.id }}"
                                                  data-idsuborder-sub=""
-                                                 data-id-sub-amount="{{ service_month_invoices.employee_all }}"
+                                                 data-id-sub-amount="{{ service_month_invoices.employee_all|format_rub }}"
                                                  data-id-sub="">
+                                            <div class="invoice_month_item_text ">   
                                                 {% if suborder.month_bill.id == service_month_invoices.id %}
-                                                    {{ suborder.amount }}
+                                                    {{ suborder.amount|format_rub }} ₽ 
                                                     {% if service_month_invoices.sum_subcontractmonth %}
                                                         {% if service_month_invoices.operation_amount_employee_all_comment %}
                                                             <div class="comment_operation ">?</div>
@@ -264,7 +284,7 @@
                                                                 {% for operation in service_month_invoices.operation_set.all %}
                                                                     {% if operation.bank_to.id == 5 and operation.suborder.category_employee == suborder.category_employee and operation.comment %}
                                                                         <div class="comment_operation_hidden">
-                                                                            <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                            <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                             <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                         </div>
                                                                     {% endif %}
@@ -274,9 +294,9 @@
                                                     {% else %}
                                                     {% endif %}
                                                 {% else %}
-                                                    0
+                                                    0 ₽
                                                 {% endif %}
-                                            </div>
+                                            </div></div>
                                         </div>
                                     {% endfor %}
                                 {% endif %}
@@ -304,42 +324,42 @@
                                     {% endif %}
                                     <div class="invoice_month_item add-operation-entry"
                                          data-name="modal-add-operation-entry"
-                                         data-bill-month-date-month="{{ service_month_invoices.created_timestamp|date:'m' }}"
-                                         data-bill-month-date-year="{{ service_month_invoices.created_timestamp|date:'Y' }}"
+                                         data-bill-month-date-month="{{ service_month_invoices.month|date:'m' }}"
+                                         data-bill-month-date-year="{{ service_month_invoices.month|date:'Y' }}"
                                          data-bill-month-id="{{ service_month_invoices.id }}"
-                                         data-bill-month-sum="{{ service_month_invoices.contract_sum }} "
+                                         data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
-                                         data-bill-month-sum-dont-operation="{{ service_month_invoices.contract_sum }} "
+                                         data-bill-month-sum-dont-operation="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                         data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all }}"
-                                         data-operation-old-id="{{ service_month_invoices.operations_add_all }}"
-                                         data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}">
+                                         data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         data-operation-old-id="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}">
                                         {% if service_month_invoices.operation_amount_to_all_diff == 0 %}
-                                            <p class="result_ok">{{ service_month_invoices.operation_amount_to_all }} ₽</p>
+                                            <p class="result_ok">{{ service_month_invoices.operation_amount_to_all|format_rub }}  ₽</p>
                                         {% else %}
                                             <div class="result_not-wrap">
                                                 <p class="result_not">
-                                                    {{ service_month_invoices.operation_amount_to_all }} ₽
-                                                    <p class="result_not_after">/долг {{ service_month_invoices.operation_amount_to_all_diff }} ₽</p>
+                                                    {{ service_month_invoices.operation_amount_to_all|format_rub }} ₽
+                                                    <p class="result_not_after">/долг {{ service_month_invoices.operation_amount_to_all_diff|format_rub }} ₽</p>
                                                 </p>
                                             </div>
                                         {% endif %}
-                                        {% comment %} {{service_month_invoices.operations_add_all}} {% endcomment %}
+                                     
                                     </div>
                                 </div>
-                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">OOO</div>{% endif %}
+                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold">OOO</div>{% endif %}
                                     <div class="invoice_month_item">
                                         <div class="invoice_month_item_text">
-                                            {{ service_month_invoices.operation_amount_ooo }}
+                                        <p class="small">{{ service_month_invoices.operation_amount_ooo|format_rub }} ₽</p>
                                             {% if service_month_invoices.operation_amount_ooo_comment %}
                                                 <div class="comment_operation">?</div>
                                                 <div class="comment_operation_hidden_wrap">
                                                     {% for operation in service_month_invoices.operation_set.all %}
                                                         {% if operation.bank_to.id == 1 and operation.comment %}
                                                             <div class="comment_operation_hidden">
-                                                                <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                 <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                             </div>
                                                         {% endif %}
@@ -349,19 +369,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">ИП</div>{% endif %}
+                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold">ИП</div>{% endif %}
                                     <div class="invoice_month_item">
                                         <div class="invoice_month_item_text">
-                                            {{ service_month_invoices.operation_amount_ip }}
+                                            <p class="small">{{ service_month_invoices.operation_amount_ip|format_rub }} ₽</p>
                                             {% if service_month_invoices.operation_amount_ip_comment %}
                                                 <div class="comment_operation">?</div>
                                                 <div class="comment_operation_hidden_wrap">
                                                     {% for operation in service_month_invoices.operation_set.all %}
                                                         {% if operation.bank_to.id == 2 and operation.comment %}
                                                             <div class="comment_operation_hidden">
-                                                                <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                 <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                             </div>
                                                         {% endif %}
@@ -371,20 +391,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                     data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">$</div>{% endif %}
+                                <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                     data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold">$</div>{% endif %}
                                     <div class="invoice_month_item">
                                         <div class="invoice_month_item">
                                             <div class="invoice_month_item_text">
-                                                {{ service_month_invoices.operation_amount_nal }}
+                                                <p class="small">{{ service_month_invoices.operation_amount_nal|format_rub }} ₽</p>
                                                 {% if service_month_invoices.operation_amount_nal_comment %}
                                                     <div class="comment_operation">?</div>
                                                     <div class="comment_operation_hidden_wrap">
                                                         {% for operation in service_month_invoices.operation_set.all %}
                                                             {% if operation.bank_to.id == 3 and operation.comment %}
                                                                 <div class="comment_operation_hidden">
-                                                                    <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                    <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                     <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                 </div>
                                                             {% endif %}
@@ -421,45 +441,44 @@
                                     <div class="invoice_month_item add-operation-storage"
                                          data-name="modal-add-operation-storage"
                                          data-bill-month-id="{{ service_month_invoices.id }}"
-                                         data-bill-month-sum="{{ service_month_invoices.contract_sum }} "
+                                         data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
-                                         data-bill-month-sum-dont-operation="{{ service_month_invoices.contract.sum }} "
+                                         data-bill-month-sum-dont-operation="{{ service_month_invoices.contract.sum|format_rub }} "
                                          data-bill-month-name="{{ bill.contract.number }}"
                                          data-bill-month-operation-entry=""
                                          data-operation-old-id=""
-                                         data-bill-month-data="{{ bill.created_timestamp|date:'F Y' }}"
-                                         data-bill-month-diff-sum="{% if service_month_invoices.operation_amount_out_all_diff %} {{ service_month_invoices.operation_amount_out_all_diff }} {% else %} 0 {% endif %}"
+                                         data-bill-month-data="{{ bill.month|date:'F Y' }}"
+                                         data-bill-month-diff-sum="{% if service_month_invoices.operation_amount_out_all_diff %} {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} {% else %} 0 {% endif %}"
                                          {% comment %}
-                                         data-id-sub-amount="{{service_month_invoices.diff_sum}}"
+                                         data-id-sub-amount="{{service_month_invoices.diff_sum|format_rub}}"
                                          {% endcomment %}
-                                         data-id-sub-amount="{% if service_month_invoices.operation_amount_out_all_diff %} {{ service_month_invoices.operation_amount_out_all_diff }} {% else %} 0 {% endif %}"
-                                         date-operation_out_storage="{{ bill.created_timestamp|date:'d-m-Y' }}"
+                                         data-id-sub-amount="{% if service_month_invoices.operation_amount_out_all_diff %} {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} {% else %} 0 {% endif %}"
+                                         date-operation_out_storage="{{ bill.month|date:'d-m-Y' }}"
                                          data-id-sub="">
+                     
                                         {% if service_month_invoices.operation_amount_out_all_diff == 0 %}
-                                            <p class="result_ok">{{ service_month_invoices.operation_amount_out_all }} ₽</p>
+                                            <p class="result_ok">{{ service_month_invoices.operation_amount_out_all|format_rub }} ₽</p>
                                         {% else %}
                                             <div class="result_not-wrap">
                                                 <p class="result_not">
-                                                    {{ service_month_invoices.operation_amount_out_all }} ₽
+                                                    {{ service_month_invoices.operation_amount_out_all|format_rub }} ₽
                                                     {% if title_name == "ADV" %}
                                                         <p class="result_not_after">
                                                             /остаток
                                                             {% if service_month_invoices.operation_amount_out_all_diff %}
-                                                                {{ service_month_invoices.operation_amount_out_all_diff }}
+                                                                {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} ₽
                                                             {% else %}
-                                                                {{ service_month_invoices.diff_sum }}
+                                                                {{ service_month_invoices.diff_sum|format_rub }} ₽
                                                             {% endif %}
-                                                            ₽
                                                         </p>
                                                     {% else %}
                                                         <p class="result_not_after">
                                                             /к выплате
                                                             {% if service_month_invoices.operation_amount_out_all_diff %}
-                                                                {{ service_month_invoices.operation_amount_out_all_diff }}
+                                                                {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} ₽
                                                             {% else %}
-                                                                0
+                                                                0 ₽
                                                             {% endif %}
-                                                            ₽
                                                         </p>
                                                     {% endif %}
                                                 </p>
@@ -469,19 +488,19 @@
                                 </div>
                                 <div class="invoice_month_out_additional shrink-item invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
                                      data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">ООО</div>{% endif %}
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold">ООО</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">
-                                                    {{ service_month_invoices.operation_amount_out_ooo }}
+                                                <p class="small">{{ service_month_invoices.operation_amount_out_ooo|format_rub }} ₽</p>
                                                     {% if service_month_invoices.operation_amount_out_ooo_comment %}
-                                                        <div class="comment_operation">?</div>
+                                                        <div class="comment_operation">?</div>  
                                                         <div class="comment_operation_hidden_wrap">
                                                             {% for operation in service_month_invoices.operation_set.all %}
                                                                 {% if  operation.comment and operation.bank_in.id == 1 and operation.bank_to.id == 5 %}
                                                                     <div class="comment_operation_hidden">
-                                                                        <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                        <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                         <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                     </div>
                                                                 {% endif %}
@@ -491,25 +510,25 @@
                                                 </div>
                                             </div>
                                         {% else %}
-                                            <div class="">n/a</div>
+                                            <div class="small">n/a</div>
                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="invoice_month_out_additional invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                      data-attr-shrink-item='invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">ИП</div>{% endif %}
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold">ИП</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">
-                                                    {{ service_month_invoices.operation_amount_out_ip }}
+                                                <p class="small">{{ service_month_invoices.operation_amount_out_ip|format_rub }} ₽</p>
                                                     {% if service_month_invoices.operation_amount_out_ip_comment %}
                                                         <div class="comment_operation">?</div>
                                                         <div class="comment_operation_hidden_wrap">
                                                             {% for operation in service_month_invoices.operation_set.all %}
                                                                 {% if operation.comment and operation.bank_in.id == 2 and operation.bank_to.id == 5 %}
                                                                     <div class="comment_operation_hidden">
-                                                                        <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                        <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                         <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                     </div>
                                                                 {% endif %}
@@ -519,25 +538,25 @@
                                                 </div>
                                             </div>
                                         {% else %}
-                                            <div class="">n/a</div>
+                                            <div class="small">n/a</div>
                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
                                      data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
-                                    {% if forloop.first %}<div class="invoice_month_title">$</div>{% endif %}
+                                    {% if forloop.first %}<div class="invoice_month_title small_bold ">$</div>{% endif %}
                                     <div class="invoice_month_item">
                                         {% if service_month_invoices.sum_subcontractmonth %}
                                             <div class="invoice_month_item">
                                                 <div class="invoice_month_item_text">
-                                                    {{ service_month_invoices.operation_amount_out_nal }}
+                                                <p class="small">{{ service_month_invoices.operation_amount_out_nal|format_rub }} ₽</p>
                                                     {% if service_month_invoices.operation_amount_out_nal_comment %}
                                                         <div class="comment_operation">?</div>
                                                         <div class="comment_operation_hidden_wrap">
                                                             {% for operation in service_month_invoices.operation_set.all %}
                                                                 {% if  operation.comment and operation.bank_in.id == 3 and operation.bank_to.id == 5 %}
                                                                     <div class="comment_operation_hidden">
-                                                                        <div class="previous_operation_title">{{ operation.data|date:'j E Y' }} - {{ operation.amount }} ₽</div>
+                                                                        <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div>
                                                                         <div class="previous_operation_comment">{{ operation.comment }}</div>
                                                                     </div>
                                                                 {% endif %}
@@ -547,7 +566,7 @@
                                                 </div>
                                             </div>
                                         {% else %}
-                                            <div class="">n/a</div>
+                                            <div class="small">n/a</div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -569,8 +588,8 @@
                                          data-cat-service="{{ title }}"
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                         data-bill-month-sum="{{ service_month_invoices.contract_sum }}"
-                                         data-bill-month-sum-adv="{{ service_month_invoices.adv_all_sum }}"
+                                         data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }}"
+                                         data-bill-month-sum-adv="{{ service_month_invoices.adv_all_sum|format_rub }}"
                                          class="change_btn change_btn_bill  {% if forloop.last %}last-loop-modal-add-client{% endif %}">
                                         <svg width="16"
                                              height="16"
@@ -586,73 +605,73 @@
                                     <div class="invoice_month_item"></div>
                                 </div>
                                 <div class="invoice_month_client_name invoice_wrap">
-                                    <div class="invoice_month_item"></div>
+                                    <div class="invoice_month_item font-bold"> Итого:</div>
                                 </div>
                                 <div class="invoice_month_contract_name invoice_wrap">
                                     <div class="invoice_month_item"></div>
                                 </div>
                                 <div class="invoice_month_summ_invoce invoice_wrap">
-                                    <div class="invoice_month_item">{{ total.total_contract_sum }}</div>
+                                    <div class="invoice_month_item font-bold">{{ total.total_contract_sum|format_rub }} ₽</div>
                                 </div>
                                 {% if title_name == "ADV" %}
                                     <div class="invoice_month_summ_adv invoice_wrap">
-                                        <div class="invoice_month_item">{{ total.total_adv_all_sum }}</div>
+                                        <div class="invoice_month_item font-bold">{{ total.total_adv_all_sum|format_rub }} ₽</div>
                                     </div>
                                 {% endif %}
                                 <div class="invoice_month_suborder invoice_wrap invoice_wrap_len">
-                                    <div class="invoice_month_suborder_main">
+                                    <div class="invoice_month_suborder_main font-bold">
                                         {% if title_name == "ADV" %}
-                                            <div class="invoice_month_item">{{ total.total_sum_subcontractmonth }}</div>
+                                            <div class="invoice_month_item">{{ total.total_sum_subcontractmonth|format_rub }} ₽</div>
                                         {% else %}
-                                            <div class="invoice_month_item">{{ total.total_sum_subcontractmonth_category_employee }}</div>
+                                            <div class="invoice_month_item">{{ total.total_sum_subcontractmonth_category_employee|format_rub }} ₽</div>
                                         {% endif %}
                                     </div>
                                     {% if platform %}
                                         {% for platform_item in platform %}
-                                            <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                                 data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
-                                                <div class="invoice_month_item">
+                                            <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                                 data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                                <div class="invoice_month_item small_bold">
                                                     {% if platform_item.name == "Таргет" %}
-                                                        {{ total.total_sum_subcontractmonth_target }}
+                                                        {{ total.total_sum_subcontractmonth_target|format_rub }} ₽
                                                     {% elif platform_item.name == "Я.Директ" %}
-                                                        {{ total.total_sum_subcontractmonth_yandex }}
+                                                        {{ total.total_sum_subcontractmonth_yandex|format_rub }} ₽
                                                     {% else %}
                                                     {% endif %}
                                                 </div>
                                             </div>
                                         {% endfor %}
-                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
-                                            <div class="invoice_month_item">{{ total.total_sum_subcontractmonth_category_employee }}</div>
+                                        <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                             data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                            <div class="invoice_month_item small_bold">{{ total.total_sum_subcontractmonth_category_employee|format_rub }} ₽</div>
                                         </div>
                                     {% else %}
                                         {% for suborder in suborders %}
-                                            <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ date_invoice|join:"_" }}"
-                                                 data-attr-shrink-item='invoice_month_suborder_additional_{{ date_invoice|join:"_" }}'>
-                                                <div class="invoice_month_item  "
+                                            <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                                data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                                <div class="small_bold invoice_month_item  font-bold"
                                                      data-sub-type="2"
                                                      data-bill-month-id="{{ service_month_invoices.id }}"
-                                                     data-bill-month-adv="{{ service_month_invoices.diff_sum }}"
+                                                     data-bill-month-adv="{{ service_month_invoices.diff_sum|format_rub }}"
                                                      data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                                      data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                                     data-bill-month-data="{{ service_month_invoices.created_timestamp|date:'F Y' }}"
+                                                     data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}"
                                                      data-name-sub="Премии"
                                                      data-idName-sub=" {{ platform_item.id }}"
                                                      data-idsuborder-sub=""
-                                                     data-id-sub-amount="{{ service_month_invoices.employee_all }}"
-                                                     data-id-sub="">{{ suborder.amount }}</div>
+                                                     data-id-sub-amount="{{ service_month_invoices.employee_all|format_rub }}"
+                                                     data-id-sub="">{{ suborder.amount|format_rub }} ₽</div>
                                             </div>
                                         {% endfor %}
                                     {% endif %}
                                 </div>
                                 <div class="invoice_month_in invoice_wrap invoice_wrap_len">
                                     <div class="invoice_month_in_main">
-                                        <div class="invoice_month_item">
+                                        <div class="invoice_month_item font-bold">
                                             {% if total.total_operation_amount_to_all_diff == 0 %}
-                                                <p class="result_ok">{{ total.total_operation_amount_to_all }} ₽</p>
+                                                {{ total.total_operation_amount_to_all|format_rub }} ₽
                                             {% else %}
                                                 <div class="result_not-wrap">
-                                                    <p class="result_not">
+                                                    <p class="result_not font-bold">
                                                         {{ total.total_operation_amount_to_all }} ₽
                                                         <p class="result_not_after">/долг {{ total.total_operation_amount_to_all_diff }} ₽</p>
                                                     </p>
@@ -660,58 +679,57 @@
                                             {% endif %}
                                         </div>
                                     </div>
-                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                        <div class="invoice_month_item">
-                                            <div class="invoice_month_item_text">{{ total.total_operation_amount_ooo }}</div>
+                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                        <div class="invoice_month_item font-bold">
+                                            <div class="invoice_month_item_text small_bold">{{ total.total_operation_amount_ooo|format_rub }} ₽</div>
                                         </div>
                                     </div>
-                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                        <div class="invoice_month_item">
-                                            <div class="invoice_month_item_text">{{ total.total_operation_amount_ip }}</div>
+                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                         data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                        <div class="invoice_month_item font-bold">
+                                            <div class="invoice_month_item_text small_bold">{{ total.total_operation_amount_ip|format_rub }} ₽</div>
                                         </div>
                                     </div>
-                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ date_invoice|join:"_" }}"
-                                         data-attr-shrink-item='invoice_month_in_additional_{{ date_invoice|join:"_" }}'>
-                                        <div class="invoice_month_item">
+                                    <div class="invoice_month_in_additional invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                            data-attr-shrink-item='invoice_month_in_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
+                                        <div class="invoice_month_item font-bold">
                                             <div class="invoice_month_item">
-                                                <div class="invoice_month_item_text">{{ total.total_operation_amount_nal }}</div>
+                                                <div class="invoice_month_item_text small_bold">{{ total.total_operation_amount_nal|format_rub }} ₽</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="invoice_month_out invoice_wrap invoice_wrap_len">
                                     <div class="invoice_month_out_main">
-                                        <div class="invoice_month_item">
+                                        <div class="invoice_month_item font-bold">
                                             {% if total.total_operation_amount_out_all_and_storage_diff == 0 %}
-                                                <p class="result_ok">{{ total.total_operation_amount_out_all_and_storage }} ₽</p>
+                                                {{ total.total_operation_amount_out_all_and_storage|format_rub }} ₽
                                                 {% if total.total_operation_amount_storage_all %}
                                                     <p class="result_not_after result_not_after_green">
-                                                        /хранилище {{ total.total_operation_amount_storage_all }}
-                                                        ₽
+                                                        /хранилище {{ total.total_operation_amount_storage_all|format_rub }} ₽
+                                                        
                                                     </p>
                                                 {% endif %}
                                             {% else %}
-                                                <div class="result_not-wrap">
-                                                    <p class="result_not">
-                                                        {{ service_month_invoices.operation_amount_out_all }} ₽
+                                                <div class="result_not-wrap ">
+                                                    <p class="result_not font-bold">
+                                                        {{ service_month_invoices.operation_amount_out_all|format_rub  }} 
                                                         {% if total.total_operation_amount_storage_all %}
                                                             <p class="result_not_after result_not_after_green">
-                                                                /хранилище {{ total.total_operation_amount_storage_all }}
-                                                                ₽
+                                                                /хранилище {{ total.total_operation_amount_storage_all|format_rub }} ₽
+                                                                
                                                             </p>
-                                                            <br>
                                                         {% endif %}
                                                         {% if title_name == "ADV" %}
                                                             <p class="result_not_after">
-                                                                /остаток {{ total.total_operation_amount_out_all_and_storage_diff }}
-                                                                ₽
+                                                                /остаток {{ total.total_operation_amount_out_all_and_storage_diff|format_rub }} ₽
+                                                                
                                                             </p>
                                                         {% else %}
                                                             <p class="result_not_after">
-                                                                /к выплате {{ total.total_sum_subcontractmonth_no_adv }}
-                                                                ₽
+                                                                /к выплате {{ total.total_sum_subcontractmonth_no_adv|format_rub }} ₽
+                                                                
                                                             </p>
                                                         {% endif %}
                                                     </p>
@@ -721,25 +739,25 @@
                                     </div>
                                     <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
                                          data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
-                                        <div class="invoice_month_item">
+                                        <div class="invoice_month_item font-bold">
                                             <div class="invoice_month_item">
-                                                <div class="invoice_month_item_text">{{ total.total_operation_amount_out_ooo }}</div>
+                                                <div class="invoice_month_item_text small_bold">{{ total.total_operation_amount_out_ooo|format_rub }} ₽</div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
                                          data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                         <div class="invoice_month_item">
-                                            <div class="invoice_month_item">
-                                                <div class="invoice_month_item_text">{{ total.total_operation_amount_out_ip }}</div>
+                                            <div class="invoice_month_item font-bold">
+                                                <div class="invoice_month_item_text small_bold">{{ total.total_operation_amount_out_ip|format_rub }} ₽</div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="invoice_month_out_additional invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}"
                                          data-attr-shrink-item='invoice_month_out_additional_{{title}}_{{ date_invoice|join:"_" }}'>
                                         <div class="invoice_month_item">
-                                            <div class="invoice_month_item">
-                                                <div class="invoice_month_item_text">{{ total.total_operation_operation_amount_out_nal }}</div>
+                                            <div class="invoice_month_item font-bold">
+                                                <div class="invoice_month_item_text small_bold">{{ total.total_operation_operation_amount_out_nal|format_rub }} ₽</div>
                                             </div>
                                         </div>
                                     </div>

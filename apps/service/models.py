@@ -26,8 +26,7 @@ class ServicesClientMonthlyInvoice(models.Model):
     contract = models.ForeignKey(
         Contract,  on_delete=models.PROTECT,verbose_name="Контракт", blank=True, null=True
     )
-    month = models.DateField(
-        auto_now_add=True, verbose_name="Месяц"
+    month = models.DateField( verbose_name="Месяц", blank=True, 
     )
 
     # subcontract = models.ForeignKey(
@@ -43,17 +42,17 @@ class ServicesClientMonthlyInvoice(models.Model):
     operations_add_diff_all = models.FloatField(
         "Сумма прихода остаток", default="0", blank=True, null=True
     )
-    operations_add_ip = models.FloatField("Сумма прихода ИП", default=None, blank=True, null=True)
-    operations_add_ооо = models.FloatField("Сумма прихода ООО", default=None, blank=True, null=True)
-    operations_add_nal = models.FloatField("Сумма прихода нал", default=None, blank=True, null=True)
+    # # operations_add_ip = models.FloatField("Сумма прихода ИП", default=None, blank=True, null=True)
+    # # operations_add_ооо = models.FloatField("Сумма прихода ООО", default=None, blank=True, null=True)
+    # # operations_add_nal = models.FloatField("Сумма прихода нал", default=None, blank=True, null=True)
 
-    operations_out_all = models.FloatField("Сумма расхода вся", default="0", blank=True, null=True)
-    operations_out_diff_all = models.FloatField(
-        "Сумма прихода остаток", default="0", blank=True, null=True
-    )
-    operations_out_ip = models.FloatField("Сумма расхода ИП", default=None, blank=True, null=True)
-    operations_out_ооо = models.FloatField("Сумма расхода ООО", default=None, blank=True, null=True)
-    operations_out_nal = models.FloatField("Сумма расхода нал", default=None, blank=True, null=True)
+    # operations_out_all = models.FloatField("Сумма расхода вся", default="0", blank=True, null=True)
+    # operations_out_diff_all = models.FloatField(
+    #     "Сумма прихода остаток", default="0", blank=True, null=True
+    # )
+    # operations_out_ip = models.FloatField("Сумма расхода ИП", default=None, blank=True, null=True)
+    # operations_out_ооо = models.FloatField("Сумма расхода ООО", default=None, blank=True, null=True)
+    # operations_out_nal = models.FloatField("Сумма расхода нал", default=None, blank=True, null=True)
 
     adv_all_sum = models.FloatField(
         "Сумма ведения для ADV", default=None, blank=True, null=True)

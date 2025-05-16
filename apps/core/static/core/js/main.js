@@ -382,36 +382,36 @@ function ChekinOtherSum(inputOtherSum, radioOtherSum) {
 
 // добавление знаков рубля в инпуты с суммами
 function replaceNam() {
-  const sel = document.querySelectorAll(".pyb");
-  sel.forEach((elem) => {
-    if (elem.value != "") {
-      elem.value =
-        elem.value
-          .replace(/\d $ /, "")
-          .replace(/\D/g, "")
-          .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
-    }
+  // const sel = document.querySelectorAll(".pyb");
+  // sel.forEach((elem) => {
+  //   if (elem.value != "") {
+  //     elem.value =
+  //       elem.value
+  //         .replace(/\d $ /, "")
+  //         .replace(/\D/g, "")
+  //         .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
+  //   }
 
-    elem.addEventListener("keydown", (event) => {
-      var key = event.keyCode;
-      if (key != 8) {
-        // elem.value =
-        //   elem.value
-        //     .replace(/\d $ / , "")
-        //     .replace(/\D/g, "")
-        //     .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
-        // if (elem.value == " ₽") {
-        //   elem.value = "";
-        // }
-      } else {
-        var s = elem.value;
-        elem.setSelectionRange(s.length - 2, s.length - 2);
-        if (elem.value == " ₽") {
-          elem.value = null
-        }
-      }
-    });
-  });
+  //   elem.addEventListener("keydown", (event) => {
+  //     var key = event.keyCode;
+  //     if (key != 8) {
+  //       // elem.value =
+  //       //   elem.value
+  //       //     .replace(/\d $ / , "")
+  //       //     .replace(/\D/g, "")
+  //       //     .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
+  //       // if (elem.value == " ₽") {
+  //       //   elem.value = "";
+  //       // }
+  //     } else {
+  //       var s = elem.value;
+  //       elem.setSelectionRange(s.length - 2, s.length - 2);
+  //       if (elem.value == " ₽") {
+  //         elem.value = null
+  //       }
+  //     }
+  //   });
+  // });
 }
 
 function replaceNamDot() {
@@ -438,6 +438,35 @@ function replaceNamDot() {
     });
   });
 }
+function getCurrentPrice(p) {
+  const price = p.replace(",", ".").replace(/(\d)\++/g, '$1');
+
+  return price;
+}
+function getCurrentPriceJS(p) {
+  console.log("getCurrentPriceJS(p)",p)
+  let price = p.replace(",", ".").replace(/(\d)\++/g, '$1');
+  price = parseInt(price)
+  return price;
+}
+function monthToInt(str) {
+  if (str == "Январь") return "01";
+  if (str == "Февраль") return "02";
+  if (str == "Март") return "03";
+  if (str == "Апрель") return "04";
+  if (str == "Май") return "05";
+  if (str == "Июнь") return "06";
+  if (str == "Июль") return "07";
+  if (str == "Август") return "08";
+  if (str == "Сентябрь") return "09";
+  if (str == "Октябрь") return "10";
+  if (str == "Ноябрь") return "11";
+  if (str == "Декабрь") return "12";
+  return 0;
+}
+
+
+
 
 // document.addEventListener('DOMContentLoaded', _ => {
 //   const elems = document.querySelectorAll('.invoice_month_out_additional')
@@ -515,16 +544,25 @@ document.addEventListener('DOMContentLoaded', _ => {
 
 
 
-    const btn = document.querySelectorAll('.btn_month_invoce-shrink')
+    const btn = document.querySelectorAll('.shrink-item')
     btn.forEach((element, i) => {
+
       element.addEventListener("click", () => {
+
         const dataShrinkDate = element.getAttribute("data-attr-shrink-name");
         console.log("dataShrinkDate", dataShrinkDate)
         const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`)
         if (localStorage.getItem(dataShrinkDate)) {
           console.log(99999)
+          const page = document.querySelector("#page_name")
+          console.log(page)
+          let display = 'block'
+          if (page || page.value == "salary"){
+            display = "flex"
+          }
+          console.log(display)
           shrinkElem.forEach((elementSr, i) => {
-            elementSr.style.display = 'block';
+            elementSr.style.display = display;
           })
           localStorage.removeItem(dataShrinkDate)
           element.style.transform = 'rotate(' + 0 + 'deg)';

@@ -192,13 +192,13 @@ function getSumOldOperAccountOperation(element, elem) {
           let operationAllSum = element.getAttribute("data-operation-sum");
           let st = 0;
           // let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
-          console.log("st",st);
+          console.log("st", st);
           if (data.length > -1) {
             const lastOperationWrap = document.querySelector(
               ".previous_operation_oper_acc"
             );
             lastOperationWrap.innerHTML = "";
-            console.log("data",data)
+            console.log("data", data)
             data.forEach((item) => {
               // полученые старых оераций
               var options = {
@@ -247,12 +247,12 @@ function getSumOldOperAccountOperation(element, elem) {
             console.log(st);
             // заполнение тайтла с результатом старых операций
             sumOperationEnded = st;
-            console.log("sumOperationEnded",sumOperationEnded)
+            console.log("sumOperationEnded", sumOperationEnded)
             var num = +st;
-            console.log("num",num)
+            console.log("num", num)
 
             var result = num.toLocaleString();
-            console.log("result",result)
+            console.log("result", result)
             const sumExpected = document.querySelector(
               ".oper_account_title_sub_categ_sum"
             );
@@ -282,14 +282,14 @@ function DeOperAccountlOperation(element) {
         method: "POST",
         body: dataJson,
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
           "X-CSRFToken": csrfToken,
         },
       }).then((response) => {
         if (response.ok === true) {
           console.log("getOldOperationOPERACCOUNT")
           item.parentElement.remove();
-          
+
           // заполнение инфом о операциях которые остались для повторого открытия окна с актцальными иоперациями
           let operationIdvalue = element.getAttribute("data-operation-old-id");
           const idOperationrepl = operationIdvalue.replace(
@@ -352,9 +352,7 @@ function addFethOperationOperAcc(element, elem) {
           const otherSumCheck = document.querySelector(
             "#other_sum_namber_oper_account"
           );
-          sumChecked = +otherSumCheck.value
-            .replace(/[^+\d]/g, "")
-            .replace(/(\d)\++/g, "$1");
+          sumChecked = getCurrentPrice(otherSumCheck.value)
           return;
         }
       }
@@ -386,7 +384,7 @@ function addFethOperationOperAcc(element, elem) {
     if (nowYear == operationYear && nowMonth == operationMonth) {
     } else {
       const oldDate = oldYearOperAccount(element);
-      form.append("created_timestamp", oldDate);
+      // form.append("created_timestamp", oldDate);
     }
 
 
@@ -407,14 +405,14 @@ function addFethOperationOperAcc(element, elem) {
         const windowContent = document.getElementById(elem);
         alertSuccess(windowContent);
         const timerId = setTimeout(() => {
-           location.reload();
+          location.reload();
         }, 200);
       } else {
         const windowContent = document.getElementById(elem);
 
         alertError(windowContent);
         const timerId = setTimeout(() => {
-           location.reload();
+          location.reload();
         }, 200);
       }
     });

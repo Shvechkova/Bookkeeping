@@ -1,8 +1,9 @@
 .salary-container {
-  font-family: "Inter", Arial, sans-serif;
-  font-size: 15px;
+  font-family: Montserrat; 
+  font-size: 20px;
   width: 100%;
   margin: 0 auto;
+  white-space: nowrap
 }
 .salary-header,
 .salary-row,
@@ -16,8 +17,7 @@
 }
 .salary-header {
   font-weight: 700;
-  border-bottom: 2px solid #000;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 .salary-header > div,
 .salary-row > div,
@@ -26,8 +26,8 @@
 .salary-group > div,
 .salary-category > div,
 .salary-grand-total > div {
-  flex: 1 1 0;
-  padding: 6px 10px;
+  /* flex: 1 1 0; */
+ 
   min-width: 120px;
   box-sizing: border-box;
 }
@@ -35,7 +35,6 @@
   font-weight: 700;
   margin-top: 20px;
   background: #fff;
-  border-top: 2px solid #000;
 }
 .salary-group {
   font-weight: 600;
@@ -49,13 +48,11 @@
 .salary-total-row {
   font-weight: 700;
   background: #fff;
-  border-bottom: 1px solid #eee;
 }
 .salary-grand-total {
   font-weight: 900;
   background: #f5f5f5;
   color: #000;
-  border-top: 2px solid #000;
   margin-top: 20px;
 }
 .salary-debt {
@@ -80,7 +77,6 @@
   min-width: 90px;
   color: #222;
   margin-bottom: 0;
-  text-align: right;
 }
 .salary-category-month-label {
   color: #888;
@@ -98,13 +94,12 @@
 .salary-category-row > div,
 .salary-total-row > div {
   min-width: 120px;
-  padding: 6px 10px;
+  
   box-sizing: border-box;
 }
 .salary-employee-row {
   font-weight: 700;
   background: #fff;
-  border-top: 2px solid #000;
 }
 .salary-group-row {
   font-weight: 600;
@@ -116,21 +111,19 @@
 .salary-total-row {
   font-weight: 700;
   background: #f5f5f5;
-  border-bottom: 1px solid #eee;
 }
 .salary-category-month-row {
   min-width: 90px;
   color: #222;
   margin-bottom: 0;
-  text-align: right;
+  /* text-align: left; */
 }
 .salary-header > div,
 .salary-category-month-row,
 .salary-total-row > div {
   min-width: 120px;
-  flex-basis: 120px;
-  max-width: 120px;
-  padding: 6px 10px;
+
+ 
   box-sizing: border-box;
-  text-align: right;
+ 
 }

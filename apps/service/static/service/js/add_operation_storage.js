@@ -365,25 +365,36 @@ function DelOperationOutStorage(element) {
   delButton.forEach((item) => {
     item.addEventListener("click", () => {
       idOperation = item.getAttribute("data-id-peration");
+      let object = {
+        "id": +idOperation,
+      };
       console.log(idOperation);
-      endpoint = "/operations/api/operation/" + idOperation + "/";
+      const dataJson = JSON.stringify(object);
+      preloaderModal((isLoading = true), (isLoaded = false));
+      endpoint = "/api/v1/operation/operation_delete/";
+      let csrfToken = getCookie("csrftoken");
+      // endpoint = "/operations/api/operation/" + idOperation + "/";
 
-      item.parentElement.remove();
 
       fetch(endpoint, {
-        method: "DELETE",
-        // body: dataJson,
+        method: "POST",
+        body: dataJson,
         headers: {
           "Content-Type": "application/json",
-          // "X-CSRFToken": csrfToken,
+          "X-CSRFToken": csrfToken,
         },
       }).then((response) => {
-        if (response.ok) {
+        if (response.ok === true) {
+          item.parentElement.remove();
           const add_operation = document.querySelector(".operation_add_out");
           add_operation.replaceWith(add_operation.cloneNode(true));
           element.click();
 
           return;
+        }
+        else {
+          const windowContent = document.getElementById(elem);
+          DontDelite(windowContent);
         }
       });
     });

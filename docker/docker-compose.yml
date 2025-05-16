@@ -11,34 +11,34 @@ services:
     # env_file:
     #   - ./.env
 
-  # celery:
-  #   container_name: celery
-  #   build: ./python/
-  #   command: >
-  #     sh -c "cd Bookkeeping/ && celery -A project worker -l info"
-  #   volumes:
-  #     - ../:/home/sites/Bookkeeping/
-  #   ports:
-  #     - "5566:5566"
-  #   depends_on:
-  #     - redis
+  celery:
+    container_name: celery
+    build: ./python/
+    command: >
+      sh -c "cd Bookkeeping/ && celery -A project worker -l info"
+    volumes:
+      - ../:/home/sites/Bookkeeping/
+    ports:
+      - "5566:5566"
+    depends_on:
+      - redis
 
-  # celery-beat:
-  #   container_name: celery-beat
-  #   build: ./python/
-  #   command: >
-  #     sh -c "cd Bookkeeping/ && celery -A project beat -l info"
-  #   volumes:
-  #     - ../:/home/sites/Bookkeeping/
-  #   depends_on:
-  #     - redis
-  #     - celery
+  celery-beat:
+    container_name: celery-beat
+    build: ./python/
+    command: >
+      sh -c "cd Bookkeeping/ && celery -A project beat -l info"
+    volumes:
+      - ../:/home/sites/Bookkeeping/
+    depends_on:
+      - redis
+      - celery
 
-  # redis:
-  #   container_name: redis
-  #   image: redis
-  #   ports:
-  #       - "6379:6379"    
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+        - "6379:6379"    
 
   adminer:
     container_name: adminer

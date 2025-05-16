@@ -16,9 +16,9 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    # 'creat_new_bill_month': {
-    #     'task': 'apps.service.tasks.creat_new_bill_month',
-    #     'schedule': crontab(minute='*/10'),
-    # },
+    'creat_new_bill_month': {
+        'task': 'apps.service.tasks.creat_new_bill_month',
+        'schedule': crontab(minute='*/1'),
+    },
 }
 # crontab(0, 0, day_of_month='1')

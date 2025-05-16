@@ -37,7 +37,7 @@ if (addBill) {
       modal(elem, battonAdd);
 
       getClientFilterCategory(pageName, dataBill, elem);
-      addMonthBill(dataBill, elem);
+      addMonthBill(dataBill, elem,el);
 
       // валидация
       const modalWindows = document.getElementById(elem);
@@ -123,7 +123,7 @@ function getClientFilterCategory(pageName, dataBill, elem) {
     });
 }
 // добавление месячного счета
-function addMonthBill(dataBill, elem) {
+function addMonthBill(dataBill, elem,el) {
   const addMontContract = document.querySelector(
     ".client_additional-contract_add"
   );
@@ -132,19 +132,28 @@ function addMonthBill(dataBill, elem) {
     const form = document.getElementById("month_bill");
     const service_name = document.getElementById("page_name").value;
     const contractId = document.getElementById("contract_main").value;
+    const dataDate = el.getAttribute("data-date");
+    const dataDateSplit = dataDate.split(" ");
+    const dataMonth = dataDateSplit[0];
+    const dataYear = +dataDateSplit[1];
+    // const contract_sum = document.getElementById("contract_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
+    // const adv_sum = document.getElementById("adv_all_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
 
-    const contract_sum = document.getElementById("contract_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
-    const adv_sum = document.getElementById("adv_all_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
+    const contract_sum = getCurrentPrice(document.getElementById("contract_sum").value)
+    const adv_sum = getCurrentPrice(document.getElementById("adv_all_sum").value)
+
     const diff_sum = contract_sum - adv_sum;
 
     const clientId = document.querySelector(".modal-client");
     const nameServise = document.querySelector("#page_name_abc").value;
 
     let date = new Date();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
+    // let month = date.getMonth() + 1;
+    // let year = date.getFullYear();
+    let year = dataYear
+    let month = monthToInt(dataMonth)
     const contractName = nameServise + "/" + year + "-" + month;
-
+    const dateBill = year + "-" + month + "-" + "01"
     const data = new FormData();
     data.append("client", clientId.value);
     data.append("service", service_name);
@@ -152,6 +161,7 @@ function addMonthBill(dataBill, elem) {
     data.append("contract", contractId);
     data.append("contract_sum", contract_sum);
     data.append("diff_sum", diff_sum);
+    data.append("month", dateBill);
 
     // суммы адв для категорий
     if (service_name == "1") {
@@ -214,8 +224,13 @@ if (changeBill) {
       let service_name = el.getAttribute("data-cat-service");
 
       const battonAddchange = document.querySelector(".client-contract_change");
-      let sumBillStr = sumBill.replace(/\s+/g, "");
-      let sumAdvBillStr = sumAdvBill.replace(/\s+/g, "");
+      let sumBillStr = sumBill.replace(/\s+/g, "").replace(".", ",");
+      let sumAdvBillStr = sumAdvBill.replace(/\s+/g, "").replace(".", ",");
+      // let sumBillStr = getCurrentPrice(sumBill)
+      // let sumAdvBillStr = getCurrentPrice(sumAdvBill)
+      console.log(sumBillStr)
+      console.log(sumAdvBillStr)
+
 
       modal(elem, battonAddchange);
 
@@ -223,11 +238,16 @@ if (changeBill) {
       let nameClientBillModal = document.querySelector("#contract_main_change");
       let sumBillModal = document.querySelector("#contract_sum_change");
       let sumAdvBillModal = document.querySelector("#adv_all_sum_change");
+      console.log(sumBill)
+      console.log(sumAdvBill)
+
+
       idBillModal.value = idBillName;
       nameClientBillModal.value = nameClientBill;
-      sumBillModal.value = +sumBillStr;
-      sumAdvBillModal.value = +sumAdvBillStr;
-
+      sumBillModal.value = sumBillStr;
+      sumAdvBillModal.value = sumAdvBillStr;
+      console.log(sumAdvBillModal.value)
+      console.log(sumBillModal.value)
       updBillChange(idBill, service_name, elem);
     });
   });
@@ -243,8 +263,11 @@ function updBillChange(idBill, service_name, elem) {
     let nameClientBillModal = document.querySelector(
       "#contract_main_change"
     ).value;
-    let sumBillModal = document.querySelector("#contract_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
-    let sumAdvBillModal = document.querySelector("#adv_all_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
+    // let sumBillModal = document.querySelector("#contract_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
+    // let sumAdvBillModal = document.querySelector("#adv_all_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
+
+    let sumBillModal =  getCurrentPrice(document.querySelector("#contract_sum_change").value) 
+    let sumAdvBillModal =  getCurrentPrice(document.querySelector("#adv_all_sum_change").value) 
 
     const diff_sum = sumBillModal - sumAdvBillModal;
 
@@ -277,11 +300,12 @@ function updBillChange(idBill, service_name, elem) {
           location.reload();
         }, 200);
       } else {
+        console.log(response)
         const windowContent = document.getElementById(elem);
         console.log(windowContent);
         alertError(windowContent);
         const timerId = setTimeout(() => {
-          location.reload();
+          // location.reload();
         }, 200);
       }
     });

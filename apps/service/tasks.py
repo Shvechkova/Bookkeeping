@@ -1,21 +1,10 @@
 import datetime
-from django.shortcuts import render
-
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
+from project.celery import app
 
-# Create your views here.
-def index(request):
-    title = "Главная"
-    context = {
-        "title": title,
-
-    }
-
-    return render(request, "core/index.html", context)
-
-def test(request):
-    title = "TEST"
-
+@app.task
+def creat_new_bill_month():
+ 
     now = datetime.datetime.now()
 
     old_month = now.month - 1
@@ -26,7 +15,7 @@ def test(request):
         year = year - 1
 
     bill_now_old = ServicesClientMonthlyInvoice.objects.filter(
-        month__year=year, month__month=old_month)
+        created_timestamp__year=year, created_timestamp__month=old_month)
 
     for old_bill in bill_now_old:
         subcontr_old = SubcontractMonth.objects.filter(month_bill=old_bill.id)
@@ -36,6 +25,14 @@ def test(request):
         new_bill.month = now
         new_bill.operations_add_all = 0
         new_bill.operations_add_diff_all = old_bill.operations_add_all
+        # old_bill_name = old_bill.contract_number
+        # new_bill.chekin_sum_entrees = False
+        # new_bill.chekin_sum_adv = False
+        # # name_bill = old_bill_name.split('/')
+        # # print(name_bill[0])
+        # new_name_bill = old_bill.service.name + \
+        #     "/" + str(now.year)+"-" + str(now.month)
+        # new_bill.contract_number = new_name_bill
 
         new_bill.save()
         if subcontr_old.exists():
@@ -46,11 +43,8 @@ def test(request):
                 new_subs.month_bill_id = new_bill.id
 
                 new_subs.save()
-    
-    
-    context = {
-        "title": title,
+                # new_bill_qurery = ServicesMonthlyBill.objects.filter(
+                #     id=new_bill.id).update(chekin_add_subcontr=True)
+                # new_bill.update(chekin_add_subcontr=True)
 
-    }
-
-    return render(request, "core/test_item.html", context)
+    

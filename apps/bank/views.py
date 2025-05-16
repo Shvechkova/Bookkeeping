@@ -52,7 +52,7 @@ def oper_accaunt(request):
         bank_id = [int(bank_id)]
     else:
         bank_id = [1, 2, 3]
-    print(bank_id)
+ 
     # Получаем операции
     operations = (
         Operation.objects.filter(
@@ -70,7 +70,6 @@ def oper_accaunt(request):
         .prefetch_related()
         .order_by("-data")
     )
-    print(operations_old)
     category = CATEGORY_OPERACCOUNT
     groupeis = GroupeOperaccount.objects.all()
 
@@ -118,6 +117,7 @@ def oper_accaunt(request):
                 cat_data["accounts"][account.name]["months"][month] = {
                     "operations": [],
                     "total": 0,
+                    "comment": False,
                 }
 
     # Группируем операции
@@ -127,6 +127,7 @@ def oper_accaunt(request):
 
         account = operation.operaccount
         category_id = account.category
+        comment = operation.comment
 
         if category_id in operations_by_category:
             account_name = account.name
@@ -141,6 +142,11 @@ def oper_accaunt(request):
                     operations_by_category[category_id]["accounts"][account_name][
                         "months"
                     ][month_name]["operations"].append(operation)
+                    if comment:
+                        
+                        operations_by_category[category_id]["accounts"][account_name][
+                        "months"
+                    ][month_name]["comment"] = True
                     operations_by_category[category_id]["accounts"][account_name][
                         "months"
                     ][month_name]["total"] += operation.amount
@@ -148,6 +154,7 @@ def oper_accaunt(request):
     # Группируем старые операции по годам
     operations_old_by_year = {}
     for operation in operations_old:
+        comment = operation.comment
         year = operation.data.year
         if year not in operations_old_by_year:
             operations_old_by_year[year] = {
@@ -182,7 +189,7 @@ def oper_accaunt(request):
                         month_name = MONTHS_RU[month - 1]
                         operations_old_by_year[year]["categories"][cat_id]["accounts"][
                             account.name
-                        ]["months"][month_name] = {"operations": [], "total": 0}
+                        ]["months"][month_name] = {"operations": [], "total": 0,"comment": False,}
 
         # Добавляем операцию в соответствующую структуру
         month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
@@ -209,6 +216,12 @@ def oper_accaunt(request):
                     "total_category"
                 ] += operation.amount
                 operations_old_by_year[year]["total_year"] += operation.amount
+                if comment:
+                        
+                        operations_old_by_year[year]["categories"][category_id][
+                    "accounts"
+                ][account_name]["months"][month_name]
+                month_data["comment"] = True
 
     # Преобразуем в список для шаблона
     operations_old_arr = []
@@ -251,6 +264,7 @@ def oper_accaunt(request):
                         "date_start": datetime.datetime(year, month, 1),
                         "operations": month_data["operations"],
                         "total": month_data["total"],
+                        "comment":  month_data["comment"], 
                     }
                     account_info["months"].append(month_info)
                     # Добавляем сумму в общий итог по месяцу для категории
@@ -294,6 +308,7 @@ def oper_accaunt(request):
                     "operations": month_data["operations"],
                     "total": month_data["total"],
                     "budget": 0,  # Инициализируем бюджет
+                    "comment":  month_data["comment"], 
                 }
                 if i < len(months_current_year) - 1:
                     prev_month = months_current_year[i + 1]
@@ -325,7 +340,7 @@ def oper_accaunt(request):
         "months": months_current_year,
         "all_months": MONTHS_RU,
         "data": data,
-        "year_now": year_now,
+        "year_now": str(year_now),
     }
 
     return render(request, "bank/inside/inside_one_oper_accaunt.html", context)
@@ -348,7 +363,7 @@ def salary(request):
     employee_now_year = Employee.objects.filter(
         # date_end__gte=date_start_year
     )
-    print(employee_now_year)
+
     # Создаем морфологический анализатор
     morph = pymorphy3.MorphAnalyzer(lang="ru")
 
@@ -357,8 +372,12 @@ def salary(request):
     for month in range(1, month_now + 1):
         month_name = MONTHS_RU[month - 1]
         months_current_year.append(month_name)
+        
     months_current_year.reverse()
-
+    months_current_year_2 = months_current_year.copy()
+    all_categories_qs = GroupeSalary.objects.all().select_related("bank").prefetch_related(Prefetch("bank"))
+    all_categories_bank = all_categories_qs.values_list("bank","name","id")
+    print(all_categories_bank)
     # Определяем группы категорий
     salary_groups = {
         "group1": ["Оф ЗП (10 число)", "Оф Аванс", "Отпуск", "Оф Премия", "Больничный"],
@@ -366,6 +385,7 @@ def salary(request):
         "group3": ["КВ $", "КВ ИП", "квартальная премия"],
         "group4": ["Выдано в долг", "Возврат долга"],
     }
+    salary_groups_bank = {}
 
     # Получаем операции
     operations = (
@@ -377,7 +397,7 @@ def salary(request):
         .prefetch_related()
         .order_by("-data")
     )
-    print(operations)
+   
     # Структура для хранения данных
     employees_data = {}
 
@@ -403,7 +423,10 @@ def salary(request):
                 "group3_total": 0,
                 "group4_total": 0,
             }
-
+    print("salary_groups",salary_groups)
+    for dk in all_categories_qs:
+        salary_groups_bank[dk.name] = dk.bank.id
+    print("salary_groups_bank",salary_groups_bank)         
     # Обрабатываем операции
     for operation in operations:
         employee_id = operation.employee.id
@@ -415,7 +438,7 @@ def salary(request):
             continue
 
         # Получаем название категории
-        category = operation.salary.name  # исправлено!
+        category = operation.salary.name 
         amount = operation.amount
 
         # Определяем группу категории
@@ -516,13 +539,24 @@ def salary(request):
                 "categories": [],
                 "total": 0,
             }
+          
             for category in group_categories:
+
                 # Сумма по всем месяцам для этого сотрудника и категории
                 cat_total = sum(categories_by_month.get(category, {}).values())
+                # cat = all_categories_qs.get(name=category)
+                # all_categories_bank
+                # bank_in = cat.bank.id
+                bank_in = None
+                for k, v in salary_groups_bank.items():
+                   
+                    if k == category:
+                        bank_in = v
                 group_info["categories"].append(
                     {
                         "name": category,
                         "amount": cat_total,
+                        "bank_in": bank_in,
                     }
                 )
                 group_info["total"] += cat_total
@@ -583,11 +617,16 @@ def salary(request):
         employee_info["group_month_totals"] = group_month_totals
 
         # Добавляем месяцы
+        i = 0
         for month in months_current_year:
+            i +=1
+            print(len(months_current_year) - i)
             month_data = data["months"][month]
             employee_info["months"].append(
                 {
                     "name": month,
+                    "name": month,
+                    "date_start": datetime.datetime(year_now, len(months_current_year) , 1),
                     "group1_total": month_data["group1_total"],
                     "group2_total": month_data["group2_total"],
                     "group3_total": month_data["group3_total"],
@@ -624,7 +663,7 @@ def salary(request):
             totals_by_month["group4"][idx] += employee["months"][idx]["group4_total"]
 
     # Получаем все категории GroupeSalary
-    all_categories = list(GroupeSalary.objects.all().values_list("name", flat=True))
+    all_categories = list(all_categories_qs.values_list("name", flat=True))
 
     # Группируем категории по salary_groups и считаем total
     group_totals = {}
@@ -650,7 +689,7 @@ def salary(request):
         "salary_groups": salary_groups,
         "totals_by_month": totals_by_month,
         "group_totals": group_totals,
-        "year_now": year_now,
+        "year_now": str(year_now),
     }
     print(context)
 

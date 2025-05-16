@@ -48,14 +48,14 @@
 }
 
 .oper-account-month {
-  min-width: 120px;
+  min-width: 180px;
   text-align: left;
   color: #222;
   font-weight: 500;
 }
 
 .oper-account-value {
-  min-width: 120px;
+  min-width: 180px;
   text-align: left;
   font-weight: 400;
 }
@@ -99,6 +99,9 @@
 }
 .oper-account-service {
   width: 283px;
+}
+.oper-account-service-min{
+  width: 120px;
 }
 /* .oper-account-grid{
     width: 100%;
@@ -160,4 +163,7 @@
     font-size: 20px; 
     font-family: Montserrat; 
     font-weight: 700;
+}
+.add_operation_oper_account{
+  cursor: pointer;
 }

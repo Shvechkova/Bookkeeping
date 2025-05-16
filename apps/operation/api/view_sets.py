@@ -53,28 +53,29 @@ class ОperationViewSet(viewsets.ModelViewSet):
                         servise_month.operations_add_diff_all = (
                             servise_month.operations_add_diff_all + float(data["amount"])
                         )
-                        if data["bank_to"] == "1":
-                            if servise_month.operations_add_ip:
-                                servise_month.operations_add_ip = (
-                                    servise_month.operations_add_ip + float(data["amount"])
-                                )
-                            else:
-                                servise_month.operations_add_ip = float(data["amount"])
+                        # if data["bank_to"] == "1":
+                        #     if servise_month.operations_add_ip:
+                        #         servise_month.operations_add_ip = (
+                        #             servise_month.operations_add_ip + float(data["amount"])
+                        #         )
+                        #     else:
+                        #         servise_month.operations_add_ip = float(data["amount"])
 
-                        elif data["bank_to"] == "2":
-                            if servise_month.operations_add_ооо:
-                                servise_month.operations_add_ооо = (
-                                    servise_month.operations_add_ооо + float(data["amount"])
-                                )
-                            else:
-                                servise_month.operations_add_ооо = float(data["amount"])
-                        elif data["bank_to"] == "3":
-                            if servise_month.operations_add_nal:
-                                servise_month.operations_add_nal = (
-                                    servise_month.operations_add_nal + float(data["amount"])
-                                )
-                            else:
-                                servise_month.operations_add_nal = float(data["amount"])
+                        # elif data["bank_to"] == "2":
+                        #     if servise_month.operations_add_ооо:
+                        #         servise_month.operations_add_ооо = (
+                        #             servise_month.operations_add_ооо + float(data["amount"])
+                        #         )
+                        #     else:
+                        #         servise_month.operations_add_ооо = float(data["amount"])
+                        # elif data["bank_to"] == "3":
+                        #     if servise_month.operations_add_nal:
+                        #         servise_month.operations_add_nal = (
+                        #             servise_month.operations_add_nal + float(data["amount"])
+                        #         )
+                        #     else:
+                        #         servise_month.operations_add_nal = float(data["amount"])
+                       
                         servise_month.save()
                     # исходящая операция оплаты
                     elif data["bank_to"] == "5":
@@ -134,6 +135,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
             queryset = Operation.objects.filter(
             suborder = data['id']
             )
+            print(queryset)
         elif "category_employee" in data:
             queryset = Operation.objects.filter(
             monthly_bill = data['monthly_bill'],suborder__category_employee__isnull=False

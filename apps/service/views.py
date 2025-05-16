@@ -13,7 +13,7 @@ from apps.service.models import (
     ServicesClientMonthlyInvoice,
     SubcontractMonth,
 )
-
+from django.db.models.functions import Round
 
 # Create your views here.
 def service_all(request):
@@ -58,17 +58,14 @@ def service_one(request, slug):
         month = request.COOKIES["sortMonth"]
     else:
         month = "1"
-
+ 
     # куки для установки сортировки operation
-    sort_operation = "id"
-
+    # sort_operation = "id"
     if request.COOKIES.get("sortOper"):
         sort_operation_op = request.COOKIES["sortOper"]
-        if sort_operation_op == "1":
-            sort_operation = "chekin_sum_entrees"
-
-        if sort_operation_op == "2":
-            sort_operation = "chekin_sum_adv"
+    else:
+        sort_operation_op = "0"
+        
 
     now = datetime.datetime.now()
     year = now.year
@@ -97,7 +94,7 @@ def service_one(request, slug):
     elif month == "999":
         old_month = 1
         year = 1990
-
+    print(year,old_month)
     service_month_invoice = (
         ServicesClientMonthlyInvoice.objects.select_related(
             "client", "service", "contract"
@@ -113,7 +110,7 @@ def service_one(request, slug):
             Prefetch("operation_set__suborder__category_employee"),
             Prefetch("operation_set__suborder__platform"),
         )
-        .filter(service=category_service.id)
+        .filter(service=category_service.id, month__year__gte=year, month__month__gte=old_month)
         .annotate(
             operation_amount_to_all=Sum(
                 "operation__amount",
@@ -223,7 +220,18 @@ def service_one(request, slug):
                 default=0,
             ),
             operation_amount_out_all_diff=F("sum_subcontractmonth")
-            - (F("operation_amount_out_all")),
+            - F("operation_amount_out_all"),
+            operation_amount_out_all_diff_notnull=Case(
+                        When(
+                            operation_amount_out_all_diff=None,
+                            then=("diff_sum"),
+                        ),
+                        When(
+                            operation_amount_out_all_diff__isnull=False,
+                            then=("operation_amount_out_all_diff"),
+                        ),
+                        
+                    ),
             operation_amount_out_ooo=(
                 Sum(
                     "operation__amount",
@@ -342,7 +350,24 @@ def service_one(request, slug):
             "total_sum_subcontractmonth_no_adv": 0,
         }
         val = list(values)
+   
+        if sort_operation_op == "1":
+            val = sorted(
+                    val,
+                    key=lambda x:
+                        x.operation_amount_to_all_diff,reverse=True
+                )
 
+        if sort_operation_op == "2":
+            val = sorted(
+                    val,
+                    key=lambda x:
+                        x.operation_amount_out_all_diff_notnull,reverse=True
+                )
+            
+        
+        
+        
         for v in val:
             total["total_contract_sum"] = total["total_contract_sum"] + v.contract_sum
             total["total_adv_all_sum"] = total["total_adv_all_sum"] + v.adv_all_sum
@@ -428,21 +453,10 @@ def service_one(request, slug):
         "title_name": title_name,
         "type_url": type_url,
         "category_service": category_service,
-        # "bills": bill_now_mohth,
         "now": now,
-        # "suborders_name": suborders_name,
-        # "obj_suborder_adv": obj_suborder_adv,
-        # "suborders_name_no_adv": suborders_name_no_adv,
-        # "operation": operation,
-        # "total_month": total_month,
-        # "diff_sum_oper": diff_sum_oper,
-        # "obj_suborder_other": obj_suborder_other,
-        # "bill_now_mohth_name": bill_now_mohth_name,
-        # "bill_month": bill_month
         "service_month_invoice": service_month_invoice_new,
         "platform": platform,
         "suborders": suborders,
-        # "subcontract_month_item": subcontract_month_item,
     }
 
     return render(request, "service/service_one.html", context)

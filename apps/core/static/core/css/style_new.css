@@ -8,6 +8,7 @@
   margin-bottom: 33px;
   display: flex;
   background: none;
+  align-items: center;
 }
 
 .invoice_month_line {
@@ -16,19 +17,23 @@
 
 .invoice_wrap_len {
   display: flex;
+  align-items: flex-end;
 }
 
 .invoice_wrap {
+  display: flex;
   padding: 20px 16.5px;
   margin-left: 40px;
+  align-items: flex-end;
 }
 
 .invoice_month_counter {
   width: 15px;
+  margin-left: 0;
 }
 
 .invoice_month_client_name {
-  width: 120px;
+  width: 130px;
 }
 
 .invoice_month_contract_name {
@@ -36,7 +41,7 @@
 }
 
 .invoice_month_summ_invoce {
-  width: 100px;
+  width: 120px;
 }
 
 .invoice_month_summ_adv {
@@ -57,6 +62,18 @@
 
 .invoice_month_out_main {
   width: 120px;
+}
+
+.invoice_month_suborder {
+  gap: 40px;
+}
+
+.invoice_month_in {
+  gap: 40px;
+}
+
+.invoice_month_out {
+  gap: 40px;
 }
 
 .invoice_month_out_additional {
@@ -135,6 +152,7 @@
 
 .invoice_month_item {
   position: relative;
+  white-space: nowrap;
 }
 
 .invoice_month_item_text {
@@ -164,7 +182,7 @@
 
 .result_not_after_green {
   color: green;
-  top: 100%;
+  top: 130%;
 }
 
 /* .oper_account table {
@@ -193,33 +211,39 @@
   /* margin: 0 auto; */
   max-width: max-content;
 }
+
 .category-block {
   margin-bottom: 40px;
 }
+
 .category-title {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
 }
+
 .oper-account-grid {
   display: flex;
   flex-direction: column;
   /* border-radius: 12px; */
-  overflow: hidden;
+  /* overflow: hidden; */
   /* box-shadow: 0 2px 8px rgba(0,0,0,0.03); */
   /* border: 1px solid #eaeaea; */
 }
+
 .oper-account-row {
   display: flex;
   align-items: stretch;
   min-height: 40px;
 }
+
 .oper-account-header {
   /* background: #fafbfc; */
   font-weight: 600;
   color: #222;
   /* border-bottom: 1px solid #eaeaea; */
 }
+
 .oper-account-cell {
   display: flex;
   align-items: center;
@@ -229,36 +253,122 @@
   min-width: 110px;
   justify-content: flex-start;
 }
+
 .oper-account-cell:last-child {
   border-right: none;
 }
+
 .oper-account-num {
   min-width: 40px;
   justify-content: flex-start;
   /* color: #888; */
 }
+
 .oper-account-service {
   min-width: 180px;
   justify-content: flex-start;
   font-weight: 500;
 }
+
 .oper-account-month {
   text-align: right;
   font-weight: 500;
 }
+
 .oper-account-value {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
 .oper-account-total {
   /* background: #f5f5f5; */
   font-weight: 700;
   /* border-top: 1px solid #eaeaea; */
 }
+
 .oper-account-total .oper-account-cell {
   font-weight: 700;
   /* background: #f5f5f5; */
 }
-.oper-account-cell-zero{
+
+.oper-account-cell-zero {
   color: #C9C9C9
+}
+
+.font-bold {
+  color: rgb(0, 0, 0);
+  font-family: Montserrat;
+  font-size: 20px !important;
+  font-style: normal;
+  font-weight: 700 !important;
+  line-height: normal;
+}
+
+.invoice_month_client_name .invoice_month_item {
+  /* white-space: normal; */
+}
+
+.add_sabcontactor {
+  cursor: pointer;
+}
+
+.small_bold {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.small {
+  font-size: 15px !important;
+}
+
+.salary-employee-big-row {
+  width: 270px;
+  height: 44px;
+}
+
+.salary-employee-smal-row {
+  width: 120px;
+  height: 44px;
+}
+
+.salary-employee-row {
+  gap: 80px;
+}
+
+.salary-header {
+  gap: 80px;
+}
+
+.salary-employee-wrap_one {
+  margin-bottom: 33px;
+  display: flex;
+  flex-direction: column;
+  /* height: 44px; */
+  /* gap: 23px; */
+}
+
+.salary-category-row {
+  gap: 80px;
+}
+
+.salary-total-row {
+  gap: 80px;
+}
+
+.salary-employee-num {
+  position: absolute;
+  left: 0;
+  padding-left: 10px;
+  min-width: 0!important;
+}
+.shrink-item{
+  cursor: pointer;
+}
+.salary-employee-name{
+  display: flex;
+}
+.salary-employee-name svg{
+  margin-left: 10px;
+  margin-right: 10px;
+  transform: rotate(90deg);
 }

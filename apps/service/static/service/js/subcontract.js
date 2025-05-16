@@ -53,7 +53,7 @@ if (btnSubcontarct) {
       const modalWindows = document.getElementById(elem);
       modalWindows.addEventListener("input", () => {
         replaceNam();
-        validate(elem, ".modal_add_subcontract");
+        // validate(elem, ".modal_add_subcontract");
       });
       modalWindows.addEventListener("input", () => {
         validateBtn(elem, ".subcontarct_add");
@@ -158,6 +158,7 @@ function createNextSubcontractInput(button, elem) {
     wrapperSubcontractInp.after(dupNode);
     dupNode.append(dupSelect);
     createInputSubcontract();
+    // observerChangeCreateInput(element, elem);
   });
 }
 // обсчет выводимой в татле сумме распред не распред субподряда
@@ -231,21 +232,35 @@ function changeSum(element, elem) {
         const slash = document.querySelector(".modal_adv_budget_not_use_slash");
         slash.style.display = "block";
 
+        // if (el.value == "" || el.value == " ₽") {
+        //   intEl = 0;
+        // } else {
+        //   intEl = parseInt(
+        //     el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
+        //   );
+        // }
+
+        // let useBudgetAfterUseInit = parseInt(
+        //   useBudgetAfterUseIn.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
+        // );
+        console.log("el.value",el.value)
         if (el.value == "" || el.value == " ₽") {
-          intEl = 0;
+          let intEl = 0;
         } else {
-          intEl = parseInt(
-            el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
-          );
+          letintEl = el.value
         }
 
-        let useBudgetAfterUseInit = parseInt(
-          useBudgetAfterUseIn.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
-        );
-
+        let useBudgetAfterUseInit = 
+           useBudgetAfterUseIn
+        ;
+        
+        console.log("intEl",intEl)
         sum = sumAdvReplace - intEl;
+        console.log(sum)
+        console.log(sumKeyup)
         sumKeyup += intEl;
         sum = sumAdvReplace - sumKeyup;
+        console.log(sum)
         var result = sum.toLocaleString();
         useBudget.innerHTML = result + " ₽";
         useBudgetAfterUse.value = sum;
@@ -261,6 +276,7 @@ function observerChangeCreateInput(element, elem) {
   );
 
   let observer = new MutationObserver((mutationRecords) => {
+    console.log("observerChangeCreateInput")
     changeSum(element, elem);
   });
   observer.observe(wrapSubcontractors, {
@@ -296,9 +312,11 @@ function addSubcontractFetch(idBill, elem) {
             subcontractOther = choseNameSubcontract;
             subcontractAdv = null;
           }
-          let amount = contractChild[2].value
-            .replace(/[^+\d]/g, "")
-            .replace(/(\d)\++/g, "$1");
+          // let amount = contractChild[2].value
+          //   .replace(/[^+\d]/g, "")
+          //   .replace(/(\d)\++/g, "$1");
+          let amount = getCurrentPrice(contractChild[2].value)
+
 
           const contractObj = {
             id: idelemOld.value,
@@ -322,10 +340,10 @@ function addSubcontractFetch(idBill, elem) {
             subcontractOther = choseNameSubcontract;
             subcontractAdv = null;
           }
-          let amount = contractChild[3].value
-            .replace(/[^+\d]/g, "")
-            .replace(/(\d)\++/g, "$1");
-
+          // let amount = contractChild[3].value
+          //   .replace(/[^+\d]/g, "")
+          //   .replace(/(\d)\++/g, "$1");
+          let amount = getCurrentPrice(contractChild[3].value)
           const contractObj = {
             id: "",
             month_bill: idBill,
@@ -446,7 +464,7 @@ function getOldSumcintract(idBill, element, elem) {
               c.append(modal_add_subcontract);
 
               preloaderModal((isLoading = false), (isLoaded = true));
-
+              
               if (value.platform != null) {
                 modal_add_subcontract.innerHTML =
                   '<input type="text" readonly class="modal-subcontracts input-130" placeholder="adv" value="площадка" data-adv="adv">';
@@ -505,7 +523,7 @@ function getOldSumcintract(idBill, element, elem) {
                         ).appendTo(modal_add_subcontract);
                         new Input(
                           "text",
-                          "modal-subcontracs input-200 pyb",
+                          "modal-subcontracs input-200 modal-subcontract-input_sum num_budet pyb",
                           value.amount,
                           "сумма"
                         ).appendTo(modal_add_subcontract);
@@ -545,20 +563,28 @@ function getOldSumcintract(idBill, element, elem) {
               let sumAdvReplace = sumAdv.replace(/\s+/g, "");
               sumOld = +sumAdvReplace;
               const numBudetAll = document.querySelectorAll(".num_budet");
-
-              if (numBudetAll) {
-                numBudetAll.forEach((el) => {
-                  sumOld -= +el.value
-                    .replace(/[^+\d]/g, "")
-                    .replace(/(\d)\++/g, "$1");
+              console.log(numBudetAll)
+              if(data.length > 0){
+                data.forEach((el) => {
+                  console.log(el.amount)
+                  sumOld -= +el.amount
                 });
               }
+              // if (numBudetAll) {
+              //   numBudetAll.forEach((el) => {
+              //     console.log(el.value)
+              //     sumOld -= +el.value
+              //       .replace(/[^+\d]/g, "")
+              //       .replace(/(\d)\++/g, "$1");
+              //   });
+              // }
               let useBudget = document.querySelector(
                 ".modal_adv_budget_not_use"
               );
               let useBudgetAfterUse =
                 document.getElementById("sum_adv_after_use");
               useBudgetAfterUse.value = sumOld;
+              console.log("sumOld",sumOld)
               var result = sumOld.toLocaleString();
               useBudget.innerHTML = result + " ₽";
               // useBudget.innerHTML = sumOld;
