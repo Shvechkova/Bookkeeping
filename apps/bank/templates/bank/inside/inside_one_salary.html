@@ -4,150 +4,250 @@
 {% load format_filters %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'bank/css/inside_one_salary.css' %}">
+
     <input type="hidden" id="page_name" value="{{ title }}" />
     {% include "bank/inside/includes/header_inside.html" %}
     <div class="salary-container">
-        <div class="salary-header font-bold stiky-position1">
-            <div class="salary-employee-big-row">Сотрудник</div>
-         
-            {% for month in months %}
-                <div class="salary-month salary-employee-smal-row"">{{ month }} {{ year_now }}
-                </div>
-            {% endfor %}
+        <div class="salary-sorting" data-sort-salary="1" salary-sorting-date="1">
+            <h3>Период</h3>
+            <div class = "btn_sorting_salary" data-sort-salary="1">Активные</div>
+            <div class = "btn_sorting_salary" data-sort-salary="2">Архив</div>
         </div>
-        {% for employee in employees %}
-
-            <div class="salary-employee-wrap_one">
-                <div class="salary-employee-row stiky-position2">
-                    <div class="salary-employee-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                    <div class="salary-employee-name salary-employee-big-row"
-                         >
-                        {{ employee.employee }}
-                        <div class="shrink-item"
-                        data-attr-shrink='salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}'
-                         data-attr-shrink-name='salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}'>
-                            <svg width="16"
-                                 height="16"
-                                 viewBox="0 0 16 16"
-                                 fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
-                                <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
-                                <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
-                            </svg>
-                        </div>
-                    </div>
-                    {% for total in employee.total_by_month %}
-                        <div class="salary-category-month-row salary-employee-smal-row">
-                            <b>{{ total|format_rub }} ₽</b>
-                        </div>
+        <div class="salary-content">
+            <div class="salary-current">
+                <div class="salary-header font-bold stiky-position1">
+                    <div class="salary-employee-big-row">Сотрудник</div>
+                    {% for month in months %}
+                        <div class="salary-month salary-employee-smal-row">{{ month }} {{ year_now }}</div>
                     {% endfor %}
                 </div>
-                {% comment %} <div style="color: red; font-size: 12px;">DEBUG group_month_totals: {{ employee.group_month_totals }}</div> {% endcomment %}
-                {% for group in employee.groups_full %}
-                    {% comment %} <div class="salary-group-row">
-                    <div class="salary-group-name">
-                        {% if group.name == 'group1' %}
-                            ООО
-                        {% elif group.name == 'group2' %}
-                            $
-                        {% elif group.name == 'group3' %}
-                            КВ
-                        {% elif group.name == 'group4' %}
-                            Долги
-                        {% else %}
-                            {{ group.name }}
-                        {% endif %}
-                    </div>
-                    </div> {% endcomment %}
-                    {% comment %} <div style="color: blue; font-size: 12px;">DEBUG group.name: {{ group.name }}</div> {% endcomment %}
-                    {% with group_totals=employee.group_month_totals|get_item:group.name %}
-                        {% for category in group.categories %}
-                            <div class="salary-category-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                            data-attr-shrink-item="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                            >
-                                <div class="salary-category-name  salary-employee-big-row "
-                                     >
-                                    {{ category.name }}
-                                    {% comment %}  — <b>{{ category.amount|floatformat:2 }} р</b> {% endcomment %}
+                {% for employee in employees %}
+                    <div class="salary-employee-wrap_one">
+                        <div class="salary-employee-row stiky-position2">
+                            <div class="salary-employee-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                            <div class="salary-employee-name salary-employee-big-row">
+                                {{ employee.employee }}
+                                <div class="shrink-item-vert"
+                                     data-attr-shrink-vert='salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}'
+                                     data-attr-shrink-name-vert='salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}'>
+                                    <svg width="16"
+                                         height="16"
+                                         viewBox="0 0 16 16"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                                        <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                                        <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                                    </svg>
                                 </div>
-                                {% for m in months %}
-                     
-                                <div class="salary_employee_item_wrapper">
-                                    <div class="salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                                         data-attr-shrink-item="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                                         data-bank-in="{{ category.bank_in }}"
-                                         data-id-people="{{ employee.employee.id }}"
-                                         data-sub-categ-name="{{ category.name_id }}"
-                                         data-operation-data-month="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"m" }}"
-                                         data-operation-data-year="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"Y" }}"
-                                         data-operation-old-id="{{ employee.operations_by_month|get_item:category.name|get_item:m }}"
-                                         data-operation-data-start-all_2="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:'Y-m-d' }}"
-                                         data-prev-month="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}"
-                                         >
-                                         
-                                         {% if month_now_name == m and employee.operations_by_month|get_item:category.name|get_item:m|default:"0" == "0" %}
-                                            <p class="salary_employee_item_sums_text oper-account-cell-zero">
-                                                {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
-                                            </p>
-                                            <input type="text" class="salary_employee_item_sums_inp" value="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
-                                         {% else %}
-                                            <p class="salary_employee_item_sums_text">
-                                                {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
-                                            </p>
-                                            <input type="text" class="salary_employee_item_sums_inp" value="{{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }}">
-                                         {% endif %}
-                                         
-                                          
-                                        
-                                         
-                                         
+                                {% comment %} <span class="employee-total-year">({{ employee.total_year|format_rub }} ₽)</span> {% endcomment %}
+                            </div>
+                            {% for total in employee.total_by_month %}
+                                <div class="salary-category-month-row salary-employee-smal-row">
+                                    <b>{{ total|format_rub }} ₽</b>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% for group in employee.groups_full %}
+                            {% with group_totals=employee.group_month_totals|get_item:group.name %}
+                                {% for category in group.categories %}
+                                    <div class="salary-category-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                         data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}">
+                                        <div class="salary-category-name salary-employee-big-row">{{ category.name }}
+                                            {% comment %} <span class="category-total-year">({{ category.total_year|format_rub }} ₽)</span> {% endcomment %}
+                                        </div>
+                                        {% for m in months %}
+                                            <div class="salary_employee_item_wrapper">
+                                                <div class="salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                     data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                     data-bank-in="{{ category.bank_in }}"
+                                                     data-id-people="{{ employee.employee.id }}"
+                                                     data-sub-categ-name="{{ category.name_id }}"
+                                                     data-operation-data-month="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"m" }}"
+                                                     data-operation-data-year="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"Y" }}"
+                                                     data-operation-old-id="{{ employee.operations_by_month|get_item:category.name|get_item:m }}"
+                                                     data-operation-data-start-all_2="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:'Y-m-d' }}"
+                                                     data-prev-month="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
+                                                    {% if month_now_name == m and employee.operations_by_month|get_item:category.name|get_item:m|default:"0" == "0" %}
+                                                        <p class="salary_employee_item_sums_text oper-account-cell-zero">
+                                                            {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
+                                                        </p>
+                                                        <input type="text"
+                                                               class="salary_employee_item_sums_inp"
+                                                               value="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
+                                                    {% else %}
+                                                        <p class="salary_employee_item_sums_text">
+                                                            {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
+                                                        </p>
+                                                        <input type="text"
+                                                               class="salary_employee_item_sums_inp"
+                                                               value="{{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }}">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="btn_add_operation_salary">ОК</div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                    <div class="btn_add_operation_salary">ОК</div>
-                                </div>
                                 {% endfor %}
-                            </div>
+                                <div class="salary-total-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                     data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}">
+                                    <div class="salary-employee-big-row">
+                                        <b>
+                                            {% if group.name == 'group1' %}
+                                                Итого ООО 
+                                            {% elif group.name == 'group2' %}
+                                                Итого $ 
+                                            {% elif group.name == 'group3' %}
+                                                Итого КВ 
+                                            {% elif group.name == 'group4' %}
+                                                Остаток долга 
+                                            {% endif %}
+                                        </b>
+                                    </div>
+                                    {% for total in group_totals %}
+                                        <div class="salary-category-month-row salary-employee-smal-row">{{ total|format_rub }} ₽</div>
+                                    {% endfor %}
+                                </div>
+                            {% endwith %}
                         {% endfor %}
-                        <div class="salary-total-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                        data-attr-shrink-item="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
-                        >
-                            <div class="salary-employee-big-row ">
-                                <b>
-                                    {% if group.name == 'group1' %}
-                                        Итого ООО
-                                    {% elif group.name == 'group2' %}
-                                        Итого $
-                                    {% elif group.name == 'group3' %}
-                                        Итого КВ
-                                    {% elif group.name == 'group4' %}
-                                        Остаток долга
-                                    {% endif %}
-                                </b>
+                    </div>
+                {% endfor %}
+                <div class="salary-totals">
+                    <div class="salary-total-header font-bold">
+                        <div class="salary-employee-big-row">ИТОГО</div>
+                    </div>
+                    {% for total_name, totals in totals_by_month.items %}
+                        <div class="salary-total-row">
+                            <div class="salary-employee-big-row">
+                                <b>{{ total_name }}</b>
                             </div>
-                          
-                            {% for total in group_totals %}
+                            {% for total in totals %}
                                 <div class="salary-category-month-row salary-employee-smal-row">{{ total|format_rub }} ₽</div>
                             {% endfor %}
                         </div>
-                    {% endwith %}
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="salary-totals">
-        <div class="salary-total-header font-bold">
-            <div class="salary-employee-big-row">ИТОГО</div>
-            
-        </div>
-        {% for total_name, totals in totals_by_month.items %}
-            <div class="salary-total-row">
-                <div class="salary-employee-big-row">
-                    <b>{{ total_name }}</b>
+                    {% endfor %}
                 </div>
-                {% for total in totals %}
-                    <div class="salary-category-month-row salary-employee-smal-row">{{ total|format_rub }} ₽</div>
+            </div>
+            <div class="salary-old">
+                {% for year_data in operations_old %}
+                    <div class="salary-old-year">
+                        <div class="salary-header font-bold stiky-position1">
+                            <div class="salary-employee-smal-row">{{ year_data.year|cut:" " }}
+                            <div class="btn_month_invoce-shrink shrink-item"
+                                             data-attr-shrink='salary-old_{{ year_data.year|cut:" " }}'
+                                             data-attr-shrink-name='salary-old_{{ year_data.year|cut:" " }}'>
+                                            <svg width="16"
+                                                 height="16"
+                                                 viewBox="0 0 16 16"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                                                <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                                                <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                                            </svg>
+                                        </div> 
+                            
+                            </div>
+                            {% for month in all_months %}
+                                <div class="salary-month salary-employee-smal-row salary-old_{{ year_data.year|cut:" " }}" 
+                                data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'>{{ month }}</div>
+                            {% endfor %}
+                        </div>
+                        {% for employee in year_data.employees %}
+                            <div class="salary-employee-wrap_one">
+                                <div class="salary-employee-row stiky-position2">
+                                    <div class="salary-employee-num"></div>
+                                    <div class="salary-employee-name salary-employee-smal-row">{{ employee.total_year|format_rub }} ₽</div>
+                                    {% for total in employee.total_by_month %}
+                                        <div class="salary-category-month-row salary-employee-smal-row salary-old_{{ year_data.year|cut:" " }}"
+                                        data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'
+                                        ><b>{{ total|format_rub }} ₽</b></div>
+                                    {% endfor %}
+                                </div>
+                                {% for group in employee.groups_full %}
+                                    {% for category in group.categories %}
+                                        <div class="salary-category-row salary-employee_additional_{{ employee.employee }}_"
+                                        data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_">
+                                            <div class="salary-category-name salary-employee-big-row">
+                                                {{ category.total_year|format_rub }} ₽
+                                            </div>
+                                            {% for month in all_months %}
+                                                <div class="salary_employee_item_wrapper salary-employee_additional_{{ employee.employee }}_ salary-old_{{ year_data.year|cut:" " }}"
+                                                data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'
+                                                data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_">
+                                                    <div class="salary_employee_item_sums salary-category-month-row salary-employee-smal-row"
+                                                    data-bank-in="{{ category.bank_in }}"
+                                                    data-id-people="{{ employee.employee.id }}"
+                                                    data-sub-categ-name="{{ category.name_id }}"
+                                                    data-operation-data-month="{{ month|date:'m' }}"
+                                                    data-operation-data-year="{{ year_data.year|cut:" " }}"
+                                                    data-operation-old-id="{{ employee.operations_by_month|get_item:category.name|get_item:month }}"
+                                                    data-operation-data-start-all_2="{{ employee.months|get_month_by_name:month|get_item:"date_start"|date:"Y-m-d" }}">
+                                                        <p class="salary_employee_item_sums_text">
+                                                            {{ employee.categories_by_month|get_item:category.name|get_item:month|default:"0"|format_rub }} ₽
+                                                        </p>
+                                                        <input type="text"
+                                                               class="salary_employee_item_sums_inp"
+                                                               value="{{ employee.categories_by_month|get_item:category.name|get_item:month|default:"0"|format_rub }}">
+                                                        <div class="btn_add_operation_salary">ОК</div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                    <div class="salary-total-row">
+                                        <div class="salary-employee-big-row salary-employee_additional_{{ employee.employee }}_"
+                                        data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_">
+                                            <b>
+                                                {% if group.name == 'group1' %}
+                                                    {{ group.total_year|format_rub }} ₽
+                                                {% elif group.name == 'group2' %}
+                                                    {{ group.total_year|format_rub }} ₽
+                                                {% elif group.name == 'group3' %}
+                                                    {{ group.total_year|format_rub }} ₽
+                                                {% elif group.name == 'group4' %}
+                                                    {{ group.total_year|format_rub }} ₽
+                                                {% endif %}
+                                            </b>
+                                        </div>
+                                        {% for total in group.totals_by_month %}
+                                            <div class="salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_ salary-old_{{ year_data.year|cut:" " }}"
+                                            data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_"
+                                            data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'>{{ total|format_rub }} ₽</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <div class="salary-totals">
+                            <div class="salary-total-header font-bold">
+                                <div class="salary-employee-big-row">ИТОГО {{ year_data.year|cut:" "  }}</div>
+                            </div>
+                            {% for total_name, totals in totals_old_by_month|get_item:year_data.year|items %}
+                                {% if total_name != "total_year" %}
+                                    <div class="salary-total-row">
+                                        <div class="salary-employee-big-row font-bold">
+                                            {% comment %} <b>{{ total_name }}</b> {% endcomment %}
+                                            {% if totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name %}
+                                                {{ totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name|default:"0"|format_rub }}
+                                            {% else %}
+                                                0 ₽
+                                            {% endif %}
+                                        </div>
+                                        {% for total in totals %}
+                                            <div class="salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_ salary-old_{{ year_data.year|cut:" " }}"
+                                            data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_"
+                                            data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'>{{ total|format_rub }} ₽</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     </div>
+
 {% endblock content %}
+

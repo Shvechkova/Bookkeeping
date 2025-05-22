@@ -5,13 +5,21 @@ register = template.Library()
 
 @register.filter
 def get_item(dictionary, key):
-    if isinstance(dictionary, dict):
-        return dictionary.get(key, {})
-    # return ""
+    if dictionary is None:
+        return {}
+    return dictionary.get(key, {})
 
 @register.filter
-def get_month_by_name(months_list, month_name):
-    for month in months_list:
-        if month.get('name') == month_name:
+def get_month_by_name(months, month_name):
+    if months is None:
+        return None
+    for month in months:
+        if month["name"] == month_name:
             return month
-    return {}
+    return None
+
+@register.filter
+def items(dictionary):
+    if dictionary is None:
+        return []
+    return dictionary.items()

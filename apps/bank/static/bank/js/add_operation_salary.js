@@ -166,3 +166,32 @@ function addSalaryOperation(element, btnAdd) {
   }
   
 }
+
+
+// установка сортировки 
+
+const sortDateSalary = document.querySelector(".salary-sorting");
+if (sortDateSalary) {
+  const sortMonthReload = sessionStorage.getItem("sortSalary");
+  if (sortMonthReload) {
+    sortDateSalary.setAttribute("salary-sorting-date", sortMonthReload);
+  }
+
+  const btnSort = document.querySelectorAll(".btn_sorting_salary");
+  console.log(btnSort)
+  btnSort.forEach((item) => {
+    item.addEventListener("click", () => {
+      const monthDate = item.getAttribute("data-sort-salary");
+      sortDateSalary.setAttribute("data-sort-salary", monthDate);
+      sessionStorage.setItem("sortSalary", monthDate);
+      document.cookie = "sortSalary=" + monthDate;
+      location.reload();
+    });
+
+    const indexBtn = sortDateSalary.getAttribute("salary-sorting-date");
+    const monthDate = item.getAttribute("data-sort-salary");
+    if (indexBtn == monthDate) {
+      item.classList.add("active_sorting");
+    }
+  });
+}

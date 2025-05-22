@@ -404,3 +404,15 @@
 .salary-total-row{
   font-weight: 500!important;
 }
+
+.employee-total-year, .category-total-year {
+  font-size: 0.9em;
+  color: #666;
+  margin-left: 8px;
+}
+.employee-total-year {
+  font-weight: bold;
+}
+.shrink-item-vert{
+cursor: pointer;
+}

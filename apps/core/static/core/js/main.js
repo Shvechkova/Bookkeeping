@@ -129,8 +129,8 @@ function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp(
       "(?:^|; )" +
-      name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-      "=([^;]*)"
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+        "=([^;]*)"
     )
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
@@ -139,17 +139,19 @@ function getCookie(name) {
 // валидация без радио кнопок
 function validate(elem, btn) {
   const modalWindows = document.getElementById(elem);
-  const allInputModal = modalWindows.querySelectorAll('input:not([type=hidden])');
+  const allInputModal = modalWindows.querySelectorAll(
+    "input:not([type=hidden])"
+  );
   const allSelectModal = modalWindows.querySelectorAll("select");
-  console.log()
+  console.log();
   const add_contract = document.querySelector(btn);
   let inputYes;
   let selectYes;
   let validateClass = false;
   allInputModal.forEach((elInput) => {
-    console.log(elInput)
+    console.log(elInput);
     if (elInput.value == "" || elInput.value == "0" || elInput.value == " ₽") {
-      console.log(elInput.value)
+      console.log(elInput.value);
       const c = elInput.getAttribute("data-validate");
       if (c == 0) {
         add_contract.disabled = false;
@@ -159,7 +161,7 @@ function validate(elem, btn) {
         throw false;
       }
     } else {
-      console.log(elInput.value)
+      console.log(elInput.value);
       add_contract.disabled = false;
       inputYes = true;
     }
@@ -224,7 +226,7 @@ function validateOtherInput(elem, btn) {
 
 // валидация без радио кнопок для кнопки ок дающаяя сохранить форму
 function validateBtn(elem, btn) {
-  console.log("validateBtn")
+  console.log("validateBtn");
   const modalWindows = document.getElementById(elem);
 
   const add_contract = document.querySelector(btn);
@@ -391,7 +393,6 @@ function replaceNam() {
   //         .replace(/\D/g, "")
   //         .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
   //   }
-
   //   elem.addEventListener("keydown", (event) => {
   //     var key = event.keyCode;
   //     if (key != 8) {
@@ -439,14 +440,14 @@ function replaceNamDot() {
   });
 }
 function getCurrentPrice(p) {
-  const price = p.replace(",", ".").replace(/(\d)\++/g, '$1');
+  const price = p.replace(",", ".").replace(/(\d)\++/g, "$1");
 
   return price;
 }
 function getCurrentPriceJS(p) {
-  console.log("getCurrentPriceJS(p)",p)
-  let price = p.replace(",", ".").replace(/(\d)\++/g, '$1');
-  price = parseInt(price)
+  console.log("getCurrentPriceJS(p)", p);
+  let price = p.replace(",", ".").replace(/(\d)\++/g, "$1");
+  price = parseInt(price);
   return price;
 }
 function monthToInt(str) {
@@ -465,9 +466,6 @@ function monthToInt(str) {
   return 0;
 }
 
-
-
-
 // document.addEventListener('DOMContentLoaded', _ => {
 //   const elems = document.querySelectorAll('.invoice_month_out_additional')
 //   if (elems) {
@@ -485,7 +483,6 @@ function monthToInt(str) {
 
 //     // if (localStorage.getItem('elem'))
 
-
 //     const btn = document.querySelectorAll('.btn_month_invoce-shrink')
 //     btn.forEach((element, i) => {
 //       element.addEventListener("click", () => {
@@ -500,7 +497,6 @@ function monthToInt(str) {
 //           localStorage.removeItem(dataShrinkDate)
 //           element.style.transform = 'rotate(' + 0 + 'deg)';
 
-
 //         } else {
 //           shrinkElem.forEach((elementSr, i) => {
 //             elementSr.style.display = 'none';
@@ -508,7 +504,6 @@ function monthToInt(str) {
 //           localStorage.setItem(dataShrinkDate, 1)
 //           element.style.transform = 'rotate(' + 180 + 'deg)';
 //         }
-
 
 //       })
 
@@ -522,70 +517,190 @@ function monthToInt(str) {
 //   //   localStorage.setItem('elem', 1)
 //   // })
 // })
-
-document.addEventListener('DOMContentLoaded', _ => {
-  const elems = document.querySelectorAll('.shrink-item')
-  if (elems) {
-    console.log("elems", elems)
-    elems.forEach((elementItem, i) => {
-      const dataShrinkDateItem = elementItem.getAttribute("data-attr-shrink-name");
-      console.log("dataShrinkDateItem", dataShrinkDateItem)
-      if (localStorage.getItem(dataShrinkDateItem)) {
-        const shrinkElem = document.querySelectorAll(`.${dataShrinkDateItem}`)
-        shrinkElem.forEach((elementSr, i) => {
-          elementSr.style.display = 'none';
-          const btnShr = document.querySelector(`[data-attr-shrink=${dataShrinkDateItem}]`)
-          btnShr.style.transform = 'rotate(' + 180 + 'deg)';
-          elementSr.style.background = 'none';
-          // localStorage.setItem(dataShrinkDateItem, 0)
-          })
-      }
-    })
-
-
-
-    const btn = document.querySelectorAll('.shrink-item')
-    btn.forEach((element, i) => {
-
-      element.addEventListener("click", () => {
-
-        const dataShrinkDate = element.getAttribute("data-attr-shrink-name");
-        console.log("dataShrinkDate", dataShrinkDate)
-        const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`)
-        if (localStorage.getItem(dataShrinkDate)) {
-          console.log(99999)
-          const page = document.querySelector("#page_name")
-          console.log(page)
-          let display = 'block'
-          if (page || page.value == "salary"){
-            display = "flex"
-          }
-          console.log(display)
+function ShrinkHorizon2() {
+  
+    const elems = document.querySelectorAll(".shrink-item");
+    if (elems) {
+      console.log("elems", elems);
+      elems.forEach((elementItem, i) => {
+        const dataShrinkDateItem = elementItem.getAttribute(
+          "data-attr-shrink-name"
+        );
+        console.log("dataShrinkDateItem", dataShrinkDateItem);
+        if (localStorage.getItem(dataShrinkDateItem)) {
+          const shrinkElem = document.querySelectorAll(
+            `.${dataShrinkDateItem}`
+          );
           shrinkElem.forEach((elementSr, i) => {
-            elementSr.style.display = display;
-          })
-          localStorage.removeItem(dataShrinkDate)
-          element.style.transform = 'rotate(' + 0 + 'deg)';
-
-
-        } else {
-          shrinkElem.forEach((elementSr, i) => {
-            elementSr.style.display = 'none';
-          })
-          localStorage.setItem(dataShrinkDate, 1)
-          element.style.transform = 'rotate(' + 180 + 'deg)';
+            elementSr.style.display = "none";
+            const btnShr = document.querySelector(
+              `[data-attr-shrink=${dataShrinkDateItem}]`
+            );
+            btnShr.style.transform = "rotate(" + 180 + "deg)";
+            elementSr.style.background = "none";
+            // ShrinkVert()
+            // localStorage.setItem(dataShrinkDateItem, 0)
+          });
         }
+      });
+    }
+ 
+}
+function ShrinkVert() {
+  document.addEventListener("DOMContentLoaded", (_) => {
+    const elems = document.querySelectorAll(".shrink-item-vert");
+    if (elems) {
+      elems.forEach((elementItem, i) => {
+        const dataShrinkDateItem = elementItem.getAttribute(
+          "data-attr-shrink-name-vert"
+        );
+        console.log("dataShrinkDateItem", dataShrinkDateItem);
+        if (localStorage.getItem(dataShrinkDateItem)) {
+          const shrinkElem = document.querySelectorAll(
+            `.${dataShrinkDateItem}`
+          );
+          shrinkElem.forEach((elementSr, i) => {
+            elementSr.style.display = "none";
+            const btnShr = document.querySelector(
+              `[data-attr-shrink-vert=${dataShrinkDateItem}]`
+            );
+            btnShr.style.transform = "rotate(" + 180 + "deg)";
+            elementSr.style.background = "none";
+            // localStorage.setItem(dataShrinkDateItem, 0)
+          });
+        }
+      });
 
+      const btn = document.querySelectorAll(".shrink-item-vert");
+      btn.forEach((element, i) => {
+        element.addEventListener("click", () => {
+          const dataShrinkDate = element.getAttribute(
+            "data-attr-shrink-name-vert"
+          );
+          console.log("dataShrinkDate", dataShrinkDate);
+          const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`);
+          if (localStorage.getItem(dataShrinkDate)) {
+            console.log(99999);
+            console.log(shrinkElem);
+            const page = document.querySelector("#page_name");
+            let display = "block";
+            if (page || page.value == "salary") {
+              display = "flex";
+            }
+            console.log(display);
+            shrinkElem.forEach((elementSr, i) => {
+              elementSr.style.display = display;
+            });
+            localStorage.removeItem(dataShrinkDate);
+            element.style.transform = "rotate(" + 0 + "deg)";
+            ShrinkHorizon2()
+          } else {
+            shrinkElem.forEach((elementSr, i) => {
+              elementSr.style.display = "none";
+            });
+            localStorage.setItem(dataShrinkDate, 1);
+            element.style.transform = "rotate(" + 180 + "deg)";
+            ShrinkHorizon2()
+          }
+        });
+      });
+    }
+  });
+}
+ShrinkVert();
 
-      })
-
-    })
+function ShrinkVert2() {
+  const elems = document.querySelectorAll(".shrink-item-vert");
+  if (elems) {
+    elems.forEach((elementItem, i) => {
+      const dataShrinkDateItem = elementItem.getAttribute(
+        "data-attr-shrink-name-vert"
+      );
+      console.log("dataShrinkDateItem", dataShrinkDateItem);
+      if (localStorage.getItem(dataShrinkDateItem)) {
+        const shrinkElem = document.querySelectorAll(`.${dataShrinkDateItem}`);
+        shrinkElem.forEach((elementSr, i) => {
+          elementSr.style.display = "none";
+          const btnShr = document.querySelector(
+            `[data-attr-shrink-vert=${dataShrinkDateItem}]`
+          );
+          btnShr.style.transform = "rotate(" + 180 + "deg)";
+          elementSr.style.background = "none";
+          // localStorage.setItem(dataShrinkDateItem, 0)
+        });
+      }
+    });
   }
-  // if (localStorage.getItem('elem')) elem.disabled = true;
-  // const btn = document.querySelector('.btn_month_invoce-shrink')
-  // console.log(btn)
-  // btn.addEventListener("click", function() {
-  //   elem.disabled = true;
-  //   localStorage.setItem('elem', 1)
-  // })
-})
+}
+
+function ShrinkHorizon() {
+  document.addEventListener("DOMContentLoaded", (_) => {
+    const elems = document.querySelectorAll(".shrink-item");
+    if (elems) {
+      console.log("elems", elems);
+      elems.forEach((elementItem, i) => {
+        const dataShrinkDateItem = elementItem.getAttribute(
+          "data-attr-shrink-name"
+        );
+        console.log("dataShrinkDateItem", dataShrinkDateItem);
+        if (localStorage.getItem(dataShrinkDateItem)) {
+          const shrinkElem = document.querySelectorAll(
+            `.${dataShrinkDateItem}`
+          );
+          shrinkElem.forEach((elementSr, i) => {
+            elementSr.style.display = "none";
+            const btnShr = document.querySelector(
+              `[data-attr-shrink=${dataShrinkDateItem}]`
+            );
+            btnShr.style.transform = "rotate(" + 180 + "deg)";
+            elementSr.style.background = "none";
+            // ShrinkVert()
+            // localStorage.setItem(dataShrinkDateItem, 0)
+          });
+        }
+      });
+
+      const btn = document.querySelectorAll(".shrink-item");
+      btn.forEach((element, i) => {
+        element.addEventListener("click", () => {
+          const dataShrinkDate = element.getAttribute("data-attr-shrink-name");
+          console.log("dataShrinkDate", dataShrinkDate);
+          const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`);
+          if (localStorage.getItem(dataShrinkDate)) {
+            console.log(99999);
+            const page = document.querySelector("#page_name");
+            console.log(page);
+            let display = "block";
+            if (page || page.value == "salary") {
+              display = "flex";
+            }
+            console.log(display);
+            shrinkElem.forEach((elementSr, i) => {
+              elementSr.style.display = display;
+            });
+            localStorage.removeItem(dataShrinkDate);
+            element.style.transform = "rotate(" + 0 + "deg)";
+            console.log("before ShrinkVert");
+            ShrinkVert2();
+          } else {
+            shrinkElem.forEach((elementSr, i) => {
+              elementSr.style.display = "none";
+            });
+            localStorage.setItem(dataShrinkDate, 1);
+            element.style.transform = "rotate(" + 180 + "deg)";
+            console.log("before ShrinkVert");
+            ShrinkVert2();
+          }
+        });
+      });
+    }
+    // if (localStorage.getItem('elem')) elem.disabled = true;
+    // const btn = document.querySelector('.btn_month_invoce-shrink')
+    // console.log(btn)
+    // btn.addEventListener("click", function() {
+    //   elem.disabled = true;
+    //   localStorage.setItem('elem', 1)
+    // })
+  });
+}
+ShrinkHorizon();
