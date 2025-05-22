@@ -68,35 +68,8 @@ class Operation(models.Model):
         blank=True,
         null=True,
     )
-    # name = models.ForeignKey(
-    #     NameOperation,
-    #     on_delete=models.PROTECT,
-    #     verbose_name="Название операции",
-    #     blank=True,
-    #     null=True,
-    # )
-    # category = models.ForeignKey(
-    #     CategoryOperation,
-    #     on_delete=models.PROTECT,
-    #     verbose_name="Категория операции",
-    #     blank=True,
-    #     null=True,
-    # )
-    # meta_category = models.ForeignKey(
-    #     MetaCategoryOperation,
-    #     on_delete=models.PROTECT,
-    #     verbose_name="Главная категория операции",
-    #     blank=True,
-    #     null=True,
-    # )
-
-    # people = models.ForeignKey(
-    #     Employee,
-    #     on_delete=models.PROTECT,
-    #     verbose_name="зарплата",
-    #     blank=True,
-    #     null=True,
-    # )
+    
+ 
 
     TYPE_OPERATION = [
         ("entry", "entry"),
@@ -122,7 +95,7 @@ class Operation(models.Model):
         verbose_name = "Операция"
         verbose_name_plural = "Операции"
 
-    def save(self, *args, **kwargs):
-        if self.comment == "":
-            self.comment = None
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.comment == "":
+    #         self.comment = None
+    #     super().save(*args, **kwargs)

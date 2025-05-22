@@ -2185,11 +2185,11 @@ input[type="radio"]:checked {
   border: 1px solid #000;
   border-radius: 5px;
   cursor: pointer;
-  /* display: none; */
+  display: none; 
 }
 
 .btn_add_operation_salary_active {
-  /* display: flex; */
+   display: flex; 
 }
 
 .change_btn_employee {

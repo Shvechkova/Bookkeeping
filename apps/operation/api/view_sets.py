@@ -29,17 +29,26 @@ class ОperationViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r"operation_save")
     def operation_save(self, request, *args, **kwargs):
+        print(request.method)
         try:
             data = request.data
             print(data)
             # СОХПРАНЕНИЕ ОПЕРАЦИИ
-            if data["comment"] == "" or data["comment"] == "null":
-                data['comment'] = None
-            serializer = self.serializer_class(data=data)
-            if serializer.is_valid():
-                obj = serializer.save()
-                print(obj)
+            if "comment" in data:
+                print("datacomment")
+                if  data["comment"] == "" or data["comment"] == "null":
+                    data['comment'] = None
+            else:
+                data["comment"] = None
+            print(11111)
 
+            serializer = self.serializer_class(data=data)
+   
+            if serializer.is_valid():
+                print("serializer.data")
+                obj = serializer.save()
+                print("obj")
+ 
                 # операциоо по услагам счетов
                 if "monthly_bill" in data:
                     servise_month = ServicesClientMonthlyInvoice.objects.get(
@@ -83,11 +92,16 @@ class ОperationViewSet(viewsets.ModelViewSet):
                 
                 elif "operaccount" in data:
                     pass                
+                elif "salary" in data:
+                    print("salary")
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 print(serializer.errors)
+                print("errorvalidetae")
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            print("all error")
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
         # serializer = self.serializer_class(data=data)

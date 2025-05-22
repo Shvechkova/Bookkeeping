@@ -358,11 +358,14 @@ def salary(request):
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
     date_start_year = str(year_now) + "-01-01"
+    
+    month_now_name = MONTHS_RU[month_now - 1]
 
     # Получаем активных сотрудников
     employee_now_year = Employee.objects.filter(
         # date_end__gte=date_start_year
     )
+   
 
     # Создаем морфологический анализатор
     morph = pymorphy3.MorphAnalyzer(lang="ru")
@@ -378,6 +381,9 @@ def salary(request):
     all_categories_qs = GroupeSalary.objects.all().select_related("bank").prefetch_related(Prefetch("bank"))
     all_categories_bank = all_categories_qs.values_list("bank","name","id")
     print(all_categories_bank)
+    cat_name_id = {}
+    for cat in all_categories_qs:
+        cat_name_id[cat.name] = cat.id
     # Определяем группы категорий
     salary_groups = {
         "group1": ["Оф ЗП (10 число)", "Оф Аванс", "Отпуск", "Оф Премия", "Больничный"],
@@ -392,6 +398,16 @@ def salary(request):
         Operation.objects.filter(
             salary__isnull=False,
             data__year__gte=year_now,
+        )
+        .select_related("salary")
+        .prefetch_related()
+        .order_by("-data")
+    )
+    
+    operations_old = (
+        Operation.objects.filter(
+            salary__isnull=False,
+            data__year__lt=year_now,
         )
         .select_related("salary")
         .prefetch_related()
@@ -423,10 +439,10 @@ def salary(request):
                 "group3_total": 0,
                 "group4_total": 0,
             }
-    print("salary_groups",salary_groups)
+    
     for dk in all_categories_qs:
         salary_groups_bank[dk.name] = dk.bank.id
-    print("salary_groups_bank",salary_groups_bank)         
+   
     # Обрабатываем операции
     for operation in operations:
         employee_id = operation.employee.id
@@ -498,17 +514,21 @@ def salary(request):
             "months": [],
             "groups": [],
             "categories_by_month": {},
+            "operations_by_month": {},
             "groups_full": [],
         }
 
         # Инициализация categories_by_month
         categories_by_month = {}
+        operations_by_month = {}
         for group_name, group_data in data["groups"].items():
             for category, _ in group_data["categories"].items():
                 if category not in categories_by_month:
                     categories_by_month[category] = {}
+                    operations_by_month[category] = {}
                 for month in months_current_year:
                     categories_by_month[category][month] = 0
+                    operations_by_month[category][month] = None
 
         # Заполнение categories_by_month по операциям
         for month in months_current_year:
@@ -516,20 +536,49 @@ def salary(request):
             for op in month_data["operations"]:
                 op_category = op.salary.name if hasattr(op.salary, "name") else None
                 if op_category:
-                    # Если категория "Оф ЗП (10 число)", добавляем в следующий месяц
+                    # Добавляем операцию в текущий месяц
+                    categories_by_month.setdefault(op_category, {})
+                    categories_by_month[op_category].setdefault(month, 0)
+                    categories_by_month[op_category][month] += op.amount
+                    operations_by_month.setdefault(op_category, {})
+                    operations_by_month[op_category].setdefault(month, None)
+                    operations_by_month[op_category][month] = op.id
+
+                    # Если это "Оф ЗП (10 число)", добавляем в total следующего месяца
                     if op_category == "Оф ЗП (10 число)":
                         idx = months_current_year.index(month)
                         if idx > 0:
                             next_month = months_current_year[idx - 1]
-                            categories_by_month.setdefault(op_category, {})
-                            categories_by_month[op_category].setdefault(next_month, 0)
-                            categories_by_month[op_category][next_month] += op.amount
-                    else:
-                        categories_by_month.setdefault(op_category, {})
-                        categories_by_month[op_category].setdefault(month, 0)
-                        categories_by_month[op_category][month] += op.amount
+                            # Добавляем в total следующего месяца
+                            if "total" not in categories_by_month[op_category]:
+                                categories_by_month[op_category]["total"] = {}
+                            categories_by_month[op_category]["total"][next_month] = op.amount
+
+        # Добавляем предполагаемые траты на основе предыдущего месяца
+        for category in categories_by_month:
+            prev_month_values = {}
+            for i, month in enumerate(months_current_year):
+                if i < len(months_current_year) - 1:
+                    prev_month = months_current_year[i + 1]
+                    prev_value = categories_by_month[category].get(prev_month, 0)
+                else:
+                    prev_value = 0
+                prev_month_values[month] = prev_value
+            categories_by_month[category]["prev_month_values"] = prev_month_values
+
+            # Обновляем total для операции "Оф ЗП (10 число)"
+            if category == "Оф ЗП (10 число)":
+                for month in months_current_year:
+                    idx = months_current_year.index(month)
+                    if idx < len(months_current_year) - 1:
+                        next_month = months_current_year[idx + 1]
+                        if next_month in categories_by_month[category]:
+                            if "total" not in categories_by_month[category]:
+                                categories_by_month[category]["total"] = {}
+                            categories_by_month[category]["total"][month] = categories_by_month[category][next_month]
 
         employee_info["categories_by_month"] = categories_by_month
+        employee_info["operations_by_month"] = operations_by_month
 
         # Формируем groups_full: всегда 4 группы, в каждой все категории из salary_groups
         groups_full = []
@@ -541,20 +590,31 @@ def salary(request):
             }
           
             for category in group_categories:
-
+                print(category)
                 # Сумма по всем месяцам для этого сотрудника и категории
-                cat_total = sum(categories_by_month.get(category, {}).values())
-                # cat = all_categories_qs.get(name=category)
-                # all_categories_bank
+                cat_total = sum(
+                    value for key, value in categories_by_month.get(category, {}).items() 
+                    if key not in ['prev_month_values', 'total']
+                )
+     
                 # bank_in = cat.bank.id
                 bank_in = None
                 for k, v in salary_groups_bank.items():
                    
                     if k == category:
                         bank_in = v
+                        
+                cat_in = None
+                for k, v in cat_name_id.items():
+                   
+                    if k == category:
+                        cat_in = v
+                        
+                        
                 group_info["categories"].append(
                     {
                         "name": category,
+                        "name_id": cat_in,
                         "amount": cat_total,
                         "bank_in": bank_in,
                     }
@@ -565,16 +625,59 @@ def salary(request):
 
         # Итоги по месяцам для сотрудника
         total_by_month = []
+        
+        # Словарь для хранения остатков долга
+        debt_balances = {}
+        
+        # Расчет остатка долга
+        # Создаем список месяцев в правильном порядке (от января к текущему месяцу)
+        months_ordered = []
+        for month in range(1, month_now + 1):
+            month_name = MONTHS_RU[month - 1]
+            months_ordered.append(month_name)
+        
+        # Сначала рассчитываем остатки долга
+        for i, month in enumerate(months_ordered):
+            # Получаем предыдущий месяц (если это не первый месяц)
+            prev_month = None
+            if i > 0:
+                prev_month = months_ordered[i - 1]
+            
+            # Получаем остаток предыдущего месяца
+            prev_balance = debt_balances.get(prev_month, 0) if prev_month else 0
+            
+            # Получаем операции за текущий месяц
+            debt_issued = employee_info["categories_by_month"].get("Выдано в долг", {}).get(month, 0)
+            debt_returned = employee_info["categories_by_month"].get("Возврат долга", {}).get(month, 0)
+            
+            # Рассчитываем текущий остаток
+            current_balance = prev_balance + debt_issued - debt_returned
+            current_balance = max(0, current_balance)  # Не даем остатку уйти в минус
+            
+            # Сохраняем остаток в промежуточный словарь
+            debt_balances[month] = current_balance
+            
+            # Сохраняем остаток в categories_by_month
+            if "Остаток долга" not in employee_info["categories_by_month"]:
+                employee_info["categories_by_month"]["Остаток долга"] = {}
+            employee_info["categories_by_month"]["Остаток долга"][month] = current_balance
+        
+        # Теперь рассчитываем общие суммы по месяцам в правильном порядке
         for month in months_current_year:
             month_total = 0
             for group in employee_info["groups_full"]:
-                for cat in group["categories"]:
-                    month_total += (
-                        employee_info["categories_by_month"]
-                        .get(cat["name"], {})
-                        .get(month, 0)
-                    )
+                if group["name"] != "group4":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Оф ЗП (10 число)":
+                            # Для "Оф ЗП (10 число)" берем значение из следующего месяца
+                            idx = months_current_year.index(month)
+                            if idx < len(months_current_year) - 1:  # Если это не последний месяц
+                                next_month = months_current_year[idx + 1]
+                                month_total += employee_info["categories_by_month"].get(cat["name"], {}).get(next_month, 0)
+                        else:
+                            month_total += employee_info["categories_by_month"].get(cat["name"], {}).get(month, 0)
             total_by_month.append(month_total)
+        
         employee_info["total_by_month"] = total_by_month
 
         # months_full: для каждого месяца — группы, для каждой группы — категории и total
@@ -607,26 +710,35 @@ def salary(request):
             group_month_totals[group["name"]] = []
             for month in months_current_year:
                 month_total = 0
-                for cat in group["categories"]:
-                    month_total += (
-                        employee_info["categories_by_month"]
-                        .get(cat["name"], {})
-                        .get(month, 0)
-                    )
+                if group["name"] == "group4":
+                    # Для группы 4 берем остаток долга
+                    month_total = employee_info["categories_by_month"].get("Остаток долга", {}).get(month, 0)
+                else:
+                    for cat in group["categories"]:
+                        if cat["name"] == "Оф ЗП (10 число)":
+                            # Для "Оф ЗП (10 число)" берем значение из следующего месяца
+                            idx = months_current_year.index(month)
+                            if idx < len(months_current_year) - 1:
+                                next_month = months_current_year[idx + 1]
+                                month_total += employee_info["categories_by_month"].get(cat["name"], {}).get(next_month, 0)
+                        else:
+                            month_total += employee_info["categories_by_month"].get(cat["name"], {}).get(month, 0)
                 group_month_totals[group["name"]].append(month_total)
         employee_info["group_month_totals"] = group_month_totals
 
         # Добавляем месяцы
         i = 0
         for month in months_current_year:
-            i +=1
-            print(len(months_current_year) - i)
+            i += 1
             month_data = data["months"][month]
+            # Определяем номер месяца
+            month_number = MONTHS_RU.index(month) + 1
+            # Устанавливаем дату начала для этого месяца
+            date_start = datetime.datetime(year_now, month_number, 1)
             employee_info["months"].append(
                 {
                     "name": month,
-                    "name": month,
-                    "date_start": datetime.datetime(year_now, len(months_current_year) , 1),
+                    "date_start": date_start,
                     "group1_total": month_data["group1_total"],
                     "group2_total": month_data["group2_total"],
                     "group3_total": month_data["group3_total"],
@@ -650,17 +762,40 @@ def salary(request):
 
     # Итоги по всем сотрудникам по месяцам для каждой группы
     totals_by_month = {
-        "group1": [0 for _ in months_current_year],
-        "group2": [0 for _ in months_current_year],
-        "group3": [0 for _ in months_current_year],
-        "group4": [0 for _ in months_current_year],
+        "ИТОГО ЗП с ООО": [0 for _ in months_current_year],
+        "ИТОГО ЗП с $": [0 for _ in months_current_year],
+        "ИТОГО КВ $": [0 for _ in months_current_year],
+        "ИТОГО КВ ИП": [0 for _ in months_current_year],
+        "ИТОГО кварт. премия": [0 for _ in months_current_year],
+        "Итого общий долг": [0 for _ in months_current_year],
     }
+
     for idx, month in enumerate(months_current_year):
         for employee in employees_list:
-            totals_by_month["group1"][idx] += employee["months"][idx]["group1_total"]
-            totals_by_month["group2"][idx] += employee["months"][idx]["group2_total"]
-            totals_by_month["group3"][idx] += employee["months"][idx]["group3_total"]
-            totals_by_month["group4"][idx] += employee["months"][idx]["group4_total"]
+            # Итоги по ООО (group1)
+            for category in employee["categories_by_month"]:
+                if category == "Оф ЗП (10 число)":
+                    # Для "Оф ЗП (10 число)" берем значение из следующего месяца
+                    if idx < len(months_current_year) - 1:
+                        next_month = months_current_year[idx + 1]
+                        totals_by_month["ИТОГО ЗП с ООО"][idx] += employee["categories_by_month"][category].get(next_month, 0)
+                else:
+                    totals_by_month["ИТОГО ЗП с ООО"][idx] += employee["categories_by_month"][category].get(month, 0)
+            
+            # Итоги по $ (group2)
+            totals_by_month["ИТОГО ЗП с $"][idx] += employee["months"][idx]["group2_total"]
+            
+            # Итоги по КВ $ и КВ ИП (из group3)
+            for category in employee["categories_by_month"]:
+                if category == "КВ $":
+                    totals_by_month["ИТОГО КВ $"][idx] += employee["categories_by_month"][category].get(month, 0)
+                elif category == "КВ ИП":
+                    totals_by_month["ИТОГО КВ ИП"][idx] += employee["categories_by_month"][category].get(month, 0)
+                elif category == "квартальная премия":
+                    totals_by_month["ИТОГО кварт. премия"][idx] += employee["categories_by_month"][category].get(month, 0)
+            
+            # Итоги по долгам (group4) - используем group_month_totals
+            totals_by_month["Итого общий долг"][idx] += employee["group_month_totals"]["group4"][idx]
 
     # Получаем все категории GroupeSalary
     all_categories = list(all_categories_qs.values_list("name", flat=True))
@@ -672,15 +807,20 @@ def salary(request):
         for category in group_categories:
             if category in all_categories:
                 total = 0
-                for employee in employees_list:
-                    for month in months_current_year:
-                        total += (
-                            employee["categories_by_month"]
-                            .get(category, {})
-                            .get(month, 0)
-                        )
+                # Пропускаем категории из группы group4 (долги)
+                if group_name != "group4":
+                    for employee in employees_list:
+                        for month in months_current_year:
+                            total += (
+                                employee["categories_by_month"]
+                                .get(category, {})
+                                .get(month, 0)
+                            )
                 group_totals[group_name].append({"name": category, "total": total})
-
+    
+    
+    
+    
     context = {
         "title": title,
         "type_url": type_url,
@@ -690,6 +830,8 @@ def salary(request):
         "totals_by_month": totals_by_month,
         "group_totals": group_totals,
         "year_now": str(year_now),
+        "data_now": datetime.datetime.now(),
+        "month_now_name": month_now_name,
     }
     print(context)
 

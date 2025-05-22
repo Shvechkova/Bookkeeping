@@ -324,11 +324,18 @@
 .salary-employee-big-row {
   width: 270px;
   height: 44px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .salary-employee-smal-row {
   width: 120px;
   height: 44px;
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .salary-employee-row {
@@ -357,18 +364,43 @@
 
 .salary-employee-num {
   position: absolute;
-  left: 0;
-  padding-left: 10px;
-  min-width: 0!important;
+  left: -30PX;
+  /* left: 0;
+  padding-left: 10px; */
+  min-width: 0 !important;
 }
-.shrink-item{
+
+.shrink-item {
   cursor: pointer;
 }
-.salary-employee-name{
+
+.salary-employee-name {
   display: flex;
 }
-.salary-employee-name svg{
+
+.salary-employee-name svg {
   margin-left: 10px;
   margin-right: 10px;
   transform: rotate(90deg);
+}
+
+.stiky-position1 {
+  position: sticky;
+  z-index: 100;
+  top: 0;
+  background-color: white;
+}
+
+.stiky-position2 {
+  top: 43px;
+  position: sticky;
+  z-index: 100;
+  background-color: white;
+}
+
+.salary-totals .salary-total-row{
+  background-color: #FFF;
+}
+.salary-total-row{
+  font-weight: 500!important;
 }

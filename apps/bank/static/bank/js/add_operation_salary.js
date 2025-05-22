@@ -13,6 +13,7 @@ if (salaryBtn) {
         ".salary_employee_item_sums_inp"
       );
       salary_inp.style.display = "block"
+      // salary_inp.previousElementSibling.style.display = "block"
       const salary_text = element.querySelector(
         ".salary_employee_item_sums_text"
       );
@@ -30,6 +31,12 @@ if (salaryBtn) {
             ".btn_add_operation_salary"
           );
           btnAddOld.classList.remove("btn_add_operation_salary_active");
+          old_elem.querySelector(
+            ".salary_employee_item_sums_text"
+          ).style.display = "block"
+          old_elem.querySelector(
+            ".salary_employee_item_sums_inp"
+          ).style.display = "none"
         }
 
         old_elem = element;
@@ -49,7 +56,19 @@ if (salaryBtn) {
 }
 
 function addSalaryOperation(element, btnAdd) {
+  console.log(element)
   btnAdd.addEventListener("click", () => {
+    // function oldYearAccount(element) {
+    //   var now = new Date();
+    //   const operationYear = element.getAttribute("data-operation-data-year");
+    //   const operationMonth = element.getAttribute("data-operation-data-month");
+    //   const windowDate = new Date(operationYear, operationMonth, 1, 0, 0, 0, 0);
+    //   const jsonDate = windowDate.toJSON();
+    
+    //   console.log(jsonDate);
+    
+    //   return jsonDate;
+    // }
     console.log(element);
     var now = new Date();
     const nowYear = now.getFullYear();
@@ -57,7 +76,8 @@ function addSalaryOperation(element, btnAdd) {
     const nowDay = now.getDate()
     const actyalDateStr = nowYear + "-" + nowMonth + "-" + nowDay
     console.log(now.toLocaleDateString())
-    const dataAmount = getCurrentPrice(element.value)
+    let amount = element.querySelector(".salary_employee_item_sums_inp").value
+    const dataAmount = getCurrentPrice(amount)
     console.log(dataAmount)
     const dataId = element.getAttribute("data-operation-old-id");
     const dataBank = element.getAttribute("data-bank-in");
@@ -67,17 +87,17 @@ function addSalaryOperation(element, btnAdd) {
     const operationMonths = element.getAttribute("data-operation-data-month");
     const operationYear = +operationYears;
     const operationMonth = +operationMonths;
-    
-  
+    const startDate = element.getAttribute("data-operation-data-start-all_2");
+    const accountid = element.getAttribute("data-sub-categ-name");
 
     const form = new FormData();
     form.append("amount", dataAmount);
     form.append("bank_to", 5);
     form.append("bank_in", +dataBank);
-    form.append("employee_id", +dataPeople);
-    // form.append("salary", true);
-
-    form.append("data", actyalDateStr);
+    form.append("employee", +dataPeople);
+    form.append("salary", accountid);
+    form.append("comment", "");
+    form.append("data", startDate);
     
     
 
@@ -96,13 +116,13 @@ function addSalaryOperation(element, btnAdd) {
     if (nowYear == operationYear && nowMonth == operationMonth) {
     } else {
       const oldDate = oldYearSalary(element);
-      form.append("created_timestamp", oldDate);
+      // form.append("created_timestamp", oldDate);
     }
     let endpoint
     let method 
-    if (dataId != ""){
+    if (dataId != "" & dataId != "None" & dataId != "{}"){
       form.append("id", dataId);
-      endpoint = "/api/v1/operation/operation_save/" + dataId +"/"
+      endpoint = "/api/v1/operation/" + dataId +"/"
       method = "UPDATE"
     } else {
       endpoint = "/api/v1/operation/operation_save/"

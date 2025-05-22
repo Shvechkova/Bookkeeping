@@ -48,7 +48,7 @@
                                 <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                                 <div class="oper-account-cell oper-account-service">{{ account.name }}</div>
                                 {% for month in account.months %}
-                                {{month.date_start}}
+  
                                     <div class="oper-account-cell oper-account-value add_operation_oper_account"
                                          data-name="modal-add_operation_oper_account"
                                          data-categ-name="{{ category.category_name }}"
