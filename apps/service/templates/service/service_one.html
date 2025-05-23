@@ -94,14 +94,14 @@
                                                  data-cat-service="{{ title }}">+</div>
                                         </div>
                                     {% endif %}
-                                    <div class="invoice_month_item">{{ service_month_invoices.contract_sum|format_rub }}</div>
+                                    <div class="invoice_month_item">{{ service_month_invoices.contract_sum|format_rub }} ₽</div>
                                 </div>
                             </div>
                             {% if title_name == "ADV" %}
                                 <div class="invoice_month_summ_adv invoice_wrap">
                                     <div class="invoice_month_summ_adv-main">
                                         {% if forloop.first %}<div class="invoice_month_title">Ведение</div>{% endif %}
-                                        <div class="invoice_month_item">{{ service_month_invoices.adv_all_sum|format_rub }}</div>
+                                        <div class="invoice_month_item ">{{ service_month_invoices.adv_all_sum|format_rub }} ₽</div>
                                     </div>
                                 </div>
                             {% endif %}
@@ -156,7 +156,10 @@
                                     {% for platform_item in platform %}
                                         <div class=" invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                              data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
-                                            {% if forloop.parentloop.first %}<div class="invoice_month_title small_bold">{{ platform_item.name }}</div>{% endif %}
+                                            {% if forloop.parentloop.first %}
+                                            <div class="invoice_month_title small_bold">{{ platform_item.name }}</div>
+                                            {% endif %}
+                                            
                                             <div class="invoice_month_item suborder_out_operation small"
                                                  data-sub-type="1"
                                                  data-name="modal-suborder_out_operation"
@@ -168,12 +171,9 @@
                                                  data-name-sub=" {{ platform_item.name }}"
                                                  data-idName-sub=" {{ platform_item.id }}"
                                                  data-idsuborder-sub="{% for suborder in suborders %} {% if suborder.month_bill.id == service_month_invoices.id and suborder.platform.id == platform_item.id %} {{ suborder.id }} {% else %} {% endif %} {% endfor %}"
-                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth|format_rub %}" {% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }} {% elif platform_item.name == "Я.Директ" %} {{ service_month_invoices.yandex }} {% else %} 0 {% endif %} {% else %} 0 {% endif %} data-id-sub="
-                                                 {% if service_month_invoices.sum_subcontractmonth %} {% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }} {% elif platform_item.name == "Я.Директ" %} {{ service_month_invoices.yandex }} {% else %} 0 {% endif %}
-                                                 {% else %}
-                                                 0
-                                                 {% endif %}
-                                                 ">
+                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}" 
+                                                 data-id-sub="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}"
+                                                 >
                                                 <div class="invoice_month_item_text">
                                                     {% if service_month_invoices.sum_subcontractmonth %}
                                                         {% if platform_item.name == "Таргет" %}
@@ -330,8 +330,10 @@
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                          data-bill-month-sum-dont-operation="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                         data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all|format_rub }}"
-                                         data-operation-old-id="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         {% comment %} data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         data-operation-old-id="{{ service_month_invoices.operations_add_all|format_rub }}" {% endcomment %}
+                                         data-bill-month-operation-entry="{{ service_month_invoices.operation_amount_to_all|format_rub }}"
+                                         data-operation-old-id="{{ service_month_invoices.operation_amount_to_all|format_rub }}"
                                          data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}">
                                         {% if service_month_invoices.operation_amount_to_all_diff == 0 %}
                                             <p class="result_ok">{{ service_month_invoices.operation_amount_to_all|format_rub }}  ₽</p>
@@ -440,10 +442,11 @@
                                          data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                          data-bill-month-sum-dont-operation="{{ service_month_invoices.contract.sum|format_rub }} "
-                                         data-bill-month-name="{{ bill.contract.number }}"
+                                       
                                          data-bill-month-operation-entry=""
                                          data-operation-old-id=""
-                                         data-bill-month-data="{{ bill.month|date:'F Y' }}"
+                                         data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
+                                         data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}"
                                          data-bill-month-diff-sum="{% if service_month_invoices.operation_amount_out_all_diff %} {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} {% else %} 0 {% endif %}"
                                          {% comment %}
                                          data-id-sub-amount="{{service_month_invoices.diff_sum|format_rub}}"
@@ -481,7 +484,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="invoice_month_out_additional shrink-item invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}"
+                                <div class="invoice_month_out_additional invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                      data-attr-shrink-item='invoice_month_out_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                     {% if forloop.first %}<div class="invoice_month_title small_bold">ООО</div>{% endif %}
                                     <div class="invoice_month_item">

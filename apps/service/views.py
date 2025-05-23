@@ -219,7 +219,7 @@ def service_one(request, slug):
                 & Q(operation__monthly_bill__id=OuterRef("pk")),
                 default=0,
             ),
-            operation_amount_out_all_diff=F("sum_subcontractmonth")
+            operation_amount_out_all_diff=F("diff_sum")
             - F("operation_amount_out_all"),
             operation_amount_out_all_diff_notnull=Case(
                         When(

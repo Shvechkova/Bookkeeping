@@ -119,7 +119,9 @@ function addFetchOperationOut(element, endpoint, elem) {
       '#sum_cheked_out input[name="sum"]'
     );
 
-    let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    // let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    let intMonthSum = getCurrentPrice(allMonthSum)
+    console.log(intMonthSum)
     // если первое добавление операции
     if (stepCheked == "1") {
       sumElement.forEach((el) => {
@@ -136,8 +138,6 @@ function addFetchOperationOut(element, endpoint, elem) {
               "#other_sum_namber_out"
             );
             sumChecked = +otherSumCheck.value
-              .replace(/[^+\d]/g, "")
-              .replace(/(\d)\++/g, "$1");
 
             return;
           }
@@ -156,8 +156,6 @@ function addFetchOperationOut(element, endpoint, elem) {
               "#other_sum_namber_out"
             );
             sumChecked = +otherSumCheck.value
-              .replace(/[^+\d]/g, "")
-              .replace(/(\d)\++/g, "$1");
             return;
           }
         }
@@ -189,7 +187,8 @@ function addFetchOperationOut(element, endpoint, elem) {
     // form.append("type_operation", "out");
     // form.append("data", data_select);
     // form.append("meta_categ", "suborders");
-
+    console.log(sumChecked)
+    sumChecked = getCurrentPrice(sumChecked)
     form.append("suborder", +idSuborder);
     form.append("data", data_select);
     form.append("bank_in", bankChecked);
@@ -221,14 +220,14 @@ function addFetchOperationOut(element, endpoint, elem) {
           const windowContent = document.getElementById(elem);
           alertSuccess(windowContent);
           const timerId = setTimeout(() => {
-            location.reload();
+            // location.reload();
           }, 200);
         } else {
           const windowContent = document.getElementById(elem);
 
           alertError(windowContent);
           const timerId = setTimeout(() => {
-            location.reload();
+            // location.reload();
           }, 200);
         }
       });
@@ -249,8 +248,8 @@ function newOperationOut(element, elem) {
     /^\D+|[^\d-]+|-(?=\D+)|\D+$/gim,
     ""
   );
-  let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
-  let sum_all = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
+  let st = getCurrentPrice(operationAllSum)
+  let sum_all = getCurrentPrice(operationAllSum)
   console.log(sum_all);
   if (operationIdvalue !== "") {
     let data = new FormData();
@@ -268,6 +267,7 @@ function newOperationOut(element, elem) {
     const dataJson = JSON.stringify(object2);
     preloaderModal((isLoading = true), (isLoaded = false));
     let csrfToken = getCookie("csrftoken");
+    console.log("222222222222222222222222")
     fetch("/api/v1/operation/operation_out_filter/", {
       method: "POST",
       body: dataJson,
@@ -280,6 +280,7 @@ function newOperationOut(element, elem) {
       .then((data) => {
         console.log(data);
         if (data.length > 0) {
+          console.log("55555555555555555555")
           // preloaderModal(isLoading = false, isLoaded = true)
           const lastOperationWrap = document.querySelector(
             ".previous_operation_out"
@@ -294,6 +295,8 @@ function newOperationOut(element, elem) {
             };
             var d = new Date(item.created_timestamp);
             const sumoperation = item.amount;
+
+            console.log("sumoperation",sumoperation)
             var num = +sumoperation;
             var result = num.toLocaleString();
             // враппер для коментария
@@ -352,6 +355,8 @@ function newOperationOut(element, elem) {
             ".sum_operation_suborders_all"
           );
 
+          console.log("sum_all",sum_all)
+          console.log("sumOperationEnded",sumOperationEnded)
           var t = sum_all - sumOperationEnded;
 
           if (sumOperationEnded == 0) {
@@ -377,6 +382,7 @@ function newOperationOut(element, elem) {
           ChekinOtherSum(nameElemOtherSum, nameRadioOtherSum);
           preloaderModal((isLoading = false), (isLoaded = true));
         } else {
+          console.log("data.length ")
           const sumChekedWrap = document.getElementById("sum_cheked_out");
           sumChekedWrap.setAttribute("data-step", "1");
           sumChekedWrap.innerHTML =

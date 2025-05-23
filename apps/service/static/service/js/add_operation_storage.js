@@ -26,9 +26,9 @@ if (addOperationStorage) {
       modal(elem, add_operation);
 
       // выбор радио кнопки если вводить другое значение
-      const nameElemOtherSum = "other_sum_namber_out_storage";
-      const nameRadioOtherSum = "other_sum_out_storage";
-      ChekinOtherSum(nameElemOtherSum, nameRadioOtherSum);
+      const nameElemOtherSumst = "other_sum_namber_out_storage";
+      const nameRadioOtherSumst = "other_sum_out_storage";
+      ChekinOtherSum(nameElemOtherSumst, nameRadioOtherSumst);
       const chekinOtherSum = document.getElementById("other_sum_out_storage");
       chekinOtherSum.addEventListener("input", () => {
         const chekinOtherSum = document.getElementById("other_sum");
@@ -121,7 +121,8 @@ function addFetchOperationOutStorage(element, endpoint, elem) {
       '#sum_cheked_out_storage input[name="sum"]'
     );
 
-    let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    // let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    let intMonthSum = getCurrentPrice(allMonthSum)
     // если первое добавление операции
     if (stepCheked == "1") {
       sumElement.forEach((el) => {
@@ -232,9 +233,10 @@ function newOperationOutStorage(element, elem) {
     /^\D+|[^\d-]+|-(?=\D+)|\D+$/gim,
     ""
   );
-  let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
-  let sum_all = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
-
+  let st = getCurrentPrice(operationAllSum);
+  let sum_all = getCurrentPrice(operationAllSum);
+  console.log("operationAllSum",operationAllSum)
+  console.log("sum_all,sum_all",sum_all)
   if (billId !== "") {
     let data = new FormData();
     let object = {
@@ -255,6 +257,7 @@ function newOperationOutStorage(element, elem) {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(2222222222222222222222222)
         console.log(data);
         if (data.length > 0) {
           preloaderModal(isLoading = false, isLoaded = true)
@@ -316,40 +319,49 @@ function newOperationOutStorage(element, elem) {
           sumOperationEnded = st;
 
           const sumExpected = document.querySelector(
-            ".sum_operation_suborders_all"
+            ".sum_operation_suborders_all_storage"
           );
-
+          console.log("sum_all",sum_all)
+          console.log("sumOperationEnded",sumOperationEnded)
           var t = sum_all - sumOperationEnded;
+          console.log("t",t)
 
           if (sumOperationEnded == 0) {
             const sumallred = document.querySelector(
-              ".sum_operation_suborders_outs"
+              ".sum_operation_suborders_outs_storage"
             );
             sumallred.style.color = "black";
           }
           var num = +t;
+          console.log("num",num)
           var result = num.toLocaleString();
+          console.log("result",result)
           sumExpected.innerHTML = result + " ₽";
 
-          const sumChekedWrap = document.getElementById("sum_cheked_out");
+          const sumChekedWrap = document.getElementById("sum_cheked_out_storage");
           sumChekedWrap.setAttribute("data-step", "2");
           sumChekedWrap.innerHTML =
-            '<h3>Сколько оплатили?</h3><div class="input_bank_wrap"><input checked type="radio" id="100_out" name="sum" value="' +
+            '<h3>Сколько перевели?</h3><div class="input_bank_wrap_storage"><input checked type="radio" id="100_out_storage" name="sum" value="' +
             sumOperationEnded +
-            '" /><label for="100_out">Остаток</label><input type="radio" id="other_sum_out" name="sum" value="1" /><input placeholder="Другая сумма" data-validate="0" type="number" id="other_sum_namber_out" name="" value="" /> </div>';
+            '" /><label for="100_out_storage">Остаток</label><input type="radio" id="other_sum_out_storage" name="sum" value="1" /><input placeholder="Другая сумма" data-validate="0" type="number" id="other_sum_out_storage" name="" value="" /> </div>';
 
-          const nameElemOtherSum = "other_sum_namber_out";
-          const nameRadioOtherSum = "other_sum_out";
+          const nameElemOtherSum = "other_sum_namber_out_storage";
+          const nameRadioOtherSum = "other_sum_out_storage";
           ChekinOtherSum(nameElemOtherSum, nameRadioOtherSum);
         } else {
+          const lastOperationWrap = document.querySelector(
+            ".previous_operation_out_storage"
+          );
+          lastOperationWrap.innerHTML = "";
+          console.log("9999999999999999999999999999999")
           preloaderModal(isLoading = false, isLoaded = true)
-          const sumChekedWrap = document.getElementById("sum_cheked_out");
+          const sumChekedWrap = document.getElementById("sum_cheked_out_storage");
           sumChekedWrap.setAttribute("data-step", "1");
           sumChekedWrap.innerHTML =
-            '<h3>Сколько оплатили?</h3><div class="input_bank_wrap"><input  type="radio" id="100_out" name="sum" value="100" /><label for="100_out">100%</label><input type="radio" id="50_out" name="sum" value="50" /><label for="50_out">50%</label><input type="radio" id="other_sum_out" name="sum" value="1" /></label><input placeholder="Другая сумма" data-validate="0"  type="number" id="other_sum_namber_out" name="" value="" /></div>';
+            '<h3>Сколько перевели?</h3><div class="input_bank_wrap_storage"><input type="radio" id="100_out_storage" name="sum" value="100" /><label for="100_out_storage">100%</label><input type="radio" id="50_out_storage" name="sum" value="50" /><label for="50_out_storage">50%</label><input type="radio" id="other_sum_out_storage" name="sum" value="1" /><input data-validate="0"type="number"id="other_sum_namber_out_storage"name=""value=""placeholder="Другая сумма" /></div>';
 
-          const nameElemOtherSum = "other_sum_namber_out";
-          const nameRadioOtherSum = "other_sum_out";
+          const nameElemOtherSum = "other_sum_namber_out_storage";
+          const nameRadioOtherSum = "other_sum_out_storage";
           ChekinOtherSum(nameElemOtherSum, nameRadioOtherSum);
         }
 

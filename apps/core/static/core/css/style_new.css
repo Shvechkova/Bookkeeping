@@ -416,3 +416,6 @@
 .shrink-item-vert{
 cursor: pointer;
 }
+.cursor-pointer{
+  cursor: pointer;
+}

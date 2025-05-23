@@ -53,7 +53,7 @@ if (btnSubcontarct) {
       const modalWindows = document.getElementById(elem);
       modalWindows.addEventListener("input", () => {
         replaceNam();
-        // validate(elem, ".modal_add_subcontract");
+        validate(elem, ".modal_add_subcontract");
       });
       modalWindows.addEventListener("input", () => {
         validateBtn(elem, ".subcontarct_add");
@@ -190,12 +190,12 @@ function changeSum(element, elem) {
     //       if (el.value == "" || el.value == " ₽") {
     //         intEl = 0;
     //       } else {
-    //         intEl = parseInt(
+    //         intEl = Number(
     //           el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
     //         );
     //       }
 
-    //       let useBudgetAfterUseInit = parseInt(
+    //       let useBudgetAfterUseInit = Number(
     //         useBudgetAfterUseIn.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
     //       );
 
@@ -210,7 +210,7 @@ function changeSum(element, elem) {
     //       if (el.value == "") {
     //         intEl = 0;
     //       } else {
-    //         intEl = parseInt(
+    //         intEl = Number(
     //           el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
     //         );
     //       }
@@ -224,43 +224,54 @@ function changeSum(element, elem) {
     //     }
     //   });
     // });
-
+    console.log("modalWindow",modalWindow)
+    
     modalWindow.addEventListener("keyup", () => {
+      let sum_oper = 0
       let sumKeyup = 0;
+      
+      console.log("sumKeyup",sumKeyup)
 
       wrapSubcontractors.forEach((el) => {
+        console.log("el.value wrapSubcontractors", el.value)
         const slash = document.querySelector(".modal_adv_budget_not_use_slash");
         slash.style.display = "block";
 
-        // if (el.value == "" || el.value == " ₽") {
-        //   intEl = 0;
-        // } else {
-        //   intEl = parseInt(
-        //     el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
-        //   );
-        // }
-
-        // let useBudgetAfterUseInit = parseInt(
+        if (el.value == "" || el.value == " ₽") {
+          intEl = 0;
+        } else {
+          // intEl = Number(
+          //   el.value.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
+          // );
+          intEl = getCurrentPrice(el.value)
+          sum_oper +=  +intEl
+        }
+        console.log("sum_oper",sum_oper)
+        // let useBudgetAfterUseInit = Number(
         //   useBudgetAfterUseIn.replace(/[^+\d]/g, "").replace(/(\d)\++/g, "$1")
         // );
+        let useBudgetAfterUseInit =useBudgetAfterUseIn.value
         console.log("el.value",el.value)
-        if (el.value == "" || el.value == " ₽") {
-          let intEl = 0;
-        } else {
-          letintEl = el.value
-        }
 
-        let useBudgetAfterUseInit = 
-           useBudgetAfterUseIn
-        ;
+        // if (el.value == "" || el.value == " ₽") {
+        //   let intEl = 0;
+        // } else {
+        //   letintEl = el.value
+        // }
+
+        // let useBudgetAfterUseInit = 
+        //    useBudgetAfterUseIn
+        // ;
         
         console.log("intEl",intEl)
+        console.log("sumAdvReplace",sumAdvReplace)
         sum = sumAdvReplace - intEl;
-        console.log(sum)
-        console.log(sumKeyup)
-        sumKeyup += intEl;
-        sum = sumAdvReplace - sumKeyup;
-        console.log(sum)
+        console.log("sum",sum)
+        console.log("sumKeyup",sumKeyup)
+        // sumKeyup = sumKeyup + intEl;
+        // sum = sumAdvReplace - sumKeyup;
+        sum = sumAdvReplace - sum_oper;
+        console.log('sum2',sum)
         var result = sum.toLocaleString();
         useBudget.innerHTML = result + " ₽";
         useBudgetAfterUse.value = sum;

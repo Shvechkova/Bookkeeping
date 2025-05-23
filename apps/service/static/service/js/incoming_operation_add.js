@@ -98,8 +98,10 @@ function addFetchOperationEntry(element, endpoint, elem) {
     const sumElement = document.querySelectorAll(
       '#sum_cheked input[name="sum"]'
     );
-
-    let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    console.log("allMonthSum",allMonthSum)
+    // let intMonthSum = allMonthSum.replace(/[^0-9]/g, "");
+    let intMonthSum = getCurrentPrice(allMonthSum)
+    console.log("allMonthSum",intMonthSum)
     if (stepCheked == "1") {
       sumElement.forEach((el) => {
         if (el.checked) {
@@ -113,8 +115,6 @@ function addFetchOperationEntry(element, endpoint, elem) {
           } else {
             const otherSumCheck = document.querySelector("#other_sum_namber");
             sumChecked = +otherSumCheck.value
-              .replace(/[^+\d]/g, "")
-              .replace(/(\d)\++/g, "$1");
             return;
           }
         }
@@ -129,8 +129,6 @@ function addFetchOperationEntry(element, endpoint, elem) {
           } else {
             const otherSumCheck = document.querySelector("#other_sum_namber");
             sumChecked = +otherSumCheck.value
-              .replace(/[^+\d]/g, "")
-              .replace(/(\d)\++/g, "$1");
             return;
           }
         }
@@ -145,7 +143,8 @@ function addFetchOperationEntry(element, endpoint, elem) {
     // 
     // form.append("type_operation", "entry");
     // form.append("meta_categ", "entrering");
-
+    console.log("sumChecked",sumChecked)
+    sumChecked = getCurrentPrice(sumChecked)
     form.append("data", data_select);
     form.append("bank_in", "5");
     form.append("bank_to", bankChecked);
@@ -206,8 +205,8 @@ function getOldOperation(element, elem) {
   );
 
   const idOperation = idOperationrepl.split("-");
-
-  if (operationIdvalue !== "0") {
+  console.log("operationIdvalue",operationIdvalue)
+  if (operationIdvalue !== "0" & operationIdvalue !== "") {
     let data = new FormData();
     let object = [];
     idOperation.forEach((item) => {
@@ -217,7 +216,7 @@ function getOldOperation(element, elem) {
       object.push(Obj);
     });
 
-    let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
+    let st = Number(operationAllSum.replace(/\s+/g, ""), 10);
     let sumOperationEnded = "";
 
     
@@ -247,7 +246,7 @@ function getOldOperation(element, elem) {
       .then((data) => {
         const lastOperationWrap = document.querySelector(".previous_operation");
         lastOperationWrap.innerHTML = "";
-
+        console.log("data",data)
         data.forEach((item) => {
           // полученые старых оераций
           var options = {
@@ -255,7 +254,7 @@ function getOldOperation(element, elem) {
             month: "long",
             year: "numeric",
           };
-          console.log(item)
+          console.log("item",item)
           var d = new Date(item.created_timestamp);
           const sumoperation = item.amount;
           let dataOperation = d.toLocaleString("ru", options);
@@ -332,6 +331,7 @@ function getOldOperation(element, elem) {
       });
   } else {
     // если нет старых операций
+    console.log("если нет старых операций")
     preloaderModal((isLoading = false), (isLoaded = true));
     const sumChekedWrap = document.getElementById("sum_cheked");
     sumChekedWrap.setAttribute("data-step", "1");

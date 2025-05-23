@@ -109,7 +109,7 @@ function getClientFilterCategory(pageName, dataBill, elem) {
               choiceColor();
               const contractSum = document.querySelector(".modal-contract_sum");
               contractSum.value = value.contract_sum;
-              replaceNam()
+              // replaceNam()
             });
             modalWindows.click();
             // иммитация лика для валидации не адв
@@ -254,7 +254,7 @@ if (changeBill) {
 }
 // изменение счета функции
 function updBillChange(idBill, service_name, elem) {
-  replaceNam()
+  // replaceNam()
   const battonAddchange = document.querySelector(".client-contract_change");
   battonAddchange.addEventListener("click", () => {
     const endpoint = "/api/v1/service_month_client/" + idBill + "/";

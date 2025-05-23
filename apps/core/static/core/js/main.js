@@ -241,6 +241,7 @@ function validateBtn(elem, btn) {
   let validateClass = false;
 
   allInputModal.forEach((elInput) => {
+    console.log(allInputModal)
     if (elInput.value == "") {
       const c = elInput.getAttribute("data-validate");
       if (c == 0) {
@@ -376,10 +377,14 @@ function choiceColor() {
 
 function ChekinOtherSum(inputOtherSum, radioOtherSum) {
   const chekinOtherSum = document.getElementById(inputOtherSum);
-  chekinOtherSum.addEventListener("input", () => {
-    const chekinOtherSum = document.getElementById(radioOtherSum);
-    chekinOtherSum.checked = true;
-  });
+  if (chekinOtherSum) {
+    chekinOtherSum.addEventListener("input", () => {
+      const chekinOtherSum = document.getElementById(radioOtherSum);
+      if (chekinOtherSum) {
+        chekinOtherSum.checked = true;
+      }
+    });
+  }
 }
 
 // добавление знаков рубля в инпуты с суммами
@@ -416,38 +421,43 @@ function replaceNam() {
 }
 
 function replaceNamDot() {
-  const sel = document.querySelectorAll(".pyb");
-  sel.forEach((elem) => {
-    if (elem.value != "") {
-      elem.value =
-        elem.value
-          .replace(/\d $ /, "")
-          .replace(/\D/g, "")
-          .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
-    }
+  // const sel = document.querySelectorAll(".pyb");
+  // sel.forEach((elem) => {
+  //   if (elem.value != "") {
+  //     elem.value =
+  //       elem.value
+  //         .replace(/\d $ /, "")
+  //         .replace(/\D/g, "")
+  //         .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
+  //   }
 
-    elem.addEventListener("input", () => {
-      elem.value =
-        elem.value
-          .replace(/\d $ /, "")
-          .replace(/\D/g, "")
-          .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
+  //   elem.addEventListener("input", () => {
+  //     elem.value =
+  //       elem.value
+  //         .replace(/\d $ /, "")
+  //         .replace(/\D/g, "")
+  //         .replace(/(\d)(?=(\d{3})+([^\d]|$))/g, "$1 ") + " ₽";
 
-      if (elem.value == " ₽") {
-        elem.value = "";
-      }
-    });
-  });
+  //     if (elem.value == " ₽") {
+  //       elem.value = "";
+  //     }
+  //   });
+  // });
 }
 function getCurrentPrice(p) {
-  const price = p.replace(",", ".").replace(/(\d)\++/g, "$1");
-
+  console.log("p",p)
+  p = String(p)
+  let price = p.replace(",", ".").replace(/(\d)\++/g, "$1").replace(/\s/g, '')
+  // price = p.replaceAll(" ", '');
+  console.log("price",price)
+  price = Number(price);
+  console.log("getCurrentPriceprice",price)
   return price;
 }
 function getCurrentPriceJS(p) {
   console.log("getCurrentPriceJS(p)", p);
-  let price = p.replace(",", ".").replace(/(\d)\++/g, "$1");
-  price = parseInt(price);
+  let price = p.replace(",", ".").replace(/(\d)\++/g, "$1").replace(/\s/g, '');
+  price = Number(price);
   return price;
 }
 function monthToInt(str) {
@@ -671,7 +681,7 @@ function ShrinkHorizon() {
             const page = document.querySelector("#page_name");
             console.log(page);
             let display = "block";
-            if (page || page.value == "salary") {
+            if (page & page.value == "salary") {
               display = "flex";
             }
             console.log(display);

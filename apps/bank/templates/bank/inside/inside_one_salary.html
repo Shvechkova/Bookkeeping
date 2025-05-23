@@ -221,7 +221,7 @@
                         {% endfor %}
                         <div class="salary-totals">
                             <div class="salary-total-header font-bold">
-                                <div class="salary-employee-big-row">ИТОГО {{ year_data.year|cut:" "  }}</div>
+                                <div class="salary-employee-big-row">ИТОГО {{ year_data.year|cut:" "  }} </div>
                             </div>
                             {% for total_name, totals in totals_old_by_month|get_item:year_data.year|items %}
                                 {% if total_name != "total_year" %}
@@ -229,7 +229,7 @@
                                         <div class="salary-employee-big-row font-bold">
                                             {% comment %} <b>{{ total_name }}</b> {% endcomment %}
                                             {% if totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name %}
-                                                {{ totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name|default:"0"|format_rub }}
+                                                {{ totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name|default:"0"|format_rub }} ₽
                                             {% else %}
                                                 0 ₽
                                             {% endif %}

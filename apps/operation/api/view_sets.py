@@ -1,4 +1,5 @@
 import datetime
+import traceback
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from apps.client.api.serializers import ClientSerializer
 from apps.client.models import Client
+from apps.core.utils import error_alert
 from apps.employee.api.serializers import EmployeeSerializer
 from apps.employee.models import CategoryEmployee, Employee
 from apps.operation.api.serializers import OperationSerializer
@@ -99,34 +101,22 @@ class ОperationViewSet(viewsets.ModelViewSet):
             else:
                 print(serializer.errors)
                 print("errorvalidetae")
+                # tr = traceback.format_exc()
+                # print("all error")
+                # location = "operation_save"
+                # info = f"Тип ошибки:{tr} {e} {serializer.errors}"
+                # e = error_alert(location, info)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
         except Exception as e:
+            # tr = traceback.format_exc()
             print("all error")
+            # location = "operation_save"
+            # info = f"Тип ошибки:{tr} {e}"
+            # e = error_alert(location, info)
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
-        # serializer = self.serializer_class(data=data)
-        # idBill = data['monthly_bill']
 
-        # # operation = Operation.objects.filter(
-        # #     monthly_bill=idBill, type_operation='entry').aggregate(total=Sum('amount', default=0))
-
-        # if serializer.is_valid():
-        #     obj = serializer.save()
-        #     billNeedSumEntry = ServicesMonthlyBill.objects.get(
-        #         id=idBill)
-        #     operation = Operation.objects.filter(
-        #         monthly_bill=idBill, type_operation='entry').aggregate(total=Sum('amount', default=0))
-
-        #     if operation['total'] == billNeedSumEntry.contract_sum:
-        #         billNeedSumEntry.chekin_sum_entrees = True
-        #         billNeedSumEntry.save()
-        #     else:
-        #         billNeedSumEntry.chekin_sum_entrees = False
-        #         billNeedSumEntry.save()
-
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r"operation_entry_list")
     def operation_entry_list(self, request, *args, **kwargs):
@@ -151,9 +141,14 @@ class ОperationViewSet(viewsets.ModelViewSet):
             )
             print(queryset)
         elif "category_employee" in data:
-            queryset = Operation.objects.filter(
-            monthly_bill = data['monthly_bill'],suborder__category_employee__isnull=False
+            if "id" in data and data['id'] != 0:
+                queryset = Operation.objects.filter(
+            suborder = data['id']
             )
+            else:
+                queryset = Operation.objects.filter(
+                monthly_bill = data['monthly_bill'],suborder__category_employee__isnull=False
+                )
         elif "storage" in data:
             queryset = Operation.objects.filter(
             monthly_bill = data['monthly_bill'],bank_to_id=4,

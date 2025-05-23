@@ -352,6 +352,7 @@ def salary(request):
 
     title = "salary"
     type_url = "inside"
+    
 
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year

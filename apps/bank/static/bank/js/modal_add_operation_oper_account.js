@@ -65,7 +65,7 @@ function getSumOldOperAccountOperation(element, elem) {
     // let operationAllSum = element.getAttribute(
     //   "data-operation-sum"
     // );
-    // let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
+    // let st = Number(operationAllSum.replace(/\s+/g, ""), 10);
 
     let operationIdvalue = element.getAttribute("data-operation-old-id");
     const idOperationrepl = operationIdvalue.replace(
@@ -191,7 +191,7 @@ function getSumOldOperAccountOperation(element, elem) {
         .then((data) => {
           let operationAllSum = element.getAttribute("data-operation-sum");
           let st = 0;
-          // let st = parseInt(operationAllSum.replace(/\s+/g, ""), 10);
+          // let st = Number(operationAllSum.replace(/\s+/g, ""), 10);
           console.log("st", st);
           if (data.length > -1) {
             const lastOperationWrap = document.querySelector(

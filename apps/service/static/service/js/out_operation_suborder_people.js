@@ -125,7 +125,7 @@ function FetchInfosubsPeople(element, elem) {
 
                 historySuborderAmount.innerHTML = result + " ₽";
 
-                historySuborderBtn.setAttribute("data-id-cat", item.other);
+                historySuborderBtn.setAttribute("data-id-cat", item.category_employee);
                 historySuborderBtn.setAttribute("data-id-subcontr", item.id);
                 historySuborderBtn.setAttribute("data-id-amount", item.amount);
                 historySuborderBtn.setAttribute(
@@ -142,6 +142,12 @@ function FetchInfosubsPeople(element, elem) {
 
             btnPaySubs.forEach((item) => {
               item.addEventListener("click", () => {
+                attrIdcub = item.getAttribute("data-id-subcontr")
+                console.log("element",element)
+                console.log("element",attrIdcub)
+
+                element.setAttribute("data-id-subcontr",attrIdcub);
+                console.log("element",element)
                 preloaderModal((isLoading = true), (isLoaded = false));
                 dataEmpty = [];
                 CreateSubcontractOtherOne(
@@ -286,7 +292,7 @@ function AddOperationOtherOut(element, elem) {
       '#sum_cheked_out_other input[name="sum"]'
     );
 
-    let intMonthSum = parseInt(allMonthSum);
+    let intMonthSum = getCurrentPrice(allMonthSum)
 
     if (stepCheked == "1") {
       sumElement.forEach((el) => {
@@ -395,6 +401,7 @@ function AddOperationOtherOut(element, elem) {
 }
 // получение старых операций
 function NewOperationOutOther(element) {
+  
   const wrapOperOther = document.querySelector(".wrapper_oper_out_other");
   let operationAllSum = wrapOperOther.getAttribute("data-id-sub-amount-id");
   const modalSumCtr = document.querySelector(
@@ -407,11 +414,14 @@ function NewOperationOutOther(element) {
   modalSumCtr.style.display = "block";
   modalsunordrt_operation_all.style.display = "block";
   modalsunordrt_operation_all.nextElementSibling.style.display = "block";
-  let idSuborder = element.getAttribute("data-idsuborder-sub");
+  // let idSuborder = element.getAttribute("data-idsuborder-sub");
   let operationIdvalue = wrapOperOther.getAttribute("data-id-sub-other");
-  let st = parseInt(operationAllSum);
-  let sum_all = parseInt(operationAllSum);
+  let st = Number(operationAllSum);
+  let sum_all = Number(operationAllSum);
   const billId = element.getAttribute("data-bill-month-id");
+  let idSuborder = element.getAttribute("data-id-subcontr");
+  console.log(element)
+  console.log("idSuborder",idSuborder)
   if (operationIdvalue !== "") {
     let data = new FormData();
     let object = {
@@ -420,7 +430,7 @@ function NewOperationOutOther(element) {
     let object2 = {
       "monthly_bill": +billId,
       // "platform": +operationNameCAt,
-      "id": + idSuborder,
+      "id": +idSuborder,
       "category_employee": true,
 
     };
