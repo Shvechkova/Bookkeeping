@@ -14,7 +14,9 @@ router.register(r"v1/groupeoperaccount", view_sets.GroupeOperaccountViews)
 urlpatterns = [
     path("storage/", views.storage, name="storage"),
     path("inside/", views.inside, name="inside"),
+    path("outside/", views.outside, name="outside"),
     path("inside/oper_accaunt/", views.oper_accaunt, name="oper_accaunt"),
     path("inside/salary/", views.salary, name="salary"),
+    path("inside/nalog/", views.nalog, name="nalog"),
     # path("<slug:slug>/", views.service_one, name="service_one"),
 ]

@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<input type="hidden" id="page_name" value="{{ title }}" />
+{% include "bank/inside/includes/header_inside.html" %}
+
+{% endblock content %}

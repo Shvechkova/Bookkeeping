@@ -20,7 +20,7 @@ def storage(request):
         "title": title,
     }
 
-    return render(request, "bank/storage.html", context)
+    return render(request, "bank/outside/storage.html", context)
 
 
 def inside(request):
@@ -1109,3 +1109,23 @@ def salary(request):
 
 
     return render(request, "bank/inside/inside_one_salary.html", context)
+
+
+def nalog(request):
+    title = "Налоги"
+    type_url = "inside"
+    context = {
+        "title": title,
+        "type_url": type_url,
+    }
+    return render(request, "bank/inside/inside_one_nalog.html", context)
+
+def outside(request):
+    title = "Внешнии счета"
+    type_url = "outside"
+    context = {
+        "title": title,
+        "type_url": type_url,
+    }
+
+    return render(request, "bank/outside/outside_all.html", context)

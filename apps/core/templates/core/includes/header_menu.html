@@ -9,14 +9,14 @@
         {% endif %}
       </li>
   
-      {% comment %} <li class="header_nav-link">
-        {% url 'operation:operation_outside' as the_url %}
+    <li class="header_nav-link">
+        {% url 'bank:outside' as the_url %}
         {% if request.get_full_path == the_url %}
           <span class="menu-active">Внешние счета</span>
         {% else %}
-          <a class="" href="{% url 'operation:operation_outside' %}">Внешние счета</a>
+          <a class="" href="{% url 'bank:outside' %}">Внешние счета</a>
         {% endif %}
-      </li> {% endcomment %}
+      </li> 
 
        <li class="header_nav-link">
         {% url 'bank:inside' as the_url %}
