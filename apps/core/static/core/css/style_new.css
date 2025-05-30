@@ -419,3 +419,7 @@ cursor: pointer;
 .cursor-pointer{
   cursor: pointer;
 }
+
+.wrapper_nalog_all{
+  display: flex;
+}

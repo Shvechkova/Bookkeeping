@@ -144,138 +144,6 @@ def oper_accaunt(request):
                     operations_by_category[category_id]["accounts"][account_name][
                         "months"
                     ][month_name]["total"] += operation.amount
-
-    # Группируем старые операции по годам
-    operations_old_by_year = {}
-    for operation in operations_old:
-        comment = operation.comment
-        year = operation.data.year
-        if year not in operations_old_by_year:
-            operations_old_by_year[year] = {
-                "year": year,
-                "categories": {},
-                "total_year": 0,
-            }
-
-            # Инициализируем структуру для категорий
-            for cat in CATEGORY_OPERACCOUNT:
-                cat_id = cat[0]
-                operations_old_by_year[year]["categories"][cat_id] = {
-                    "name": cat[1],
-                    "accounts": {},
-                    "total_category": 0,
-                }
-
-                # Получаем счета для данной категории
-                accounts = accounts_by_category.get(cat_id, [])
-                for account in accounts:
-                    operations_old_by_year[year]["categories"][cat_id]["accounts"][
-                        account.name
-                    ] = {
-                        "account": account,
-                        "account_id": account.id,
-                        "months": {},
-                        "total_account": 0,
-                    }
-
-                    # Инициализируем месяцы в прямом порядке
-                    for month in range(1, 13):
-                        month_name = MONTHS_RU[month - 1]
-                        operations_old_by_year[year]["categories"][cat_id]["accounts"][
-                            account.name
-                        ]["months"][month_name] = {
-                            "operations": [],
-                            "total": 0,
-                            "comment": False,
-                        }
-
-        # Добавляем операцию в соответствующую структуру
-        month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
-        account = operation.operaccount
-        category_id = account.category
-        account_name = account.name
-
-        if category_id in operations_old_by_year[year]["categories"]:
-            if (
-                account_name
-                in operations_old_by_year[year]["categories"][category_id]["accounts"]
-            ):
-                month_data = operations_old_by_year[year]["categories"][category_id][
-                    "accounts"
-                ][account_name]["months"][month_name]
-                month_data["operations"].append(operation)
-                month_data["total"] += operation.amount
-
-                # Обновляем суммы
-                operations_old_by_year[year]["categories"][category_id]["accounts"][
-                    account_name
-                ]["total_account"] += operation.amount
-                operations_old_by_year[year]["categories"][category_id][
-                    "total_category"
-                ] += operation.amount
-                operations_old_by_year[year]["total_year"] += operation.amount
-                if comment:
-
-                    operations_old_by_year[year]["categories"][category_id]["accounts"][
-                        account_name
-                    ]["months"][month_name]
-                month_data["comment"] = True
-
-    # Преобразуем в список для шаблона
-    operations_old_arr = []
-    for year in sorted(operations_old_by_year.keys(), reverse=True):
-        year_data = operations_old_by_year[year]
-        year_info = {
-            "year": year,
-            "total_year": year_data["total_year"],
-            "categories": [],
-            "totals_by_month": [0]
-            * 12,  # Инициализируем массив для итогов по месяцам за год
-        }
-
-        for cat_id, cat_data in year_data["categories"].items():
-            category_info = {
-                "category_id": cat_id,
-                "category_name": cat_data["name"],
-                "total_category": cat_data["total_category"],
-                "accounts": [],
-                "totals_by_month": [0]
-                * 12,  # Инициализируем массив для итогов по месяцам
-            }
-
-            for account_name, account_data in cat_data["accounts"].items():
-                account_info = {
-                    "name": account_name,
-                    "account": account_data["account"],
-                    "account_id": account_data["account_id"],
-                    "total_account": account_data["total_account"],
-                    "months": [],
-                }
-
-                # Добавляем месяцы в прямом порядке
-                for month in range(1, 13):
-                    month_name = MONTHS_RU[month - 1]
-                    month_data = account_data["months"][month_name]
-                    month_info = {
-                        "month": month_name,
-                        "month_number": month,
-                        "date_start": datetime.datetime(year, month, 1),
-                        "operations": month_data["operations"],
-                        "total": month_data["total"],
-                        "comment": month_data["comment"],
-                    }
-                    account_info["months"].append(month_info)
-                    # Добавляем сумму в общий итог по месяцу для категории
-                    category_info["totals_by_month"][month - 1] += month_data["total"]
-                    # Добавляем сумму в общий итог по месяцу для года
-                    year_info["totals_by_month"][month - 1] += month_data["total"]
-
-                category_info["accounts"].append(account_info)
-
-            year_info["categories"].append(category_info)
-
-        operations_old_arr.append(year_info)
-
     # Преобразуем в список для шаблона
     operations_arr = []
     for cat_id, cat_data in operations_by_category.items():
@@ -327,6 +195,138 @@ def oper_accaunt(request):
                 total += account["months"][i]["total"]
             totals_by_month.append(total)
         category_info["totals_by_month"] = totals_by_month
+
+    # # Группируем старые операции по годам
+    # operations_old_by_year = {}
+    # for operation in operations_old:
+    #     comment = operation.comment
+    #     year = operation.data.year
+    #     if year not in operations_old_by_year:
+    #         operations_old_by_year[year] = {
+    #             "year": year,
+    #             "categories": {},
+    #             "total_year": 0,
+    #         }
+
+    #         # Инициализируем структуру для категорий
+    #         for cat in CATEGORY_OPERACCOUNT:
+    #             cat_id = cat[0]
+    #             operations_old_by_year[year]["categories"][cat_id] = {
+    #                 "name": cat[1],
+    #                 "accounts": {},
+    #                 "total_category": 0,
+    #             }
+
+    #             # Получаем счета для данной категории
+    #             accounts = accounts_by_category.get(cat_id, [])
+    #             for account in accounts:
+    #                 operations_old_by_year[year]["categories"][cat_id]["accounts"][
+    #                     account.name
+    #                 ] = {
+    #                     "account": account,
+    #                     "account_id": account.id,
+    #                     "months": {},
+    #                     "total_account": 0,
+    #                 }
+
+    #                 # Инициализируем месяцы в прямом порядке
+    #                 for month in range(1, 13):
+    #                     month_name = MONTHS_RU[month - 1]
+    #                     operations_old_by_year[year]["categories"][cat_id]["accounts"][
+    #                         account.name
+    #                     ]["months"][month_name] = {
+    #                         "operations": [],
+    #                         "total": 0,
+    #                         "comment": False,
+    #                     }
+
+    #     # Добавляем операцию в соответствующую структуру
+    #     month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
+    #     account = operation.operaccount
+    #     category_id = account.category
+    #     account_name = account.name
+
+    #     if category_id in operations_old_by_year[year]["categories"]:
+    #         if (
+    #             account_name
+    #             in operations_old_by_year[year]["categories"][category_id]["accounts"]
+    #         ):
+    #             month_data = operations_old_by_year[year]["categories"][category_id][
+    #                 "accounts"
+    #             ][account_name]["months"][month_name]
+    #             month_data["operations"].append(operation)
+    #             month_data["total"] += operation.amount
+
+    #             # Обновляем суммы
+    #             operations_old_by_year[year]["categories"][category_id]["accounts"][
+    #                 account_name
+    #             ]["total_account"] += operation.amount
+    #             operations_old_by_year[year]["categories"][category_id][
+    #                 "total_category"
+    #             ] += operation.amount
+    #             operations_old_by_year[year]["total_year"] += operation.amount
+    #             if comment:
+
+    #                 operations_old_by_year[year]["categories"][category_id]["accounts"][
+    #                     account_name
+    #                 ]["months"][month_name]
+    #             month_data["comment"] = True
+
+    # # Преобразуем в список для шаблона
+    operations_old_arr = []
+    # for year in sorted(operations_old_by_year.keys(), reverse=True):
+    #     year_data = operations_old_by_year[year]
+    #     year_info = {
+    #         "year": year,
+    #         "total_year": year_data["total_year"],
+    #         "categories": [],
+    #         "totals_by_month": [0]
+    #         * 12,  # Инициализируем массив для итогов по месяцам за год
+    #     }
+
+    #     for cat_id, cat_data in year_data["categories"].items():
+    #         category_info = {
+    #             "category_id": cat_id,
+    #             "category_name": cat_data["name"],
+    #             "total_category": cat_data["total_category"],
+    #             "accounts": [],
+    #             "totals_by_month": [0]
+    #             * 12,  # Инициализируем массив для итогов по месяцам
+    #         }
+
+    #         for account_name, account_data in cat_data["accounts"].items():
+    #             account_info = {
+    #                 "name": account_name,
+    #                 "account": account_data["account"],
+    #                 "account_id": account_data["account_id"],
+    #                 "total_account": account_data["total_account"],
+    #                 "months": [],
+    #             }
+
+    #             # Добавляем месяцы в прямом порядке
+    #             for month in range(1, 13):
+    #                 month_name = MONTHS_RU[month - 1]
+    #                 month_data = account_data["months"][month_name]
+    #                 month_info = {
+    #                     "month": month_name,
+    #                     "month_number": month,
+    #                     "date_start": datetime.datetime(year, month, 1),
+    #                     "operations": month_data["operations"],
+    #                     "total": month_data["total"],
+    #                     "comment": month_data["comment"],
+    #                 }
+    #                 account_info["months"].append(month_info)
+    #                 # Добавляем сумму в общий итог по месяцу для категории
+    #                 category_info["totals_by_month"][month - 1] += month_data["total"]
+    #                 # Добавляем сумму в общий итог по месяцу для года
+    #                 year_info["totals_by_month"][month - 1] += month_data["total"]
+
+    #             category_info["accounts"].append(account_info)
+
+    #         year_info["categories"].append(category_info)
+
+    #     operations_old_arr.append(year_info)
+
 
     context = {
         "title": title,
@@ -1186,9 +1186,9 @@ def nalog(request):
                     "total": 0,
                     "expected": 0,  # Добавляем поле для ожидаемых расходов
                     "month_number": len(months_current_year) - i,
-                    "date_start": datetime.datetime(
-                        year_now, len(months_current_year) - i, 1
-                    ),  
+                        "date_start": datetime.datetime(
+                            year_now, len(months_current_year) - i, 1
+                        ),  
                 }
     
     for cat in categoru_nalog:
@@ -1328,15 +1328,194 @@ def nalog(request):
         Operation.objects.filter(
              nalog__isnull=False, data__year__lt=year_now,
         )
-        .select_related("nalog")
+        .select_related("nalog","nalog__bank_in")
         .prefetch_related()
         .order_by("-data")
     )
     
+    # Создаем структуру для старых операций по годам
+    operations_old_by_year = {}
+    
+    # Получаем все уникальные годы из операций
+    years_with_operations = set(operation.data.year for operation in operations_old)
+    
+    # Создаем структуру для каждого года
+    for year in sorted(years_with_operations, reverse=True):
+        year_data = {
+            "year": year,
+            "OOO": {
+                "name": "OOO",
+                "name_full": "OOO  (без УСН)",
+                "full_year_total": 0,
+                "sections": {
+                    "Налоги с ЗП": {
+                        "name": "Налоги с ЗП",
+                        "category": [],
+                        "totals_month": {},
+                        "full_year_total": 0,
+                    },
+                    "Прочие налоги": {
+                        "name": "Прочие налоги",
+                        "category": [],
+                        "totals_month": {},
+                        "full_year_total": 0,
+                    }
+                },
+                "totals_month": {}
+            },
+            "ИП": {
+                "name": "ИП (откладываем до оплаты)",
+                "name_full": "ИП",
+                "full_year_total": 0,
+                "category": [],
+                "totals_month": {}
+            }
+        }
+        
+        # Инициализируем месяцы для ООО
+        for month in MONTHS_RU:
+            year_data["OOO"]["totals_month"][month] = {"total": 0}
+            
+            # Инициализируем месяцы для секций ООО
+            for section in year_data["OOO"]["sections"].values():
+                section["totals_month"][month] = {
+                    "total": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                    "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                    "operation_id": 0
+                }
+        
+        # Инициализируем месяцы для ИП
+        for month in MONTHS_RU:
+            year_data["ИП"]["totals_month"][month] = {
+                "total": 0,
+                "month_number": MONTHS_RU.index(month) + 1,
+                "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1)
+            }
+        
+        # Инициализируем категории для ООО
+        for cat in categoru_nalog:
+            if cat.bank_in.id == 1:
+                section = "Налоги с ЗП" if cat.name != "налог на аренду офиса" else "Прочие налоги"
+                arr = {
+                    "cat_name": cat.name,
+                    "cat_id": cat.id,
+                    "cat_bank_in": cat.bank_in.id,
+                    "cat_bank_in_name": cat.bank_in.name,
+                    "months": {},
+                    "full_year_total": 0
+                }
+                # Инициализируем месяцы для категории
+                for month in MONTHS_RU:
+                    arr["months"][month] = {
+                        "month_name": month,
+                        "month_data": "",
+                        "total": 0,
+                        "month_number": MONTHS_RU.index(month) + 1,
+                        "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                        "operation_id": 0
+                    }
+                year_data["OOO"]["sections"][section]["category"].append(arr)
+        
+        # Инициализируем категории для ИП
+        for cat in categoru_nalog:
+            if cat.bank_in.id == 2:
+                arr = {
+                    "cat_name": cat.name,
+                    "cat_id": cat.id,
+                    "cat_bank_in": cat.bank_in.id,
+                    "cat_bank_in_name": cat.bank_in.name,
+                    "months": {},
+                    "full_year_total": 0
+                }
+                # Инициализируем месяцы для категории
+                for month in MONTHS_RU:
+                    arr["months"][month] = {
+                        "month_name": month,
+                        "month_data": "",
+                        "total": 0,
+                        "month_number": MONTHS_RU.index(month) + 1,
+                        "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                        "operation_id": 0
+                    }
+                year_data["ИП"]["category"].append(arr)
+        
+        operations_old_by_year[year] = year_data
+
+    # Обрабатываем старые операции
+    for operation in operations_old:
+        if operation.nalog:
+            year = operation.data.year
+            month_name = MONTHS_RU[operation.data.month - 1]
+            
+            # Определяем тип банка
+            bank_type = "OOO" if operation.nalog.bank_in.id == 1 else "ИП"
+            year_data = operations_old_by_year[year]
+            
+            if bank_type == "OOO":
+                # Определяем секцию для ООО
+                section = "Налоги с ЗП" if operation.nalog.name != "налог на аренду офиса" else "Прочие налоги"
+                section_data = year_data["OOO"]["sections"][section]
+                
+                # Находим соответствующую категорию в структуре
+                for category in section_data["category"]:
+                    if category["cat_id"] == operation.nalog.id:
+                        # Обновляем данные для месяца
+                        month_data = category["months"][month_name]
+                        month_data["month_data"] = operation
+                        month_data["total"] = operation.amount
+                        month_data["operation_id"] = operation.id
+                        
+                        # Обновляем общий итог для секции
+                        section_data["totals_month"][month_name]["total"] += operation.amount
+                        section_data["totals_month"][month_name]["operation_id"] = operation.id
+                        
+                        # Обновляем общий итог для ООО
+                        year_data["OOO"]["totals_month"][month_name]["total"] += operation.amount
+                        
+                        # Обновляем full_year_total для категории
+                        category["full_year_total"] += operation.amount
+                        break
+            else:  # ИП
+                # Находим соответствующую категорию в структуре
+                for category in year_data["ИП"]["category"]:
+                    if category["cat_id"] == operation.nalog.id:
+                        # Обновляем данные для месяца
+                        month_data = category["months"][month_name]
+                        month_data["month_data"] = operation
+                        month_data["total"] = operation.amount
+                        month_data["operation_id"] = operation.id
+                        
+                        # Обновляем общий итог для ИП
+                        year_data["ИП"]["totals_month"][month_name]["total"] += operation.amount
+                        
+                        # Обновляем full_year_total для категории
+                        category["full_year_total"] += operation.amount
+                        break
+
+    # Рассчитываем full_year_total для каждого года
+    for year, year_data in operations_old_by_year.items():
+        # Для ООО
+        ooo_total = 0
+        for section_name, section_data in year_data["OOO"]["sections"].items():
+            section_total = 0
+            for month_data in section_data["totals_month"].values():
+                section_total += month_data["total"]
+            section_data["full_year_total"] = section_total
+            ooo_total += section_total
+        year_data["OOO"]["full_year_total"] = ooo_total
+        
+        # Для ИП
+        ip_total = 0
+        for month_data in year_data["ИП"]["totals_month"].values():
+            ip_total += month_data["total"]
+        year_data["ИП"]["full_year_total"] = ip_total
+        
     context = {
         "title": title,
         "type_url": type_url,
         "operations_by_category": operations_by_category,
+        "operations_old_by_year": operations_old_by_year,
         "year_now": year_now
     }
     
