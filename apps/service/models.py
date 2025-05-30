@@ -7,7 +7,8 @@ from apps.employee.models import CategoryEmployee, Employee
 class Service(models.Model):
     name = models.CharField(
         "Категории услуг фирмы", max_length=150, blank=True, null=True)
-
+    name_long_ru = models.CharField(
+        "Категории на русском полное название ", max_length=266, blank=True, null=True)
     class Meta:
         verbose_name = "Услуга"
         verbose_name_plural = "Услуги"

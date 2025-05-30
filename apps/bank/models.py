@@ -51,5 +51,21 @@ class GroupeSalary(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class CategNalog(models.Model):
+    name = models.CharField("Имя", max_length=200)
+    bank_in = models.ForeignKey(Bank, on_delete=models.CASCADE, verbose_name="Банк")
+    article = models.PositiveIntegerField(
+        "Очередность",
+        blank=True,
+        null=True,
+    )
+    class Meta:
+        verbose_name = "Категория налога"
+        verbose_name_plural = "Категории налогов"
+
+    def __str__(self):
+        return self.name
 
 

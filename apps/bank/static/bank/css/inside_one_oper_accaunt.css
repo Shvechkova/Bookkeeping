@@ -167,3 +167,68 @@
 .add_operation_oper_account{
   cursor: pointer;
 }
+
+.outside_wr{
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.outside_title_categ{
+  font-size: 20px;
+    font-weight: 700;
+}
+
+.outside_wr .oper-account-grid {
+    margin-left: -40px; /* Ширина ячейки с номером */
+}
+.outside_wr .oper-account-cell-num {
+    width: 40px;
+}
+.section_oper_wr_culumn{
+  flex-direction: column;
+}
+
+.btn_add_operation_nalog{
+  left: 70%;
+}
+
+/* .btn_add_operation_nalog {
+  width: 47px;
+  height: 44px;
+  font-weight: 400;
+  font-size: 20px;
+  text-align: center;
+  color: #fff;
+  background-color: #000;
+  position: absolute;
+  left: 70%;
+  margin-left: -10px;
+  top: -10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none; 
+} */
+/* 
+.btn_add_operation_nalog_active {
+   display: flex; 
+}
+
+.salary_employee_item_sums_active_nalog {
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  color: black;
+  
+}
+
+.salary_employee_item_sums_nalog {
+  margin: -10px;
+  cursor: pointer;
+  padding: 10px;
+  
+
+} */

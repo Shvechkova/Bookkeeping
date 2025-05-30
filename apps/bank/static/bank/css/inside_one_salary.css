@@ -199,3 +199,16 @@
 .btn_sorting_salary .active_sorting{
   border-color: #000;
 }
+
+.salary_employee_item_sum_nalog{
+  margin: -10px;
+  cursor: pointer;
+  padding: 10px;
+}
+.salary_employee_item_sum_nalog_active {
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  color: black;
+  
+}
+

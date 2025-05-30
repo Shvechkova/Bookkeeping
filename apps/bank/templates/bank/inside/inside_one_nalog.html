@@ -1,9 +1,157 @@
 {% extends "core/base.html" %}
 {% load static %}
-
+{% load format_filters %}
 {% block content %}
-
-<input type="hidden" id="page_name" value="{{ title }}" />
-{% include "bank/inside/includes/header_inside.html" %}
-
+    <link rel="stylesheet"
+          href="{% static 'bank/css/inside_one_oper_accaunt.css' %}">
+    <input type="hidden" id="page_name" value="{{ title }}" />
+    {% include "bank/inside/includes/header_inside.html" %}
+    {{operations_by_category}}
+    <div class="oper_account_sort_wrap">
+        <h3>Сортировка</h3>
+        <div class="oper_account_sort_bank" data-sort-operation="1">с ООО</div>
+        <div class="oper_account_sort_bank" data-sort-operation="2">с ИП</div>
+    </div>
+    <div class="section_oper_wr section_oper_wr_culumn nalog_wr">
+        {% for bank_type, bank_data in operations_by_category.items %}
+            <section class="oper_account">
+                {% comment %} <h2>{{ bank_data.name }}</h2> {% endcomment %}
+                {% if bank_type == "OOO" %}
+                    {% for section_name, section_data in bank_data.sections.items %}
+                        <div class="oper-account-grid">
+                            <div class="oper-account-row oper-account-header">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">
+                                    <h3>{{ section_data.name }}</h3>
+                                </div>
+                                {% for month, total_data in section_data.totals_month.items %}
+                                    <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% for category in section_data.category %}
+                            <div class="category-block">
+                                <div class="oper-account-grid">
+                                    <div class="oper-account-row">
+                                        <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                                        <div class="oper-account-cell oper-account-service">{{ category.cat_name }}</div>
+                                        {% for month, month_data in category.months.items %}
+                                            <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
+                                                <div class=" inp_operation salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                     data-bank-in="{{ category.cat_bank_in }}"
+                                                     data-sub-categ-name="{{ category.cat_id }}"
+                                                     data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                                                     data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                                                     data-operation-old-id="{{ month_data.operation_id|default:'0' }}"
+                                                     data-prev-month="{{ month_data.expected|format_rub }}"
+                                                     data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
+                                                    {% if month_data.total > 0 %}
+                                                        <p class="salary_employee_item_sums_text">{{ month_data.total|format_rub }} ₽</p>
+                                                        <input type="text"
+                                                               class="salary_employee_item_sums_inp"
+                                                               value="{{ month_data.total|format_rub }}">
+                                                    {% else %}
+                                                        <span class="salary_employee_item_sums_text oper-account-cell-zero">0 ₽</span>
+                                                        <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.expected|format_rub }}">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <!-- Итого по секции -->
+                        <div class="category-block">
+                            <div class="oper-account-grid">
+                                <div class="oper-account-row oper-account-total">
+                                    <div class="oper-account-cell oper-account-num"></div>
+                                    <div class="oper-account-cell oper-account-service">Итого {{ section_data.name }}</div>
+                                    {% for month, total_data in section_data.totals_month.items %}
+                                        <div class="oper-account-cell oper-account-value">
+                                            <b>{{ total_data.total|format_rub }} ₽</b>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <!-- Общий итог по ООО -->
+                    <div class="category-block">
+                        <div class="oper-account-grid">
+                            <div class="oper-account-row oper-account-total">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">Итого {{ bank_data.name_full }}</div>
+                                {% for month, total_data in bank_data.totals_month.items %}
+                                    <div class="oper-account-cell oper-account-value">
+                                        <b>{{ total_data.total|format_rub }} ₽</b>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="oper-account-grid">
+                        <div class="oper-account-row oper-account-header">
+                            <div class="oper-account-cell oper-account-num"></div>
+                            <div class="oper-account-cell oper-account-service">
+                                <h3>{{ bank_data.name }}</h3>
+                            </div>
+                            {% for month, total_data in bank_data.totals_month.items %}
+                                <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% for category in bank_data.category %}
+                        <div class="category-block">
+                            <div class="oper-account-grid">
+                                <div class="oper-account-row">
+                                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                                    <div class="oper-account-cell oper-account-service">{{ category.cat_name }}</div>
+                                    {% for month, month_data in category.months.items %}
+                                        <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
+                                            <div class=" inp_operation salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                 data-bank-in="{{ category.cat_bank_in }}"
+                                                 data-sub-categ-name="{{ category.cat_id }}"
+                                                 data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                                                 data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                                                 data-operation-old-id="{{ month_data.operation_id|default:'0' }}"
+                                                 data-prev-month="{{ month_data.expected|format_rub }}"
+                                                 data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
+                                                {% if month_data.total > 0 %}
+                                                    <p class="salary_employee_item_sums_text">{{ month_data.total|format_rub }} ₽</p>
+                                                    <input type="text"
+                                                           class="salary_employee_item_sums_inp"
+                                                           value="{{ month_data.total|format_rub }}">
+                                                {% else %}
+                                                    <span class="salary_employee_item_sums_text oper-account-cell-zero">0 ₽</span>
+                                                    <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.expected|format_rub }}">
+                                                {% endif %}
+                                            </div>
+                                            <div class="btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <!-- Итого по ИП -->
+                    <div class="category-block">
+                        <div class="oper-account-grid">
+                            <div class="oper-account-row oper-account-total">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">Итого {{ bank_data.name_full }}</div>
+                                {% for month, total_data in bank_data.totals_month.items %}
+                                    <div class="oper-account-cell oper-account-value">
+                                        <b>{{ total_data.total|format_rub }} ₽</b>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+        {% endfor %}
+    </div>
 {% endblock content %}

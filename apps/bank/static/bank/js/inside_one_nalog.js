@@ -1,11 +1,11 @@
 // replaceNamDot();
-// const salaryBtn = document.querySelectorAll(".salary_employee_item_sums");
-// if (salaryBtn) {
-//   console.log(salaryBtn)
+// const nalogBtn = document.querySelectorAll(".salary_employee_item_sum_nalog");
+// if (nalogBtn) {
+//   console.log(nalogBtn)
 //   let old_elem;
 //   let valueOld;
 //   // console.log(old_elem)
-//   salaryBtn.forEach((element) => {
+//   nalogBtn.forEach((element) => {
 //     element.addEventListener("click", (event) => {
 //       console.log(element)
 //       const elemValue = element.getAttribute("data-sum");
@@ -23,14 +23,14 @@
 //         if (old_elem != undefined) {
      
 
-//           old_elem.classList.remove("salary_employee_item_sums_active");
+//           old_elem.classList.remove("salary_employee_item_sum_nalog_active");
 //           old_elem.readOnly = true;
 //           old_elem.value = old_elem.getAttribute("data-sum");
 //           const elemWrapOld = old_elem.parentNode;
 //           const btnAddOld = elemWrapOld.querySelector(
-//             ".btn_add_operation_salary"
+//             ".btn_add_operation_nalog"
 //           );
-//           btnAddOld.classList.remove("btn_add_operation_salary_active");
+//           btnAddOld.classList.remove("salary_employee_item_sum_nalog_active");
 //           old_elem.querySelector(
 //             ".salary_employee_item_sums_text"
 //           ).style.display = "block"
@@ -41,24 +41,35 @@
 
 //         old_elem = element;
 
-//         element.classList.add("salary_employee_item_sums_active");
+//         element.classList.add("salary_employee_item_sum_nalog_active");
 //         element.readOnly = false;
 //         element.value = "";
 //         const elemWrap = element.parentNode;
-//         const btnAdd = elemWrap.querySelector(".btn_add_operation_salary");
+//         const btnAdd = elemWrap.querySelector(".btn_add_operation_nalog");
 //         replaceNamDot();
 
-//         btnAdd.classList.add("btn_add_operation_salary_active");
-//         addSalaryOperation(element, btnAdd);
+//         btnAdd.classList.add("salary_employee_item_sum_nalog_active");
+//         NalogOperation(element, btnAdd);
 //       }
 //     });
 //   });
 // }
 
-// function addSalaryOperation(element, btnAdd) {
-//   console.log(element)
+// function NalogOperation(element, btnAdd) {
+// console.log("element,btnAdd")
+//   console.log(element,btnAdd)
 //   btnAdd.addEventListener("click", () => {
-
+//     // function oldYearAccount(element) {
+//     //   var now = new Date();
+//     //   const operationYear = element.getAttribute("data-operation-data-year");
+//     //   const operationMonth = element.getAttribute("data-operation-data-month");
+//     //   const windowDate = new Date(operationYear, operationMonth, 1, 0, 0, 0, 0);
+//     //   const jsonDate = windowDate.toJSON();
+    
+//     //   console.log(jsonDate);
+    
+//     //   return jsonDate;
+//     // }
 //     console.log(element);
 //     var now = new Date();
 //     const nowYear = now.getFullYear();
@@ -88,7 +99,20 @@
 //     form.append("salary", accountid);
 //     form.append("comment", "");
 //     form.append("data", startDate);
+    
+    
 
+    
+    
+    
+
+//     // form.append("amount", dataAmount);
+//     // form.append("bank", dataBank);
+//     // form.append("category", dataCAteg);
+//     // form.append("people", dataPeople);
+//     // form.append("type_operation", "out");
+//     // form.append("meta_categ", 'salary');
+//     // form.append("data", actyalDateStr);
 
 //     if (nowYear == operationYear && nowMonth == operationMonth) {
 //     } else {
@@ -145,30 +169,30 @@
 // }
 
 
-// установка сортировки 
+// // // установка сортировки 
 
-const sortDateSalary = document.querySelector(".salary-sorting");
-if (sortDateSalary) {
-  const sortMonthReload = sessionStorage.getItem("sortSalary");
-  if (sortMonthReload) {
-    sortDateSalary.setAttribute("salary-sorting-date", sortMonthReload);
-  }
+// // const sortDateSalary = document.querySelector(".salary-sorting");
+// // if (sortDateSalary) {
+// //   const sortMonthReload = sessionStorage.getItem("sortSalary");
+// //   if (sortMonthReload) {
+// //     sortDateSalary.setAttribute("salary-sorting-date", sortMonthReload);
+// //   }
 
-  const btnSort = document.querySelectorAll(".btn_sorting_salary");
-  console.log(btnSort)
-  btnSort.forEach((item) => {
-    item.addEventListener("click", () => {
-      const monthDate = item.getAttribute("data-sort-salary");
-      sortDateSalary.setAttribute("data-sort-salary", monthDate);
-      sessionStorage.setItem("sortSalary", monthDate);
-      document.cookie = "sortSalary=" + monthDate;
-      location.reload();
-    });
+// //   const btnSort = document.querySelectorAll(".btn_sorting_salary");
+// //   console.log(btnSort)
+// //   btnSort.forEach((item) => {
+// //     item.addEventListener("click", () => {
+// //       const monthDate = item.getAttribute("data-sort-salary");
+// //       sortDateSalary.setAttribute("data-sort-salary", monthDate);
+// //       sessionStorage.setItem("sortSalary", monthDate);
+// //       document.cookie = "sortSalary=" + monthDate;
+// //       location.reload();
+// //     });
 
-    const indexBtn = sortDateSalary.getAttribute("salary-sorting-date");
-    const monthDate = item.getAttribute("data-sort-salary");
-    if (indexBtn == monthDate) {
-      item.classList.add("active_sorting");
-    }
-  });
-}
+// //     const indexBtn = sortDateSalary.getAttribute("salary-sorting-date");
+// //     const monthDate = item.getAttribute("data-sort-salary");
+// //     if (indexBtn == monthDate) {
+// //       item.classList.add("active_sorting");
+// //     }
+// //   });
+// // }

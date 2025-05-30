@@ -2138,17 +2138,7 @@ input[type="radio"]:checked {
   cursor: pointer;
   padding: 10px;
   
-  /* outline: none;
-  z-index: 200;
-  border: none;
-  cursor: pointer;
-  width: -webkit-fill-available;
 
-  padding: 10px;
-  position: absolute;
-  position: absolute;
-  margin-left: -10px;
-  margin-top: -10px; */
 }
 .salary_employee_item_sums_inp{
   outline: none;

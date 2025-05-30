@@ -1,0 +1,26 @@
+<ul class="header_nav">
+      <li class="header_nav-link">
+            {% url 'bank:outside_ooo' as the_url %}
+            {% if request.path == the_url %}
+                  <span class="menu-active menu-active_service">ООО</span>
+            {% else %}
+                  <a class="menu_service" href="{% url 'bank:outside_ooo' %}">ООО</a>
+            {% endif %}
+      </li>
+      <li class="header_nav-link">
+            {% url 'bank:outside_ip' as the_url %}
+            {% if request.path == the_url %}
+                  <span class="menu-active menu-active_service">ИП</span>
+            {% else %}
+                  <a class="menu_service" href="{% url 'bank:outside_ip' %}">ИП</a>
+            {% endif %}
+      </li>
+      <li class="header_nav-link">
+            {% url 'bank:outside_nal' as the_url %}
+            {% if request.path == the_url %}
+                  <span class="menu-active menu-active_service">$</span>
+            {% else %}
+                  <a class="menu_service" href="{% url 'bank:outside_nal' %}">$</a>
+            {% endif %}
+      </li>
+</ul>

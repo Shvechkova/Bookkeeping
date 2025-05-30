@@ -21,13 +21,12 @@
 
             {% for category in operations %}
                 <div class="category-block">
-                    {% comment %} <div class="category-title">{{ category.category_name }}</div> {% endcomment %}
                     <div class="oper-account-grid">
                         <!-- Заголовки -->
                         <div class="oper-account-row oper-account-header">
                             <div class="oper-account-cell oper-account-num"></div>
                             <div class="oper-account-cell oper-account-service">
-                       
+                              <div class="category-title">{{ category.category_name }}</div> 
                                 <button class="btn_add_category_oper_account"
                                         data-name="modal-add_category_oper_account"
                                         {% comment %}

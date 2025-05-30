@@ -58,7 +58,7 @@
                                         </div>
                                         {% for m in months %}
                                             <div class="salary_employee_item_wrapper">
-                                                <div class="salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                <div class="inp_operation salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
                                                      data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
                                                      data-bank-in="{{ category.bank_in }}"
                                                      data-id-people="{{ employee.employee.id }}"
@@ -250,4 +250,3 @@
     </div>
 
 {% endblock content %}
-

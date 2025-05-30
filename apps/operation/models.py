@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 from datetime import datetime
 
-from apps.bank.models import Bank, GroupeOperaccount, GroupeSalary
+from apps.bank.models import Bank, CategNalog, GroupeOperaccount, GroupeSalary
 from apps.employee.models import Employee
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
 
@@ -58,6 +58,13 @@ class Operation(models.Model):
         GroupeSalary,
         on_delete=models.PROTECT,
         verbose_name="По зарплатам",
+        blank=True,
+        null=True,
+    )
+    nalog = models.ForeignKey(
+        CategNalog,
+        on_delete=models.PROTECT,
+        verbose_name="Налоги",
         blank=True,
         null=True,
     )
