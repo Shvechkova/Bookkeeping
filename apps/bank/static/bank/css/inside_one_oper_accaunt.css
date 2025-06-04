@@ -232,3 +232,25 @@
   
 
 } */
+
+.nalog_wr_old{
+   display: flex; 
+}
+.oper_account_nalog_old_year{
+  /* display: flex;
+  flex-direction: column; */
+  background: #f8f8f8;
+  border-radius: 25px;
+  border-radius: 25px;
+}
+.nalog_wr_old_year{
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+.oper-account-service-min-nalog{
+  margin-right: -100px;
+}
+.no-bg{
+  background:none!important;
+}

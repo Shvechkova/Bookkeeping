@@ -101,6 +101,7 @@
         </section>
         <!-- Старые операции -->
         <section class="oper_account_old">
+            
             {% for year_data in operations_old %}
                 <div class="year-block">
                     {% comment %} <h3>{{ year_data.year }} год (Итого: {{ year_data.total_year|floatformat:0 }} ₽)</h3> {% endcomment %}
@@ -137,7 +138,9 @@
                                 <!-- Услуги -->
                                 {% for account in category.accounts %}
                                     <div class="oper-account-cell_wr ">
-                                        <div class="oper-account-cell oper-account-service oper-account-service-min">
+                                        <div class="oper-account-cell oper-account-service oper-account-service-min  {% if forloop.last  %}
+                                            br-r-bb
+                                        {% endif %}">
                                             {{ account.total_account|format_rub }} ₽
                                         </div>
                                         <div class="oper-account-row">
@@ -183,10 +186,10 @@
                                 {% endfor %}
                                 <!-- Итого по месяцам для категории -->
                                 <div class="oper-account-cell_wr ">
-                                    <div class="oper-account-cell oper-account-service oper-account-service-min br-r-bb font-bold">
+                                    <div class="oper-account-cell oper-account-service oper-account-service-min br-r-bb font-bold no-bg">
                                         {{ category.total_category|format_rub }} ₽
                                     </div>
-                                    <div class="oper-account-row oper-account-total">
+                                    <div class="oper-account-row oper-account-total no-bg">
                                         {% comment %} <div class="oper-account-cell oper-account-service">
                                            <div class="oper-account-cell oper-account-service">{{ category.total_category }} ₽</div>
                                         </div> {% endcomment %}
