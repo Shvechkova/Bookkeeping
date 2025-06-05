@@ -23,7 +23,7 @@
                 </div>
                 {% for employee in employees %}
                     <div class="salary-employee-wrap_one">
-                        <div class="salary-employee-row stiky-position2">
+                        <div class="salary-employee-row ">
                             <div class="salary-employee-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                             <div class="salary-employee-name salary-employee-big-row">
                                 {{ employee.employee }}
@@ -131,7 +131,7 @@
             <div class="salary-old">
                 {% for year_data in operations_old %}
                     <div class="salary-old-year">
-                        <div class="salary-header font-bold stiky-position1">
+                        <div class="salary-header font-bold stiky-position1 salary-header-old-year">
                             <div class="salary-employee-smal-row">{{ year_data.year|cut:" " }}
                             <div class="btn_month_invoce-shrink shrink-item"
                                              data-attr-shrink='salary-old_{{ year_data.year|cut:" " }}'
@@ -149,13 +149,18 @@
                             
                             </div>
                             {% for month in all_months %}
-                                <div class="salary-month salary-employee-smal-row salary-old_{{ year_data.year|cut:" " }}" 
+                                <div class="salary-month salary-employee-smal-row salary-header-old-year salary-old_{{ year_data.year|cut:" " }} " 
                                 data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'>{{ month }}</div>
                             {% endfor %}
                         </div>
                         {% for employee in year_data.employees %}
-                            <div class="salary-employee-wrap_one">
-                                <div class="salary-employee-row stiky-position2">
+                        
+                        
+                            
+                            <div class="salary-employee-wrap_one salary-employee-wrap_one_year {% if forloop.first %}
+                            bg-need-spase
+                        {% endif %}">
+                                <div class="salary-employee-row  ">
                                     <div class="salary-employee-num"></div>
                                     <div class="salary-employee-name salary-employee-smal-row">{{ employee.total_year|format_rub }} ₽</div>
                                     {% for total in employee.total_by_month %}
@@ -225,7 +230,7 @@
                             </div>
                             {% for total_name, totals in totals_old_by_month|get_item:year_data.year|items %}
                                 {% if total_name != "total_year" %}
-                                    <div class="salary-total-row">
+                                    <div class="salary-total-row salary-total-row-no-bg">
                                         <div class="salary-employee-big-row font-bold">
                                             {% comment %} <b>{{ total_name }}</b> {% endcomment %}
                                             {% if totals_old_by_month|get_item:year_data.year|get_item:"total_year"|get_item:total_name %}

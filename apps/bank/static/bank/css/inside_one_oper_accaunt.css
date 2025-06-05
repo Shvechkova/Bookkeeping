@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  
 }
 
 .oper-account-row {
@@ -243,6 +244,7 @@
   border-radius: 25px;
   border-radius: 25px;
 }
+
 .nalog_wr_old_year{
   display: flex;
   flex-direction: column;
@@ -253,4 +255,18 @@
 }
 .no-bg{
   background:none!important;
+}
+
+.oper-account-grid{
+
+}
+.nalog_wr_old {
+  gap: 50px;
+  display: flex;
+  
+  flex-direction: column;
+}
+.nalog_wr_old_year_line{
+  gap: 50px;
+  display: flex;
 }

@@ -133,10 +133,10 @@ function addSalaryOperation(element, btnAdd,pageName) {
       },
     }).then((response) => {
       if (response.ok === true) {
-    //    location.reload();
+       location.reload();
         
       } else {
-        // location.reload();
+        location.reload();
        
       }
     });
