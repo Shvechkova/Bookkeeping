@@ -8,6 +8,16 @@
 .year-block {
   margin-bottom: 32px;
 }
+.category-block:last-child,
+.year-block:last-child {
+  margin-bottom: 0;
+}
+.oper_account_nalog_old_year, 
+.category-block:last-child{
+ 
+}
+
+
 
 .oper-account-grid {
   display: flex;
@@ -96,7 +106,7 @@
 
 .section_oper_wr {
   display: flex;
-  gap: 50px;
+  
 }
 .oper-account-service {
   width: 283px;
@@ -112,6 +122,10 @@
 } */
 .oper_account_old {
   /* background: #f5f5f7; */
+}
+.oper_account_nalog_total_year{
+  display: flex;
+  gap: 50px;
 }
 
 .oper_account_old .category-block {

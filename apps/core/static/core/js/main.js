@@ -657,7 +657,10 @@ function ShrinkHorizon() {
           const shrinkElem = document.querySelectorAll(
             `.${dataShrinkDateItem}`
           );
+          
+          ShrinkMoreElem(elementItem,false)
           shrinkElem.forEach((elementSr, i) => {
+            
             elementSr.style.display = "none";
             const btnShr = document.querySelector(
               `[data-attr-shrink=${dataShrinkDateItem}]`
@@ -667,38 +670,39 @@ function ShrinkHorizon() {
             // ShrinkVert()
             // localStorage.setItem(dataShrinkDateItem, 0)
           });
+        } else{
+          ShrinkMoreElem(elementItem,true)
         }
       });
 
       const btn = document.querySelectorAll(".shrink-item");
       btn.forEach((element, i) => {
         element.addEventListener("click", () => {
+          ShrinkMoreElem(element)
+
           const dataShrinkDate = element.getAttribute("data-attr-shrink-name");
           console.log("dataShrinkDate", dataShrinkDate);
           const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`);
           if (localStorage.getItem(dataShrinkDate)) {
-            console.log(99999);
+            ShrinkMoreElem(element,true)
             const page = document.querySelector("#page_name");
-            console.log(page);
             let display = "block";
             if (page & page.value == "salary") {
               display = "flex";
             }
-            console.log(display);
             shrinkElem.forEach((elementSr, i) => {
               elementSr.style.display = display;
             });
             localStorage.removeItem(dataShrinkDate);
             element.style.transform = "rotate(" + 0 + "deg)";
-            console.log("before ShrinkVert");
             ShrinkVert2();
           } else {
+            ShrinkMoreElem(element,false)
             shrinkElem.forEach((elementSr, i) => {
               elementSr.style.display = "none";
             });
             localStorage.setItem(dataShrinkDate, 1);
             element.style.transform = "rotate(" + 180 + "deg)";
-            console.log("before ShrinkVert");
             ShrinkVert2();
           }
         });
@@ -714,3 +718,49 @@ function ShrinkHorizon() {
   });
 }
 ShrinkHorizon();
+
+
+function ShrinkMoreElem(elementItem,is_none){
+  console.log("elementItem",elementItem)
+  const shrinkItemMore = elementItem.getAttribute(
+    "data-attr-shrink-item-more"
+  );
+  console.log("shrinkItemMore",shrinkItemMore)
+  if (shrinkItemMore){
+    elementItem.setAttribute("data-attr-shrink-item-more-tag", is_none);
+    const allElemAttr = document.querySelectorAll(`[data-attr-shrink-item-more=${shrinkItemMore}]`);
+    
+    // Проверяем все элементы на наличие атрибута data-attr-shrink-item-more-tag = false
+    const allElementsHaveFalseTag = Array.from(allElemAttr).every(elem => 
+      elem.getAttribute("data-attr-shrink-item-more-tag") === "false"
+    );
+    
+    if (allElementsHaveFalseTag) {
+      console.log("Все элементы имеют data-attr-shrink-item-more-tag = false");
+      all_elem = document.querySelectorAll(
+        `[data-attr-shrink-item-more-last=${shrinkItemMore}]`
+      );
+      console.log(`[data-attr-shrink-item-more-last=${shrinkItemMore}]`)
+      all_elem.forEach(elem => {
+        elem.style.display = "none";
+      });
+    }else{
+      all_elem = document.querySelectorAll(
+        `[data-attr-shrink-item-more-last=${shrinkItemMore}]`
+      );
+
+      all_elem.forEach(elem => {
+        elem.style.display = "block";
+      });
+    }
+    
+    // console.log("shrinkItemMore",shrinkItemMore)
+    // all_elem = document.querySelectorAll(
+    //   `[data-attr-shrink-item-more-last=${shrinkItemMore}]`
+    // )
+    // console.log("all_elem",all_elem)
+  }else{
+    console.log("NONE")
+  }
+}
+  
