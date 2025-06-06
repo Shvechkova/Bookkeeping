@@ -23,13 +23,14 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  
+  width: 100%;
 }
 
 .oper-account-row {
   display: flex;
   align-items: center;
   min-height: 40px;
+  width: 100%;
 }
 
 .oper-account-header {
@@ -40,33 +41,38 @@
 }
 
 .oper-account-cell {
-  /* padding: 8px 16px; */
-  min-width: 120px;
+  padding: 8px 16px;
   text-align: left;
   font-size: 16px;
-  /* background: #fff; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .oper-account-num {
-  min-width: 40px;
-  
+  width: 40px;
+  flex-shrink: 0;
   font-weight: 400;
 }
 
 .oper-account-service {
-  min-width: 200px;
+  width: 283px;
+  flex-shrink: 0;
   font-weight: 500;
+  white-space: normal;
 }
 
 .oper-account-month {
-  min-width: 180px;
+  width: 180px;
+  flex-shrink: 0;
   text-align: left;
   color: #222;
   font-weight: 500;
 }
 
 .oper-account-value {
-  min-width: 180px;
+  width: 180px;
+  flex-shrink: 0;
   text-align: left;
   font-weight: 400;
 }

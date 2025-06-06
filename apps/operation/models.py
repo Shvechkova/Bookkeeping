@@ -4,7 +4,7 @@ from datetime import datetime
 
 from apps.bank.models import Bank, CategNalog, GroupeOperaccount, GroupeSalary
 from apps.employee.models import Employee
-from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
+from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth, SubcontractOtherCategory
 
 
 # Create your models here.
@@ -47,6 +47,13 @@ class Operation(models.Model):
         blank=True,
         null=True,
     )
+    suborder_other = models.ForeignKey(
+        SubcontractOtherCategory,
+        on_delete=models.PROTECT,
+        verbose_name="Другие субконтракты без привязке в услуге",
+        blank=True,
+        null=True,
+    )
     operaccount = models.ForeignKey(
         GroupeOperaccount,
         on_delete=models.PROTECT,
@@ -75,6 +82,7 @@ class Operation(models.Model):
         blank=True,
         null=True,
     )
+    
     
  
 

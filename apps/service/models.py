@@ -1,5 +1,6 @@
 from django.db import models
 
+from apps.bank.models import Bank
 from apps.client.models import Client, Contract
 from apps.employee.models import CategoryEmployee, Employee
 
@@ -115,6 +116,23 @@ class SubcontractMonth(models.Model):
     month_bill = models.ForeignKey(
         ServicesClientMonthlyInvoice, on_delete=models.CASCADE, blank=True, null=True
     )
+    
+class SubcontractOtherCategory(models.Model):
+    name = models.CharField("Название другого субподряда", max_length=200, blank=True, null=True)
+    bank = models.ForeignKey(
+        Bank,
+        on_delete=models.PROTECT,
+        verbose_name="банк",
+        blank=True,
+        null=True,
+    )
+    class Meta:
+        verbose_name = "Субподряд другое"
+        verbose_name_plural = "Субподряд другое"
+       
+    
+    def __str__(self):
+        return self.name
 
 
 class AdvPlatform(models.Model):

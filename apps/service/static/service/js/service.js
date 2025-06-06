@@ -12,9 +12,9 @@ if (addBill) {
       if (dataCatServise != 1) {
         const advWrap = document.querySelector(".adv_all_sum_wrapper");
         advWrap.style.display = "none";
+        advWrap.querySelector("input").type = "hidden";
         const advSum = document.querySelector("#adv_all_sum");
         advSum.value = 0;
-
       }
       // имя страницы для фильтрации доступных клиентов
       const pageName = document.getElementById("page_name").value;
@@ -37,7 +37,7 @@ if (addBill) {
       modal(elem, battonAdd);
 
       getClientFilterCategory(pageName, dataBill, elem);
-      addMonthBill(dataBill, elem,el);
+      addMonthBill(dataBill, elem, el);
 
       // валидация
       const modalWindows = document.getElementById(elem);
@@ -123,7 +123,7 @@ function getClientFilterCategory(pageName, dataBill, elem) {
     });
 }
 // добавление месячного счета
-function addMonthBill(dataBill, elem,el) {
+function addMonthBill(dataBill, elem, el) {
   const addMontContract = document.querySelector(
     ".client_additional-contract_add"
   );
@@ -266,8 +266,8 @@ function updBillChange(idBill, service_name, elem) {
     // let sumBillModal = document.querySelector("#contract_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
     // let sumAdvBillModal = document.querySelector("#adv_all_sum_change").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
 
-    let sumBillModal =  getCurrentPrice(document.querySelector("#contract_sum_change").value) 
-    let sumAdvBillModal =  getCurrentPrice(document.querySelector("#adv_all_sum_change").value) 
+    let sumBillModal = getCurrentPrice(document.querySelector("#contract_sum_change").value)
+    let sumAdvBillModal = getCurrentPrice(document.querySelector("#adv_all_sum_change").value)
 
     const diff_sum = sumBillModal - sumAdvBillModal;
 

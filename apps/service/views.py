@@ -17,6 +17,7 @@ from django.db.models.functions import Round
 
 # Create your views here.
 def service_all(request):
+    
     title = "Услуги"
     context = {
         "title": title,
@@ -66,7 +67,7 @@ def service_one(request, slug):
     else:
         sort_operation_op = "0"
         
-
+    print(111111111111)
     now = datetime.datetime.now()
     year = now.year
 
@@ -308,7 +309,7 @@ def service_one(request, slug):
         .prefetch_related()
         .filter(month_bill__service=category_service.id)
     )
-
+    print(2222222222222)
     import pymorphy3
 
     morph = pymorphy3.MorphAnalyzer(lang="ru")
@@ -440,13 +441,13 @@ def service_one(request, slug):
 
         item = [grouper, val, total]
         service_month_invoice_new.append(item)
-
+    print(33333333333)
     # все счета
     if title_name == "ADV":
         platform = AdvPlatform.objects.all()
     else:
         platform = None
-
+    print(444444444)
     context = {
         "title": title,
         "service": service,
@@ -458,5 +459,5 @@ def service_one(request, slug):
         "platform": platform,
         "suborders": suborders,
     }
-
+    print(6666666666)
     return render(request, "service/service_one.html", context)

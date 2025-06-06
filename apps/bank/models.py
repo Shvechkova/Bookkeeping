@@ -61,6 +61,7 @@ class CategNalog(models.Model):
         blank=True,
         null=True,
     )
+    in_page_nalog = models.BooleanField("Отображение на странице налогов",default=True)
     class Meta:
         verbose_name = "Категория налога"
         verbose_name_plural = "Категории налогов"

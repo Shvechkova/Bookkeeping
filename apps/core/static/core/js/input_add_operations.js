@@ -72,6 +72,24 @@ function addSalaryOperation(element, btnAdd,pageName) {
         const accountid = element.getAttribute("data-sub-categ-name");
         form.append("salary", accountid);
     }
+    else if(pageName == "OOO"){
+      const bank_to = element.getAttribute("data-bank-out");
+      form.append("bank_to", bank_to);
+      const type = element.getAttribute("tupe-operations");
+      if (type == "between"){
+        form.append("bank_in", 1);
+        
+      }
+      else if(type == "SubcontractOtherCategory"){
+        const categId = element.getAttribute("data-sub-categ-id");
+        form.append("bank_in", 1);
+        form.append("suborder_other", categId);
+      }
+      else{
+        
+      }
+      
+  }
     var now = new Date();
     const nowYear = now.getFullYear();
     const nowMonth = now.getMonth() + 1;

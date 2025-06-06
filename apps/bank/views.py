@@ -7,6 +7,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Prefetch, OuterRef
 from django.db.models import Avg, Count, Min, Sum
 from django.db.models import Q, F, OrderBy, Case, When, Value
+from django.db import models
 from apps.bank.models import (
     CATEGORY_OPERACCOUNT,
     Bank,
@@ -16,7 +17,7 @@ from apps.bank.models import (
 )
 from apps.employee.models import Employee
 from apps.operation.models import Operation
-from apps.service.models import Service
+from apps.service.models import Service, SubcontractOtherCategory
 from project.settings import MONTHS_RU
 import locale
 
@@ -70,7 +71,7 @@ def oper_accaunt(request):
         .prefetch_related()
         .order_by("-data")
     )
-    print("operations_old", operations_old)
+
     category = CATEGORY_OPERACCOUNT
     groupeis = GroupeOperaccount.objects.all()
 
@@ -120,7 +121,7 @@ def oper_accaunt(request):
                     "total": 0,
                     "comment": False,
                 }
-    print(operations_by_category)
+
     # Группируем операции
     for operation in operations:
 
@@ -379,7 +380,6 @@ def salary(request):
         q_object &= Q(date_end__isnull=True)
         q_object |= Q(date_end__year=year_now_st)
 
-    print(q_object)
     # Получаем активных сотрудников
     employee_now_year = Employee.objects.filter(q_object)
 
@@ -400,7 +400,7 @@ def salary(request):
         .prefetch_related(Prefetch("bank"))
     )
     all_categories_bank = all_categories_qs.values_list("bank", "name", "id")
-    print(all_categories_bank)
+ 
     cat_name_id = {}
     for cat in all_categories_qs:
         cat_name_id[cat.name] = cat.id
@@ -1262,11 +1262,11 @@ def salary(request):
 def nalog(request):
     """
     Представление для отображения налоговых операций.
-    
+
     """
     # Инициализация локали для корректного отображения русских названий месяцев
     locale.setlocale(locale.LC_ALL, "")
-    
+
     # Инициализация морфологического анализатора для работы с русским языком
     morph = pymorphy3.MorphAnalyzer(lang="ru")
 
@@ -1284,16 +1284,18 @@ def nalog(request):
         bank_id = [int(bank_id)]
     else:
         bank_id = [1, 2]
-    print(bank_id)
+  
     # Получение всех категорий налогов с предварительной загрузкой связанных данных
-    categoru_nalog = CategNalog.objects.all().select_related("bank_in")
-
+    categoru_nalog = CategNalog.objects.filter(in_page_nalog=True).select_related("bank_in")
+    
     # Формирование списка месяцев текущего года в обратном порядке
-    months_current_year = [
-        MONTHS_RU[month - 1] 
-        for month in range(1, month_now + 1)
-    ]
+    months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
+
+    # Создаем словарь для сопоставления названий месяцев с их номерами
+    month_numbers = {month: i+1 for i, month in enumerate(months_current_year)}
+   
+    print(months_current_year)
 
     # Инициализация структуры данных для хранения операций по категориям
     operations_by_category = {
@@ -1329,7 +1331,7 @@ def nalog(request):
             "name_full": "ИТОГО",
             "full_year_total": 0,
             "totals_month": {},
-        }
+        },
     }
 
     # Инициализация totals_month для общего итога
@@ -1401,7 +1403,11 @@ def nalog(request):
 
         # Распределение категорий по типам банков и секциям
         if cat.bank_in.id == 1:  # ООО
-            section = "Налоги с ЗП" if cat.name != "налог на аренду офиса" else "Прочие налоги"
+            section = (
+                "Налоги с ЗП"
+                if cat.name != "налог на аренду офиса"
+                else "Прочие налоги"
+            )
             operations_by_category["OOO"]["sections"][section]["category"].append(arr)
         elif cat.bank_in.id == 2:  # ИП
             operations_by_category["ИП"]["category"].append(arr)
@@ -1421,7 +1427,7 @@ def nalog(request):
     for operation in operations:
         if not operation.nalog:
             continue
-            
+
         month_name = MONTHS_RU[operation.data.month - 1]
         bank_type = "OOO" if operation.nalog.bank_in.id == 1 else "ИП"
 
@@ -1433,33 +1439,50 @@ def nalog(request):
                 else "Прочие налоги"
             )
 
-            for category in operations_by_category[bank_type]["sections"][section]["category"]:
+            for category in operations_by_category[bank_type]["sections"][section][
+                "category"
+            ]:
                 if category["cat_id"] == operation.nalog.id:
                     # Обновление данных для месяца
-                    category["months"][month_name].update({
-                        "month_data": operation,
-                        "total": operation.amount,
-                        "operation_id": operation.id
-                    })
+                    category["months"][month_name].update(
+                        {
+                            "month_data": operation,
+                            "total": operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
 
                     # Обновление итогов
-                    operations_by_category[bank_type]["sections"][section]["totals_month"][month_name].update({
-                        "total": operations_by_category[bank_type]["sections"][section]["totals_month"][month_name]["total"] + operation.amount,
-                        "operation_id": operation.id
-                    })
-                    operations_by_category[bank_type]["totals_month"][month_name]["total"] += operation.amount
+                    operations_by_category[bank_type]["sections"][section][
+                        "totals_month"
+                    ][month_name].update(
+                        {
+                            "total": operations_by_category[bank_type]["sections"][
+                                section
+                            ]["totals_month"][month_name]["total"]
+                            + operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
+                    operations_by_category[bank_type]["totals_month"][month_name][
+                        "total"
+                    ] += operation.amount
                     category["full_year_total"] += operation.amount
                     break
         else:
             # Обработка операций ИП
             for category in operations_by_category[bank_type]["category"]:
                 if category["cat_id"] == operation.nalog.id:
-                    category["months"][month_name].update({
-                        "month_data": operation,
-                        "total": operation.amount,
-                        "operation_id": operation.id
-                    })
-                    operations_by_category[bank_type]["totals_month"][month_name]["total"] += operation.amount
+                    category["months"][month_name].update(
+                        {
+                            "month_data": operation,
+                            "total": operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
+                    operations_by_category[bank_type]["totals_month"][month_name][
+                        "total"
+                    ] += operation.amount
                     category["full_year_total"] += operation.amount
                     break
 
@@ -1477,48 +1500,61 @@ def nalog(request):
                 for i, month in enumerate(months_current_year):
                     if i < len(months_current_year) - 1:
                         prev_month = months_current_year[i + 1]
-                        section_data["totals_month"][month]["expected"] = section_data["totals_month"][prev_month]["total"]
-                        
+                        section_data["totals_month"][month]["expected"] = section_data[
+                            "totals_month"
+                        ][prev_month]["total"]
+
                         for category in section_data["category"]:
-                            category["months"][month]["expected"] = category["months"][prev_month]["total"]
+                            category["months"][month]["expected"] = category["months"][
+                                prev_month
+                            ]["total"]
 
             # Обновление общих ожидаемых расходов для ООО
             for i, month in enumerate(months_current_year):
                 if i < len(months_current_year) - 1:
                     prev_month = months_current_year[i + 1]
-                    bank_data["totals_month"][month]["expected"] = bank_data["totals_month"][prev_month]["total"]
+                    bank_data["totals_month"][month]["expected"] = bank_data[
+                        "totals_month"
+                    ][prev_month]["total"]
 
             # Расчет итога за год для ООО
             bank_data["full_year_total"] = sum(
-                month_data["total"] 
-                for month_data in bank_data["totals_month"].values()
+                month_data["total"] for month_data in bank_data["totals_month"].values()
             )
         elif bank_type == "ИП":
             # Расчет ожидаемых расходов и итогов для ИП
             for i, month in enumerate(months_current_year):
                 if i < len(months_current_year) - 1:
                     prev_month = months_current_year[i + 1]
-                    bank_data["totals_month"][month]["expected"] = bank_data["totals_month"][prev_month]["total"]
-                    
+                    bank_data["totals_month"][month]["expected"] = bank_data[
+                        "totals_month"
+                    ][prev_month]["total"]
+
                     for category in bank_data["category"]:
-                        category["months"][month]["expected"] = category["months"][prev_month]["total"]
+                        category["months"][month]["expected"] = category["months"][
+                            prev_month
+                        ]["total"]
 
             bank_data["full_year_total"] = sum(
-                month_data["total"] 
-                for month_data in bank_data["totals_month"].values()
+                month_data["total"] for month_data in bank_data["totals_month"].values()
             )
         elif bank_type == "total_all":
             # Расчет общих итогов
             for month in months_current_year:
-                ooo_total = operations_by_category["OOO"]["totals_month"][month]["total"]
+                ooo_total = operations_by_category["OOO"]["totals_month"][month][
+                    "total"
+                ]
                 ip_total = operations_by_category["ИП"]["totals_month"][month]["total"]
-                operations_by_category["total_all"]["totals_month"][month]["total"] = ooo_total + ip_total
+                operations_by_category["total_all"]["totals_month"][month]["total"] = (
+                    ooo_total + ip_total
+                )
 
             operations_by_category["total_all"]["full_year_total"] = sum(
-                month_data["total"] 
-                for month_data in operations_by_category["total_all"]["totals_month"].values()
+                month_data["total"]
+                for month_data in operations_by_category["total_all"][
+                    "totals_month"
+                ].values()
             )
-
 
     # СТАРЫЕ ОПЕРАЦИИ
     # Получение исторических операций
@@ -1533,11 +1569,7 @@ def nalog(request):
     )
 
     # Инициализация структуры для исторических операций
-    operations_old_by_year = {
-        "OOO": {},
-        "ИП": {},
-        "total_all": {}
-    }
+    operations_old_by_year = {"OOO": {}, "ИП": {}, "total_all": {}}
 
     # Получение уникальных годов из исторических операций
     years_with_operations = {operation.data.year for operation in operations_old}
@@ -1590,13 +1622,15 @@ def nalog(request):
         for month in MONTHS_RU:
             # Для ООО
             operations_old_by_year["OOO"][year]["totals_month"][month] = {"total": 0}
-            
+
             # Для секций ООО
             for section in operations_old_by_year["OOO"][year]["sections"].values():
                 section["totals_month"][month] = {
                     "total": 0,
                     "month_number": MONTHS_RU.index(month) + 1,
-                    "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                    "date_start": datetime.datetime(
+                        year, MONTHS_RU.index(month) + 1, 1
+                    ),
                     "operation_id": 0,
                 }
 
@@ -1623,7 +1657,7 @@ def nalog(request):
                     "months": {},
                     "full_year_total": 0,
                 }
-                
+
                 # Инициализация месяцев для категории
                 for month in MONTHS_RU:
                     arr["months"][month] = {
@@ -1631,10 +1665,14 @@ def nalog(request):
                         "month_data": "",
                         "total": 0,
                         "month_number": MONTHS_RU.index(month) + 1,
-                        "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                        "date_start": datetime.datetime(
+                            year, MONTHS_RU.index(month) + 1, 1
+                        ),
                         "operation_id": 0,
                     }
-                operations_old_by_year["OOO"][year]["sections"][section]["category"].append(arr)
+                operations_old_by_year["OOO"][year]["sections"][section][
+                    "category"
+                ].append(arr)
 
         # Инициализация категорий для ИП
         for cat in categoru_nalog:
@@ -1647,7 +1685,7 @@ def nalog(request):
                     "months": {},
                     "full_year_total": 0,
                 }
-                
+
                 # Инициализация месяцев для категории
                 for month in MONTHS_RU:
                     arr["months"][month] = {
@@ -1655,7 +1693,9 @@ def nalog(request):
                         "month_data": "",
                         "total": 0,
                         "month_number": MONTHS_RU.index(month) + 1,
-                        "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
+                        "date_start": datetime.datetime(
+                            year, MONTHS_RU.index(month) + 1, 1
+                        ),
                         "operation_id": 0,
                     }
                 operations_old_by_year["ИП"][year]["category"].append(arr)
@@ -1664,7 +1704,7 @@ def nalog(request):
     for operation in operations_old:
         if not operation.nalog:
             continue
-            
+
         year = operation.data.year
         month_name = MONTHS_RU[operation.data.month - 1]
         bank_type = "OOO" if operation.nalog.bank_in.id == 1 else "ИП"
@@ -1683,17 +1723,22 @@ def nalog(request):
                 if category["cat_id"] == operation.nalog.id:
                     # Обновление данных для месяца
                     month_data = category["months"][month_name]
-                    month_data.update({
-                        "month_data": operation,
-                        "total": operation.amount,
-                        "operation_id": operation.id
-                    })
+                    month_data.update(
+                        {
+                            "month_data": operation,
+                            "total": operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
 
                     # Обновление итогов
-                    section_data["totals_month"][month_name].update({
-                        "total": section_data["totals_month"][month_name]["total"] + operation.amount,
-                        "operation_id": operation.id
-                    })
+                    section_data["totals_month"][month_name].update(
+                        {
+                            "total": section_data["totals_month"][month_name]["total"]
+                            + operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
                     year_data["totals_month"][month_name]["total"] += operation.amount
                     category["full_year_total"] += operation.amount
                     break
@@ -1702,11 +1747,13 @@ def nalog(request):
             for category in year_data["category"]:
                 if category["cat_id"] == operation.nalog.id:
                     month_data = category["months"][month_name]
-                    month_data.update({
-                        "month_data": operation,
-                        "total": operation.amount,
-                        "operation_id": operation.id
-                    })
+                    month_data.update(
+                        {
+                            "month_data": operation,
+                            "total": operation.amount,
+                            "operation_id": operation.id,
+                        }
+                    )
                     year_data["totals_month"][month_name]["total"] += operation.amount
                     category["full_year_total"] += operation.amount
                     break
@@ -1718,14 +1765,17 @@ def nalog(request):
                 # Расчет итогов для ООО
                 ooo_total = 0
                 for section_name, section_data in year_data["sections"].items():
-                    section_total = sum(month_data["total"] for month_data in section_data["totals_month"].values())
+                    section_total = sum(
+                        month_data["total"]
+                        for month_data in section_data["totals_month"].values()
+                    )
                     section_data["full_year_total"] = section_total
                     ooo_total += section_total
                 year_data["full_year_total"] = ooo_total
             else:
                 # Расчет итогов для ИП
                 year_data["full_year_total"] = sum(
-                    month_data["total"] 
+                    month_data["total"]
                     for month_data in year_data["totals_month"].values()
                 )
 
@@ -1737,7 +1787,7 @@ def nalog(request):
             "name": "Итого",
             "name_full": "Итого год",
             "full_year_total": 0,
-            "totals_month": {}
+            "totals_month": {},
         }
 
         # Инициализация месяцев для общего итога
@@ -1745,20 +1795,28 @@ def nalog(request):
             operations_old_by_year["total_all"][year]["totals_month"][month] = {
                 "total": 0,
                 "month_number": MONTHS_RU.index(month) + 1,
-                "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1)
+                "date_start": datetime.datetime(year, MONTHS_RU.index(month) + 1, 1),
             }
 
         # Расчет итогов по месяцам
         for month in MONTHS_RU:
             # Суммируем значения из ООО и ИП для каждого месяца
-            ooo_total = operations_old_by_year["OOO"][year]["totals_month"][month]["total"]
-            ip_total = operations_old_by_year["ИП"][year]["totals_month"][month]["total"]
-            operations_old_by_year["total_all"][year]["totals_month"][month]["total"] = ooo_total + ip_total
+            ooo_total = operations_old_by_year["OOO"][year]["totals_month"][month][
+                "total"
+            ]
+            ip_total = operations_old_by_year["ИП"][year]["totals_month"][month][
+                "total"
+            ]
+            operations_old_by_year["total_all"][year]["totals_month"][month][
+                "total"
+            ] = (ooo_total + ip_total)
 
         # Расчет общего итога за год
         operations_old_by_year["total_all"][year]["full_year_total"] = sum(
-            month_data["total"] 
-            for month_data in operations_old_by_year["total_all"][year]["totals_month"].values()
+            month_data["total"]
+            for month_data in operations_old_by_year["total_all"][year][
+                "totals_month"
+            ].values()
         )
 
     # Формирование контекста для шаблона
@@ -1768,7 +1826,9 @@ def nalog(request):
         "operations_by_category": operations_by_category,
         "operations_old_by_year": operations_old_by_year,
         "year_now": year_now,
-        "nalog_wr_old": operations_old_by_year["total_all"]  # Добавляем общие итоги по годам
+        "nalog_wr_old": operations_old_by_year[
+            "total_all"
+        ],  # Добавляем общие итоги по годам
     }
 
     return render(request, "bank/inside/inside_one_nalog.html", context)
@@ -1792,29 +1852,53 @@ def outside_ooo(request):
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
+    
+    # Получаем только нужный банк
     bank = Bank.objects.get(id=1)
-    operations_in = (
-        Operation.objects.filter(data__year__gte=year_now, bank_to=bank)
-        .select_related()
-        .prefetch_related()
-        .order_by("-data")
+    
+    # Оптимизируем запросы
+    operations = (
+        Operation.objects.select_related(
+            "bank_in",
+            "bank_to",
+            "operaccount",
+            "salary",
+            "nalog",
+            "employee",
+            "monthly_bill",
+            "monthly_bill__service",
+            "suborder",
+            "suborder__month_bill",
+            "suborder__month_bill__service",
+            "suborder__platform",
+            "suborder__category_employee",
+        )
+        .filter(
+            Q(bank_in=bank) | Q(bank_to=bank),
+            data__year__gte=year_now,
+            
+        )
+        .order_by("data")
     )
 
-    operations_out = (
-        Operation.objects.filter(data__year__gte=year_now, bank_in=bank)
-        .select_related()
-        .prefetch_related()
-        .order_by("-data")
-    )
+    # Получаем все сервисы одним запросом
+    services = Service.objects.all().select_related()
+    other_categ_subkontract = SubcontractOtherCategory.objects.filter(bank=bank).exclude(name="Topvisor")
+    
     # Создаем список месяцев текущего года
-    months_current_year = []
-    for month in range(1, month_now + 1):
-        month_name = MONTHS_RU[month - 1]
-        months_current_year.append(month_name)
+    
+    months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
-
+   
+    # Создаем словарь для сопоставления названий месяцев с их номерами
+    month_numbers = {month: i+1 for i, month in enumerate(months_current_year)}
+   
     print(months_current_year)
-
+   
+    arr_start_month = {
+        "name": "Р/С на начало месяца",
+        "total": {},
+    }
     arr_in = {
         "name": "ПОСТУПЛЕНИЯ",
         "category": [
@@ -1827,6 +1911,8 @@ def outside_ooo(request):
                 "group": {
                     "перевод с ИП для оплаты субподряда": {},
                     "перевод с $ для оплаты субподряда": {},
+                    "зачисление из хранилища": {},
+                    
                 },
             },
         ],
@@ -1844,8 +1930,9 @@ def outside_ooo(request):
                     "SEO": {
                         "Topvisor": {},
                         "ИП Галаев": {},
+                        "Другое": {},
                     },
-                    "другое": {},
+                    "остальное": {},
                 },
             },
             {
@@ -1856,15 +1943,60 @@ def outside_ooo(request):
             },
             {
                 "name": "другие субподряды:",
-                "group": {
-                    "бухгалтерия": {},
-                },
+                "group": {},
             },
         ],
         "total_category": {
             "name": "ИТОГО СУБПОДРЯДЧИКИ + ПЛОЩАДКИ",
             "total": {},
         },
+    }
+
+    # Инициализируем месяцы для итогов arr_out в правильном порядке
+    for month in months_current_year:
+        month_number = month_numbers[month]
+        arr_out["total_category"]["total"][month] = {
+            "amount_month": 0,
+            "month_number": f"{month_number:02d}",
+            "is_make_operations": False,
+        }
+
+    arr_in_out_all = {
+        "name": None,
+        "category": [
+            {
+                "name": "РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)",
+                "total": {},
+            },
+            {
+                "name": "ПРИБЫЛЬ 1% ЦРП 5%",
+                "total": {},
+            },
+            {
+                "name": "КВ 20% ЦРП 50%",
+                "total": {},
+            },
+            {
+                "name": "ПРЕМИИ",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО",
+                "total": {},
+            },
+            {
+                "name": "ПРОВЕРКА ООО ДОХОД-РАСХОД = ОСТАТОК",
+                "total": {},
+            },
+        ],
+    }
+    arr_nalog = {
+        "name": "НАЛОГИ (без УСН)",
+        "total": {},
+    }
+    arr_salary = {
+        "name": "ЗП с ООО",
+        "total": {},
     }
 
     arr_operaccount = {
@@ -1876,17 +2008,71 @@ def outside_ooo(request):
         },
     }
 
+    arr_in_out_after_all = {
+            "name": None,
+            "category": [
+                {
+                    "name": "ДОХОД - РЕАЛЬНЫЙ РАСХОД в текущем месяце",
+                    "total": {},
+                },
+                {
+                    "name": "НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)",
+                    "total": {},
+                },
+                {
+                    "name": "Реальный налог УСН с ООО доход - 1%",
+                    "total": {},
+                },
+                {
+                    "name": "Предполагаемый УСН по результатам месяца",
+                    "total": {},
+                },
+                {
+                    "name": "ПРОВЕРКА ДОХОД - РАСХОД",
+                    "total": {},
+                },
+            ],
+        }
+    arr_in_out_after_all_total = {
+            "name": None,
+            "category": [
+                {
+                    "name": "ДОХОД-РАСХОД (в текущем месяце без УСН и вывода остатков)",
+                    "total": {},
+                },
+                {
+                    "name": "ФАКТИЧЕСКАЯ ОПЛАТА УСН",
+                    "total": {},
+                },
+                {
+                    "name": "ВЫВОД ОСТАТКОВ НА ИП + НАЛОГИ ИП",
+                    "total": {},
+                },
+                {
+                    "name": "Расходы ООО из отложенных средств в прошлые периоды",
+                    "total": {},
+                },
+            ],
+        }
     # Добавляем категории из CATEGORY_OPERACCOUNT
     for categ_oper in CATEGORY_OPERACCOUNT:
         category_data = {"name": categ_oper[1], "group": {}}
         # Добавляем месяцы для каждой категории
-        for month in months_current_year:
-            category_data["group"][month] = {"amount_month": 0}
+        for i, month in enumerate(months_current_year):
+            month_number = month_numbers[month]
+            category_data["group"][month] = {
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+            }
         arr_operaccount["category"].append(category_data)
 
     # Добавляем месяцы для итогов
-    for month in months_current_year:
-        arr_operaccount["total_category"]["total"][month] = {"amount_month": 0}
+    for i, month in enumerate(months_current_year):
+        month_number = month_numbers[month]
+        arr_operaccount["total_category"]["total"][month] = {
+            "amount_month": 0,
+            "month_number": f"{month_number:02d}",
+        }
 
     services = Service.objects.all()
 
@@ -1894,73 +2080,188 @@ def outside_ooo(request):
         name = f"{service.name}({service.name_long_ru})"
         arr_in["category"][0]["group"][name] = {}
 
-        for month in months_current_year:
+        for i, month in enumerate(months_current_year):
+            month_number = month_numbers[month]
+            print(month_number)
             # Для услуг
             arr_in["category"][0]["group"][name][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
             # Для переводов с ИП
-            arr_in["category"][1]["group"]["перевод с ИП для оплаты субподряда"][
-                month
-            ] = {
+            arr_in["category"][1]["group"]["перевод с ИП для оплаты субподряда"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
             # Для переводов с $
-            arr_in["category"][1]["group"]["перевод с $ для оплаты субподряда"][
-                month
-            ] = {
+            arr_in["category"][1]["group"]["перевод с $ для оплаты субподряда"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
+            }
+            # Для переводов с хранилища
+            arr_in["category"][1]["group"]["зачисление из хранилища"][month] = {
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
             # Для итогов
             arr_in["total_category"]["total"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
             # Для arr_out
             # Добавляем месяцы для SEO
             arr_out["category"][0]["group"]["SEO"]["Topvisor"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": True,
+                "bank_out": 5, 
+                "date_start": datetime.datetime(year_now, month_number, 1),
+                "operation_id": 0,
+                "type_operations": "SubcontractOtherCategory",
             }
             arr_out["category"][0]["group"]["SEO"]["ИП Галаев"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
+            }
+            arr_out["category"][0]["group"]["SEO"]["Другое"][month] = {
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
             # Добавляем месяцы для переводов
-            arr_out["category"][1]["group"]["перевод на ИП для оплаты субподряда"][
-                month
-            ] = {
+            arr_out["category"][1]["group"]["перевод на ИП для оплаты субподряда"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": True,
+                "bank_out": 2,
+                "date_start": datetime.datetime(year_now, month_number, 1),
+                "operation_id": 0,
+                "type_operations": "between",
             }
 
-            # Добавляем месяцы для бухгалтерии
-            arr_out["category"][2]["group"]["бухгалтерия"][month] = {
-                "amount_month": 0,
-            }
+            # Добавляем месяцы для других субподрядов
+            for category in other_categ_subkontract:
+                if category.name not in arr_out["category"][2]["group"]:
+                    arr_out["category"][2]["group"][category.name] = {}
+                    # Инициализируем месяцы для каждой категории
+                    for i, month in enumerate(months_current_year):
+                        month_number = month_numbers[month]
+                        arr_out["category"][2]["group"][category.name][month] = {
+                            "amount_month": 0,
+                            "month_number": f"{month_number:02d}",
+                            "is_make_operations": True,
+                            "bank_out": 5,
+                            "date_start": datetime.datetime(year_now, month_number, 1),
+                            "operation_id": 0,
+                            "type_operations": "SubcontractOtherCategory",
+                            "id_groupe": category.id,
+                        }
 
             # Добавляем месяцы для итогов arr_out
+            print(month)
             arr_out["total_category"]["total"][month] = {
                 "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
             }
 
     # Добавляем сервисы в "другое" для arr_out, исключая SEO
     for service in services:
         if service.name != "SEO":  # Пропускаем SEO
             name = f"{service.name}({service.name_long_ru})"
-            arr_out["category"][0]["group"]["другое"][name] = {}
+            arr_out["category"][0]["group"]["остальное"][name] = {}
             for month in months_current_year:
-                arr_out["category"][0]["group"]["другое"][name][month] = {
+                arr_out["category"][0]["group"]["остальное"][name][month] = {
                     "amount_month": 0,
+                    "month_number": len(months_current_year) - months_current_year.index(month),
+                    "is_make_operations": False,
                 }
 
-    print(arr_in)
+
+
+   
+    
+
+    for operation in operations:
+        month_name = MONTHS_RU[operation.data.month - 1]
+        if operation.operaccount:
+            pass
+        elif operation.salary:
+            pass
+        elif operation.nalog:
+            pass
+        elif operation.employee:
+            pass
+        elif operation.monthly_bill and operation.suborder is None:
+            # поступления по договорам услуг
+            
+            service_name = f"{operation.monthly_bill.service.name}({operation.monthly_bill.service.name_long_ru})"
+            
+            if service_name in arr_in["category"][0]["group"]:
+                arr_in["category"][0]["group"][service_name][month_name]["amount_month"] += operation.amount
+                arr_in["total_category"]["total"][month_name]["amount_month"] += operation.amount
+        elif operation.suborder:
+            # расходы по договорам услуг
+           
+            
+            # Для SEO
+            if operation.suborder.month_bill.service.name == "SEO":
+                if operation.suborder.platform and operation.suborder.platform.name == "Topvisor":
+                    pass
+                    # arr_out["category"][0]["group"]["SEO"]["Topvisor"][month_name]["amount_month"] += operation.amount
+                elif operation.suborder.category_employee and operation.suborder.category_employee.name == "ИП Галаев":
+                    arr_out["category"][0]["group"]["SEO"]["ИП Галаев"][month_name]["amount_month"] += operation.amount
+                else:
+                    arr_out["category"][0]["group"]["SEO"]["Другое"][month_name]["amount_month"] += operation.amount
+                    
+            # Для других субподрядов
+            else:
+                if operation.suborder.platform and operation.suborder.platform.name == "Topvisor":
+                    pass
+                    # arr_out["category"][0]["group"]["SEO"]["Topvisor"][month_name]["amount_month"] += operation.amount
+                    # arr_out["category"][0]["group"]["SEO"]["Topvisor"]["id_groupe"] = 
+                else:
+                    service_name = f"{operation.suborder.month_bill.service.name}({operation.suborder.month_bill.service.name_long_ru})"
+                    if service_name in arr_out["category"][0]["group"]["остальное"]:
+                        arr_out["category"][0]["group"]["остальное"][service_name][month_name]["amount_month"] += operation.amount
+                
+            # Добавляем в общий итог по месяцу операции
+            arr_out["total_category"]["total"][month_name]["amount_month"] += operation.amount
+        
+        elif operation.suborder_other:
+            # Добавляем в общий итог по месяцу операции
+            print(arr_out["total_category"]["total"][month_name]["amount_month"])
+            arr_out["total_category"]["total"][month_name]["amount_month"] += operation.amount
+            print(arr_out["total_category"]["total"][month_name]["amount_month"])
+            if  operation.suborder_other.name == "Topvisor":
+                    arr_out["category"][0]["group"]["SEO"]["Topvisor"][month_name]["amount_month"] += operation.amount
+                    # arr_out["category"][0]["group"]["SEO"]["Topvisor"]["id_groupe"] = 
+            else:
+                service_name = operation.suborder_other.name
+                arr_out["category"][2]["group"][service_name][month_name]["amount_month"] += operation.amount
+        
+        # операции доход
+        if operation.bank_in:
+            pass
+        # операции расход:
+        else:
+            pass
 
     context = {
         "title": title,
         "type_url": type_url,
-        "operations_in": operations_in,
+       "bank":bank.id,
         "arr_in": arr_in,
         "arr_out": arr_out,
         "months_current_year": months_current_year,
