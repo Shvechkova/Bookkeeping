@@ -11,7 +11,7 @@
   
     <li class="header_nav-link">
         {% url 'bank:outside' as the_url %}
-        {% if request.get_full_path == the_url %}
+        {% if request.get_full_path == the_url or type_url ==  "outside" %}
           <span class="menu-active">Внешние счета</span>
         {% else %}
           <a class="" href="{% url 'bank:outside' %}">Внешние счета</a>

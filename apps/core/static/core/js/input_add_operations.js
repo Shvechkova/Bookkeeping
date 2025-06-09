@@ -58,6 +58,11 @@ if (salaryBtn) {
 
 function addSalaryOperation(element, btnAdd,pageName) {
   console.log(element)
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') { // Проверяем, была ли нажата клавиша Enter
+      btnAdd.click(); // Имитируем нажатие на кнопку
+    }
+  });
   btnAdd.addEventListener("click", () => {
     const form = new FormData();
     console.log(element);
@@ -78,6 +83,7 @@ function addSalaryOperation(element, btnAdd,pageName) {
       const type = element.getAttribute("tupe-operations");
       if (type == "between"){
         form.append("bank_in", 1);
+
         
       }
       else if(type == "SubcontractOtherCategory"){
