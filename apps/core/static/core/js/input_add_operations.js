@@ -70,7 +70,7 @@ function addSalaryOperation(element, btnAdd,pageName) {
         form.append("bank_to", 5);
         const accountid = element.getAttribute("data-sub-categ-name");
         form.append("nalog", accountid);
-    }else if(pageName == "ЗП"){
+    }else if(pageName == "salary"){
         const dataPeople = element.getAttribute("data-id-people");
         form.append("employee", +dataPeople);
         form.append("bank_to", 5);

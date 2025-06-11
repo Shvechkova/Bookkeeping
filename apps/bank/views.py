@@ -2091,35 +2091,24 @@ def outside_ooo(request):
 
     # Добавляем категории из CATEGORY_OPERACCOUNT
     for categ_oper in CATEGORY_OPERACCOUNT:
-        category_data = {"name": categ_oper[1], "group": {}}
+        
         arr_inside_all["category"][2]["group"][categ_oper[1]] = {}
         # Добавляем месяцы для каждой категории
         for i, month in enumerate(months_current_year):
             month_number = month_numbers[month]
-            category_data["group"][month] = {
-                "amount_month": 0,
-                "month_number": MONTHS_RU.index(month) + 1,
-            }
-            # inside_all["group"]["ОПЕР СЧЕТ, в т.ч.:"]["group"][month] = {
-            #         "amount_month": 0,
-            #         "month_number": MONTHS_RU.index(month) + 1,
-            #     }
             arr_inside_all["category"][2]["group"][categ_oper[1]][month] = {
                 "amount_month": 0,
                 "month_number": MONTHS_RU.index(month) + 1,
                 "is_make_operations": False,
             }
-        arr_operaccount["category"].append(category_data)
 
-        # arr_inside_all["category"][1]["group"].append(category_data)
+
+     
 
     # Добавляем месяцы для итогов
     for i, month in enumerate(months_current_year):
         month_number = month_numbers[month]
-        arr_operaccount["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": MONTHS_RU.index(month) + 1,
-        }
+        
         for in_out in arr_in_out_all["category"]:
 
             in_out["total"][month] = {
@@ -2143,10 +2132,6 @@ def outside_ooo(request):
                     "month_number": MONTHS_RU.index(month) + 1,
                 }
 
-            #      inside_all["group"]["ИТОГО налоги с ЗП:"][month] = {
-            #     "amount_month": 0,
-            #     "month_number": MONTHS_RU.index(month) + 1,
-            # }
 
     services = Service.objects.all()
 
@@ -2267,7 +2252,15 @@ def outside_ooo(request):
                 "month_number": MONTHS_RU.index(month) + 1,
                 "is_make_operations": False,
             }
-
+    
+    def get_id_categ_oper(id_nalog):
+        for categ_oper_for in CATEGORY_OPERACCOUNT:
+            name = categ_oper_for[1]
+            id = categ_oper_for[0]
+            
+            if id_nalog == id:
+                return(name)
+            
     # Добавляем сервисы в "другое" для arr_out, исключая SEO
     for service in services:
         if service.name != "SEO":  # Пропускаем SEO
@@ -2283,30 +2276,75 @@ def outside_ooo(request):
     for operation in operations:
         month_name = MONTHS_RU[operation.data.month - 1]
         prev_month = MONTHS_RU[operation.data.month]
+        print(month_name)
+        print(prev_month)
         if prev_month in months_current_year:
             is_prev_month = True
         else:
             is_prev_month = False
 
+        # операции ВНУТРЕННИЕ СЧЕТА
         if operation.operaccount:
-            pass
-        elif operation.salary:
-            pass
-        elif operation.nalog:
-            arr_inside_all["total_category"]["total"][month_name][
+            id_operacc_categ = get_id_categ_oper(operation.operaccount.category)
+            arr_inside_all["category"][2]["group"][id_operacc_categ][month_name][
                         "amount_month"
                     ] += operation.amount
-            if operation.nalog != 4 and operation.nalog != 9:
+            arr_inside_all["category"][2]["total"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+            
+            arr_inside_all["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount   
+        elif operation.salary and operation.employee:
+            
+            # 10 число в след месяц 
+            if operation.salary.id == 1:
+                print()
+                month_name = MONTHS_RU[operation.data.month - 2]
+                arr_inside_all["category"][1]["total"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                arr_inside_all["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                
+            # не 10 число обычно 
+            else:
+                print(operation)
+                arr_inside_all["category"][1]["total"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                arr_inside_all["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+        elif operation.nalog:
+            
+            
+            if operation.nalog.id != 4 and operation.nalog.id != 9:
                 
                 arr_inside_all["category"][0]["group"]["ИТОГО налоги с ЗП:"][
                     month_name
                 ][
                         "amount_month"
                     ] += operation.amount
-            elif operation.nalog == 4:
-                pass
-        elif operation.employee:
-            pass
+                arr_inside_all["category"][0]["total"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                arr_inside_all["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                
+            elif operation.nalog.id == 4:
+                
+                arr_inside_all["category"][0]["total"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                arr_inside_all["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+        
+        # операции прихода по договорам услуг
         elif operation.monthly_bill and operation.suborder is None:
             # поступления по договорам услуг
 
@@ -2319,6 +2357,8 @@ def outside_ooo(request):
                 arr_in["total_category"]["total"][month_name][
                     "amount_month"
                 ] += operation.amount
+        
+        # операции расхода по договорам услуг
         elif operation.suborder:
             # расходы по договорам услуг
             # Для SEO
@@ -2405,7 +2445,7 @@ def outside_ooo(request):
             else:
                 pass
 
-    print(arr_inside_all)
+    
     context = {
         "title": title,
         "year_now": year_now,
