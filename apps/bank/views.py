@@ -1,4 +1,5 @@
 import datetime
+from apps.core.utils import create_month_categ_persent
 import pymorphy3
 import itertools
 from dateutil.relativedelta import relativedelta
@@ -1855,6 +1856,7 @@ def outside_ooo(request):
 
     # Получаем только нужный банк
     bank = Bank.objects.get(id=1)
+    
 
     # Оптимизируем запросы
     operations = (
@@ -2131,6 +2133,30 @@ def outside_ooo(request):
                     "amount_month": 0,
                     "month_number": MONTHS_RU.index(month) + 1,
                 }
+        for in_out_after_all in arr_in_out_after_all["category"]:
+            in_out_after_all["total"][month] = {
+                    "amount_month": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                }
+            if in_out_after_all["name"] == "ПРИБЫЛЬ 1% ЦРП 5%":
+                pass
+            elif in_out_after_all["name"] == "КВ 20% ЦРП 50%":
+                pass
+            elif in_out_after_all["name"] == "ПРЕМИИ":
+                in_out_after_all["total"][month]["is_make_operations"] = True
+                in_out_after_all["total"][month]["bank_out"] = 5
+                in_out_after_all["total"][month]["date_start"] =  datetime.datetime(
+                    year_now, MONTHS_RU.index(month) + 1, 1)
+                in_out_after_all["total"][month]["operation_id"] = 0,
+             
+             
+                
+            else:
+                pass
+                # in_out_after_all["total"][month] = {
+                #     "amount_month": 0,
+                #     "month_number": MONTHS_RU.index(month) + 1,
+                # }
 
 
     services = Service.objects.all()
@@ -2297,17 +2323,20 @@ def outside_ooo(request):
                         "amount_month"
                     ] += operation.amount   
         elif operation.salary and operation.employee:
-            
+            pass
             # 10 число в след месяц 
             if operation.salary.id == 1:
-                print()
+                print("operation.salary.id == 1 operation.data.month ",operation.data.month )
+                print("operation.salary.id == 1 operation.data.month ",month_name )
+               
                 month_name = MONTHS_RU[operation.data.month - 2]
-                arr_inside_all["category"][1]["total"]["total"][month_name][
-                        "amount_month"
-                    ] += operation.amount
-                arr_inside_all["total_category"]["total"][month_name][
-                        "amount_month"
-                    ] += operation.amount
+                if  month_name in arr_inside_all["category"][1]["total"]["total"]:
+                    arr_inside_all["category"][1]["total"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                    arr_inside_all["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
                 
             # не 10 число обычно 
             else:

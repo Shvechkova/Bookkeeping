@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 
 
@@ -70,3 +71,21 @@ class CategNalog(models.Model):
         return self.name
 
 
+class CategForPercentGroupBank(models.Model):
+    name = models.CharField("Имя", max_length=200)
+    bank = models.ForeignKey(Bank, on_delete=models.CASCADE, verbose_name="Банк")
+    class Meta:
+        verbose_name = "Категория процентных полей "
+        verbose_name_plural = "Категории  процентных полей"
+
+    def __str__(self):
+        return self.name
+
+class CategPercentGroupBank(models.Model):
+    created_timestamp = models.DateTimeField(
+        default=timezone.now, verbose_name="Дата добавления"
+    )
+    data = models.DateField(verbose_name="Дата добавления вручную")
+    category = models.ForeignKey(CategForPercentGroupBank, on_delete=models.CASCADE, verbose_name="Категория")
+    percent = models.FloatField("Сумма", default="0")
+    is_auto_persent = models.BooleanField("Авто процент с прошлого месяца",default=True)

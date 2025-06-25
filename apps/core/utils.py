@@ -10,3 +10,6 @@ def log_alert(error, location, info):
     error_alert = Logsinfo.objects.create(
            location=location, info=info
         )
+    
+def create_month_categ_persent():
+    pass
