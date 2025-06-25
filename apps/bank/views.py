@@ -392,6 +392,7 @@ def salary(request):
         month_name = MONTHS_RU[month - 1]
         months_current_year.append(month_name)
 
+    month_leng_total_month = len(months_current_year)
     months_current_year.reverse()
     months_current_year_2 = months_current_year.copy()
     all_categories_qs = (
@@ -476,7 +477,7 @@ def salary(request):
         # Получаем название категории
         category = operation.salary.name
         amount = operation.amount
-
+        
         # Определяем группу категории
         group = None
         for group_name, categories in salary_groups.items():
@@ -493,11 +494,12 @@ def salary(request):
             # Обновляем итоги по группам
             if group == "group1":
                 if category == "Оф ЗП (10 число)":
-                    # Для Оф ЗП (10 число) добавляем в итог следующего месяца
-                    next_month_index = months_current_year.index(month_name) - 1
-                    if next_month_index >= 0:
-                        next_month = months_current_year[next_month_index]
-                        employees_data[employee_id]["months"][next_month][
+                    # Для Оф ЗП (10 число) добавляем в итог предыдущего месяца (в обратном списке)
+                    current_index = months_current_year.index(month_name)
+                    prev_month_index_categ = current_index + 1
+                    if prev_month_index_categ < len(months_current_year):
+                        prev_month_categ = months_current_year[prev_month_index_categ]
+                        employees_data[employee_id]["months"][prev_month_categ][
                             "group1_total"
                         ] += amount
                 else:
@@ -588,10 +590,10 @@ def salary(request):
         month_idx = MONTHS_RU.index(month_name)
         if category == "Оф ЗП (10 число)":
             # Для "Оф ЗП (10 число)" добавляем в следующий месяц
-            if month_idx < len(MONTHS_RU) - 1:
+            if month_idx < len(MONTHS_RU) + 1:
                 operations_old_by_year[year]["employees"][employee_id][
                     "total_by_month"
-                ][month_idx + 1] += operation.amount
+                ][month_idx - 1] += operation.amount
         else:
             operations_old_by_year[year]["employees"][employee_id]["total_by_month"][
                 month_idx
@@ -819,8 +821,8 @@ def salary(request):
                         for category in group["categories"]:
                             if category["name"] == "Оф ЗП (10 число)":
                                 # Для "Оф ЗП (10 число)" берем значение из предыдущего месяца
-                                if month_idx > 0:
-                                    prev_month = MONTHS_RU[month_idx - 1]
+                                if month_idx <= month_leng_total_month:
+                                    prev_month = MONTHS_RU[month_idx + 1]
                                     amount = (
                                         employee.get("categories_by_month", {})
                                         .get(category["name"], {})
@@ -829,9 +831,7 @@ def salary(request):
                                     totals_old_by_month[year]["ИТОГО ЗП с ООО"][
                                         month_idx
                                     ] += amount
-                                    totals_old_by_month[year]["total_year"][
-                                        "ИТОГО ЗП с ООО"
-                                    ] += amount
+                                    totals_old_by_month[year]["total_year"]["ИТОГО ЗП с ООО"] += amount
                             else:
                                 amount = (
                                     employee.get("categories_by_month", {})
@@ -841,9 +841,7 @@ def salary(request):
                                 totals_old_by_month[year]["ИТОГО ЗП с ООО"][
                                     month_idx
                                 ] += amount
-                                totals_old_by_month[year]["total_year"][
-                                    "ИТОГО ЗП с ООО"
-                                ] += amount
+                                totals_old_by_month[year]["total_year"]["ИТОГО ЗП с ООО"] += amount
                 elif group["name"] == "group2":
                     # Для group2 ($) суммируем все категории
                     for month_idx, total in enumerate(group["totals_by_month"]):
@@ -930,14 +928,13 @@ def salary(request):
                     # Если это "Оф ЗП (10 число)", добавляем в total следующего месяца
                     if op_category == "Оф ЗП (10 число)":
                         idx = months_current_year.index(month)
-                        if idx > 0:
-                            next_month = months_current_year[idx - 1]
-                            # Добавляем в total следующего месяца
+                        # Только если есть следующий месяц, переносим сумму
+                        if idx < len(months_current_year) - 1:
+                            next_month = months_current_year[idx + 1]
                             if "total" not in categories_by_month[op_category]:
                                 categories_by_month[op_category]["total"] = {}
-                            categories_by_month[op_category]["total"][
-                                next_month
-                            ] = op.amount
+                            categories_by_month[op_category]["total"][next_month] = op.amount
+                        # Если текущий месяц последний (январь) — ничего не делаем
 
         # Добавляем предполагаемые траты на основе предыдущего месяца
         for category in categories_by_month:
@@ -955,6 +952,7 @@ def salary(request):
             if category == "Оф ЗП (10 число)":
                 for month in months_current_year:
                     idx = months_current_year.index(month)
+                    # Только если есть следующий месяц, переносим сумму
                     if idx < len(months_current_year) - 1:
                         next_month = months_current_year[idx + 1]
                         if next_month in categories_by_month[category]:
@@ -963,6 +961,7 @@ def salary(request):
                             categories_by_month[category]["total"][month] = (
                                 categories_by_month[category][next_month]
                             )
+                    # Если текущий месяц последний (январь) — ничего не делаем
 
         employee_info["categories_by_month"] = categories_by_month
         employee_info["operations_by_month"] = operations_by_month
@@ -1050,22 +1049,21 @@ def salary(request):
 
         # Теперь рассчитываем общие суммы по месяцам в правильном порядке
         for month in months_current_year:
+            idx = months_current_year.index(month)
             month_total = 0
             for group in employee_info["groups_full"]:
                 if group["name"] != "group4":
                     for cat in group["categories"]:
                         if cat["name"] == "Оф ЗП (10 число)":
-                            # Для "Оф ЗП (10 число)" берем значение из следующего месяца
-                            idx = months_current_year.index(month)
-                            if (
-                                idx < len(months_current_year) - 1
-                            ):  # Если это не последний месяц
-                                next_month = months_current_year[idx + 1]
+                            # Только если это не первый месяц (текущий месяц в списке)
+                            if idx > 0:
+                                prev_month = months_current_year[idx - 1]
                                 month_total += (
                                     employee_info["categories_by_month"]
                                     .get(cat["name"], {})
-                                    .get(next_month, 0)
+                                    .get(prev_month, 0)
                                 )
+                            # Если это первый месяц — не учитываем вообще!
                         else:
                             month_total += (
                                 employee_info["categories_by_month"]
@@ -1105,6 +1103,7 @@ def salary(request):
         for group in employee_info["groups_full"]:
             group_month_totals[group["name"]] = []
             for month in months_current_year:
+                idx = months_current_year.index(month)
                 month_total = 0
                 if group["name"] == "group4":
                     # Для группы 4 берем остаток долга
@@ -1116,15 +1115,15 @@ def salary(request):
                 else:
                     for cat in group["categories"]:
                         if cat["name"] == "Оф ЗП (10 число)":
-                            # Для "Оф ЗП (10 число)" берем значение из следующего месяца
-                            idx = months_current_year.index(month)
-                            if idx < len(months_current_year) - 1:
-                                next_month = months_current_year[idx + 1]
+                            # Только если это не первый месяц (текущий месяц в списке)
+                            if idx > 0:
+                                prev_month = months_current_year[idx - 1]
                                 month_total += (
                                     employee_info["categories_by_month"]
                                     .get(cat["name"], {})
-                                    .get(next_month, 0)
+                                    .get(prev_month, 0)
                                 )
+                            # Если это первый месяц — не учитываем вообще!
                         else:
                             month_total += (
                                 employee_info["categories_by_month"]
@@ -1177,18 +1176,19 @@ def salary(request):
         "ИТОГО кварт. премия": [0 for _ in months_current_year],
         "Итого общий долг": [0 for _ in months_current_year],
     }
-
+#!!!ТУТ БЛОК ИТОГОВ ПО ВСЕМ СОТРУДНИКАМ
     for idx, month in enumerate(months_current_year):
         for employee in employees_list:
             # Итоги по ООО (group1)
             for category in employee["categories_by_month"]:
                 if category == "Оф ЗП (10 число)":
-                    # Для "Оф ЗП (10 число)" берем значение из следующего месяца
-                    if idx < len(months_current_year) - 1:
-                        next_month = months_current_year[idx + 1]
+                    # Только если это не первый месяц (текущий месяц в списке)
+                    if idx > 0:
+                        prev_month = months_current_year[idx - 1]
                         totals_by_month["ИТОГО ЗП с ООО"][idx] += employee[
                             "categories_by_month"
-                        ][category].get(next_month, 0)
+                        ][category].get(prev_month, 0)
+                    # Если это первый месяц — не учитываем вообще!
                 else:
                     totals_by_month["ИТОГО ЗП с ООО"][idx] += employee[
                         "categories_by_month"
