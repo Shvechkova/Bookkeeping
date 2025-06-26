@@ -89,3 +89,23 @@ class CategPercentGroupBank(models.Model):
     category = models.ForeignKey(CategForPercentGroupBank, on_delete=models.CASCADE, verbose_name="Категория")
     percent = models.FloatField("Сумма", default="0")
     is_auto_persent = models.BooleanField("Авто процент с прошлого месяца",default=True)
+    
+    
+class CategOperationsBetweenBank(models.Model):
+    name = models.CharField("Имя", max_length=200)
+    bank_in = models.ForeignKey(
+        Bank,
+        on_delete=models.PROTECT,
+        verbose_name="банк откуда назначения операции",
+        related_name="between_bank_in",
+        blank=True,
+        null=True,
+    )
+    bank_to = models.ForeignKey(
+        Bank,
+        on_delete=models.PROTECT,
+        related_name="between_bank_to",
+        verbose_name="банк конечный назначения операции",
+        blank=True,
+        null=True,
+    )

@@ -15,13 +15,28 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-total">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ arr_in.name }}</div>
+                        <div class="oper-account-cell oper-account-service">{{ arr_in.name }}
+                            <div class="shrink-item-vert"
+                            data-attr-shrink-vert='ooo_{{ arr_in.name }}_{{ year_data.year|cut:" " }}'
+                            data-attr-shrink-name-vert='ooo_{{ arr_in.name }}_{{ year_data.year|cut:" " }}'>
+                           <svg width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                               <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                               <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                               <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                           </svg>
+                       </div></div>
                         {% for month in months_current_year %}<div class="oper-account-cell oper-account-month">{{ month }} {{year_now}}</div>{% endfor %}
                     </div>
                 </div>
             </div>
             {% for category in arr_in.category %}
-                <div class="category-block">
+                <div class="category-block ooo_{{ arr_in.name }}_{{ year_data.year|cut:" " }}"
+                data-attr-shrink-item-vert="ooo_{{ arr_in.name }}_{{ year_data.year|cut:" " }}"
+                >
                     <div class="oper-account-grid">
                         <!-- Заголовки -->
                         <div class="oper-account-row oper-account-header">
@@ -71,18 +86,35 @@
         </section>
         <!-- Субподрядчики -->
         <section class="oper_account">
-            {% comment %} <h2 class="outside_title_categ category-title">{{ .name }}</h2> {% endcomment %}
+           
             <div class="category-block">
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-total">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ arr_out.name }}</div>
+                        <div class="oper-account-cell oper-account-service">{{ arr_out.name }}
+                            <div class="shrink-item-vert"
+                            data-attr-shrink-vert='ooo_arr_out_{{ year_data.year|cut:" " }}'
+                            data-attr-shrink-name-vert='ooo_arr_out_{{ year_data.year|cut:" " }}'>
+                           <svg width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                               <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                               <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                               <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                           </svg>
+                       </div>
+
+                        </div>
                         {% for month in months_current_year %}<div class="oper-account-cell oper-account-month">{{ month }} {{year_now}}</div>{% endfor %}
                     </div>
                 </div>
             </div>
             {% for category in arr_out.category %}
-                <div class="category-block">
+                <div class="category-block ooo_arr_out_{{ year_data.year|cut:" " }}"
+                data-attr-shrink-item-vert="ooo_arr_out_{{ year_data.year|cut:" " }}"
+                >
                     <div class="oper-account-grid">
                         <!-- Заголовки -->
                         <div class="oper-account-row oper-account-header">
@@ -118,6 +150,7 @@
                                                          data-bank-in="{{ bank }}"
                                                          data-bank-out="{{ month_data.bank_out }}"
                                                          tupe-operations = "{{ month_data.type_operations}}"
+                                                         
                                                          data-sub-categ-name="SubcontractOtherCategory"
                                                          data-sub-categ-id="{{ month_data.id_groupe}}"
                                                          data-operation-data-month="{{ month_data.date_start|date:'m' }}"
@@ -155,7 +188,7 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                            222
+                        
                                 <div class="oper-account-row">
                                     <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                                     <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
@@ -167,6 +200,7 @@
                                                      data-bank-in="{{ bank }}"
                                                      data-bank-out="{{ month_data.bank_out }}"
                                                      tupe-operations = "{{ month_data.type_operations}}"
+                                                     data-between-id = "{{ month_data.between_id}}"
                                                      data-sub-categ-name="{{ service_name}}"
                                                      data-sub-categ-id="{{ month_data.id_groupe}}"
                                                      data-operation-data-month="{{ month_data.date_start|date:'m' }}"
@@ -227,19 +261,112 @@
             </div>
         </section>
 
-        <!-- Внутренние счета -->
+        <!-- РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ -->
+        **********************************
         <section class="oper_account">
             <div class="category-block">
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-total">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ arr_inside_all.name }}</div>
+                        <div class="oper-account-cell oper-account-service"></div>
+                        {% for month in months_current_year %}<div class="oper-account-cell oper-account-month">{{ month }} {{year_now}}</div>{% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% for category in arr_in_out_all.category %}
+           {% comment %} {{category}} {% endcomment %}
+                <div class="category-block">
+                    <div class="oper-account-grid">
+                                     <div class="oper-account-row">
+                                        <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                                        {% for month, month_data  in category.total.items %}
+                                            {% if  month_data.is_make_operations %}
+                                            
+                                                <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
+                                                    <div class=" inp_operation inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                         data-bank-in="{{ bank }}"
+                                                         data-bank-out="{{ month_data.bank_out }}"
+                                                         tupe-operations = "{{ month_data.type_operations}}"
+                                                         data-sub-categ-name="SubcontractOtherCategory"
+                                                         data-sub-categ-id="{{ month_data.id_groupe}}"
+                                                         data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                                                         data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                                                         data-operation-old-id="{{ month_data.operation_id|default:'0' }}"
+                                                         data-prev-month="{{ month_data.expected|format_rub }}"
+                                                         data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
+                                                        {% if month_data.amount_month > 0 %}
+                                                            <p class="salary_employee_item_sums_text">{{  month_data.amount_month|format_rub }} ₽</p>
+                                                            <input type="text"
+                                                                   class="salary_employee_item_sums_inp"
+                                                                   value="{{ month_data.amount_month|format_rub }}">
+                                                        {% else %}
+                                                            <span class="salary_employee_item_sums_text oper-account-cell-zero">0 ₽</span>
+                                                            <input type="text"
+                                                                   class="salary_employee_item_sums_inp"
+                                                                   value="{{ month_data.expected|format_rub }}">
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
+                                                </div>
+                                            {% else %}
+                                                <div class="oper-account-cell oper-account-value"
+                                                     data-month-number="{{ month_data.month_number }}">
+                                                    <div class="invoice_month_item_text">
+                                                        {% if month_data.amount_month > 0 %}
+                                                            <p>{{ month_data.amount_month|format_rub }} ₽</p>
+                                                        {% else %}
+                                                            <p>{{ month_data.amount_month|format_rub }} ₽</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                
+                            
+                        
+                    </div>
+                </div>
+            
+            
+            {% endfor %}
+        
+            
+        </section>
+        ******************
+
+        <!-- Внутренние счета  -->
+        <section class="oper_account">
+            <div class="category-block">
+                <div class="oper-account-grid">
+                    <div class="oper-account-row oper-account-total">
+                        <div class="oper-account-cell oper-account-num"></div>
+                        <div class="oper-account-cell oper-account-service">{{ arr_inside_all.name }}
+                            <div class="shrink-item-vert"
+                            data-attr-shrink-vert='ooo_arr_inside_all_{{ year_data.year|cut:" " }}'
+                            data-attr-shrink-name-vert='ooo_arr_inside_all_{{ year_data.year|cut:" " }}'>
+                           <svg width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                               <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                               <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                               <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                           </svg>
+                       </div>
+
+
+                        </div>
                         {% for month in months_current_year %}<div class="oper-account-cell oper-account-month">{{ month }} {{year_now}}</div>{% endfor %}
                     </div>
                 </div>
             </div>
             {% for category in arr_inside_all.category %}
-                <div class="category-block">
+                <div class="category-block ooo_arr_inside_all_{{ year_data.year|cut:" " }}"
+                data-attr-shrink-item-vert="ooo_arr_inside_all_{{ year_data.year|cut:" " }}"
+                >
                     <div class="oper-account-grid">
                         
                         <!-- Группы -->

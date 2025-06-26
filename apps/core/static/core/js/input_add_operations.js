@@ -83,8 +83,10 @@ function addSalaryOperation(element, btnAdd,pageName) {
       const type = element.getAttribute("tupe-operations");
       if (type == "between"){
         form.append("bank_in", 1);
-
-        
+        betweenId = element.getAttribute("data-between-id");
+        console.log(element)
+        console.log(betweenId)
+        form.append("between_bank", betweenId);
       }
       else if(type == "SubcontractOtherCategory"){
         const categId = element.getAttribute("data-sub-categ-id");
@@ -160,7 +162,7 @@ function addSalaryOperation(element, btnAdd,pageName) {
        location.reload();
         
       } else {
-        location.reload();
+        // location.reload();
        
       }
     });

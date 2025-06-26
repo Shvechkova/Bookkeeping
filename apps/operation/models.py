@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 from datetime import datetime
 
-from apps.bank.models import Bank, CategNalog, GroupeOperaccount, GroupeSalary
+from apps.bank.models import Bank, CategNalog, CategOperationsBetweenBank, GroupeOperaccount, GroupeSalary
 from apps.employee.models import Employee
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth, SubcontractOtherCategory
 
@@ -11,6 +11,9 @@ from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth, 
 class Operation(models.Model):
     created_timestamp = models.DateTimeField(
         default=timezone.now, verbose_name="Дата добавления"
+    )
+    update_timestamp = models.DateTimeField(
+        auto_now=True, verbose_name="Дата обновления"
     )
     data = models.DateField(verbose_name="Дата добавления вручную")
     bank_in = models.ForeignKey(
@@ -82,6 +85,13 @@ class Operation(models.Model):
         blank=True,
         null=True,
     )
+    between_bank = models.ForeignKey(
+        CategOperationsBetweenBank,
+        on_delete=models.PROTECT,
+        verbose_name="Между банками",
+        blank=True,
+        null=True,
+    )
     
     
  
@@ -110,7 +120,3 @@ class Operation(models.Model):
         verbose_name = "Операция"
         verbose_name_plural = "Операции"
 
-    # def save(self, *args, **kwargs):
-    #     if self.comment == "":
-    #         self.comment = None
-    #     super().save(*args, **kwargs)
