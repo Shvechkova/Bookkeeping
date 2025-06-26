@@ -9,6 +9,7 @@ from rest_framework import routers
 app_name = "bank"
 router = routers.DefaultRouter()
 router.register(r"v1/groupeoperaccount", view_sets.GroupeOperaccountViews)
+router.register(r"v1/percentgroupbank", view_sets.CategPercentGroupBankViews)
 
 
 urlpatterns = [
