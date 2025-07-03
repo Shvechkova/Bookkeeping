@@ -12,9 +12,10 @@
     {% include "service/includes/modal/suborder_peple.html" %}
     {% include "service/includes/modal/add_operation_storage.html" %}
     <input type="hidden" id="page_name" value="{{ title }}" />
-    <div class="open-modal btn_month_bill" data-name="modal-add-bill"
-    data-date="Июнь 2025"
-    data-cat-service="{{ title }}">+</div>  
+    <div class="open-modal btn_month_bill"
+         data-name="modal-add-bill"
+         data-date="Июнь 2025"
+         data-cat-service="{{ title }}">+</div>
     <input type="hidden" id="page_name_abc" value="{{ title_name }}" />
     <div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
         <h3>Период</h3>
@@ -159,10 +160,7 @@
                                     {% for platform_item in platform %}
                                         <div class=" invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                              data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
-                                            {% if forloop.parentloop.first %}
-                                            <div class="invoice_month_title small_bold">{{ platform_item.name }}</div>
-                                            {% endif %}
-                                            
+                                            {% if forloop.parentloop.first %}<div class="invoice_month_title small_bold">{{ platform_item.name }}</div>{% endif %}
                                             <div class="invoice_month_item suborder_out_operation small"
                                                  data-sub-type="1"
                                                  data-name="modal-suborder_out_operation"
@@ -174,9 +172,8 @@
                                                  data-name-sub=" {{ platform_item.name }}"
                                                  data-idName-sub=" {{ platform_item.id }}"
                                                  data-idsuborder-sub="{% for suborder in suborders %} {% if suborder.month_bill.id == service_month_invoices.id and suborder.platform.id == platform_item.id %} {{ suborder.id }} {% else %} {% endif %} {% endfor %}"
-                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}" 
-                                                 data-id-sub="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}"
-                                                 >
+                                                 data-id-sub-amount="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}"
+                                                 data-id-sub="{% if service_month_invoices.sum_subcontractmonth %}{% if platform_item.name == "Таргет" %} {{ service_month_invoices.target }}{% elif platform_item.name == "Я.Директ" %}{{ service_month_invoices.yandex }} {% else %} 0 {% endif %}{% else %}0{% endif %}">
                                                 <div class="invoice_month_item_text">
                                                     {% if service_month_invoices.sum_subcontractmonth %}
                                                         {% if platform_item.name == "Таргет" %}
@@ -333,8 +330,10 @@
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                          data-bill-month-sum-dont-operation="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"
-                                         {% comment %} data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all|format_rub }}"
-                                         data-operation-old-id="{{ service_month_invoices.operations_add_all|format_rub }}" {% endcomment %}
+                                         {% comment %}
+                                         data-bill-month-operation-entry="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         data-operation-old-id="{{ service_month_invoices.operations_add_all|format_rub }}"
+                                         {% endcomment %}
                                          data-bill-month-operation-entry="{{ service_month_invoices.operation_amount_to_all|format_rub }}"
                                          data-operation-old-id="{{ service_month_invoices.operation_amount_to_all|format_rub }}"
                                          data-bill-month-data="{{ service_month_invoices.month|date:'F Y' }}">
@@ -445,7 +444,6 @@
                                          data-bill-month-sum="{{ service_month_invoices.contract_sum|format_rub }} "
                                          data-bill-month-client-name="{{ service_month_invoices.client.name }}"
                                          data-bill-month-sum-dont-operation="{{ service_month_invoices.contract.sum|format_rub }} "
-                                       
                                          data-bill-month-operation-entry=""
                                          data-operation-old-id=""
                                          data-bill-month-name="{{ service_month_invoices.contract.contract_number }}"

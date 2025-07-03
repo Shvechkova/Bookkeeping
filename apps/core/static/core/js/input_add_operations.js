@@ -96,11 +96,44 @@ function addSalaryOperation(element, btnAdd,pageName) {
         form.append("bank_in", 1);
         form.append("suborder_other", categId);
       }
+      else if(type == "nalog"){
+        form.append("bank_to", 5);
+        const accountid = element.getAttribute("data-sub-categ-id");
+        form.append("nalog", accountid);
+      }
       else{
         
       }
       
-  }
+  } else if(pageName == "ИП"){
+    const bank_to = element.getAttribute("data-bank-out");
+    form.append("bank_to", bank_to);
+    const type = element.getAttribute("tupe-operations");
+    if (type == "between"){
+      form.append("bank_in", 1);
+      betweenId = element.getAttribute("data-between-id");
+      console.log(element)
+      console.log(betweenId)
+      form.append("between_bank", betweenId);
+    }
+    else if(type == "percent"){
+      
+    }
+    else if(type == "SubcontractOtherCategory"){
+      const categId = element.getAttribute("data-sub-categ-id");
+      form.append("bank_in", 1);
+      form.append("suborder_other", categId);
+    }
+    else if(type == "nalog"){
+      form.append("bank_to", 5);
+      const accountid = element.getAttribute("data-sub-categ-id");
+      form.append("nalog", accountid);
+    }
+    else{
+      
+    }
+    
+}
     var now = new Date();
     const nowYear = now.getFullYear();
     const nowMonth = now.getMonth() + 1;

@@ -1,7 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
   {% include "client/includes/modal_client_contract.html" %}
-
   <section class="clients">
     <div>
       <div class="bill-sorting-operation client_sorting"
@@ -63,7 +62,9 @@
                 </svg>
               </div>
               <div class="client_client_meneger_client-name_count">
-                <span>{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}.</span>
+                <span>
+                  {% if forloop.counter < 10 %}0{% endif %}
+                {{ forloop.counter }}.</span>
               </div>
               <div class="client_client_meneger_client-name">
                 <p>{{ client.grouper.name }}</p>

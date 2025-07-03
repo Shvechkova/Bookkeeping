@@ -9,3 +9,4 @@ class GroupeOperaccountViews(viewsets.ModelViewSet):
 class CategPercentGroupBankViews(viewsets.ModelViewSet):
     queryset = CategPercentGroupBank.objects.all()
     serializer_class = CategPercentGroupBankSerializer
+    http_method_names = ["get", "post", "delete", "update"]

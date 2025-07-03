@@ -5,3 +5,8 @@
     top: 0;
     height: 40px;
 }
+.shrink-item-vert-im svg {
+    margin-left: 10px;
+    margin-right: 10px;
+    transform: rotate(90deg);
+  }

@@ -29,7 +29,7 @@
 
       <li class="header_nav-link">
         {% url 'bank:storage' as the_url %}
-        {% if request.get_full_path == the_url %}
+        {% if request.get_full_path == the_url or type_url ==  "keep" %}
           <span class="menu-active">Хранилище</span>
         {% else %}
           <a class="" href="{% url 'bank:storage' %}">Хранилище</a>
