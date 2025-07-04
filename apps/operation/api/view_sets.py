@@ -31,25 +31,18 @@ class ОperationViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r"operation_save")
     def operation_save(self, request, *args, **kwargs):
-        print(request.method)
         try:
             data = request.data
-            print(data)
-            # СОХПРАНЕНИЕ ОПЕРАЦИИ
             if "comment" in data:
-                print("datacomment")
                 if  data["comment"] == "" or data["comment"] == "null":
                     data['comment'] = None
             else:
                 data["comment"] = None
-            print(11111)
 
             serializer = self.serializer_class(data=data)
    
             if serializer.is_valid():
-                print("serializer.data")
                 obj = serializer.save()
-                print("obj")
  
                 # операциоо по услагам счетов
                 if "monthly_bill" in data:
@@ -64,38 +57,11 @@ class ОperationViewSet(viewsets.ModelViewSet):
                         servise_month.operations_add_diff_all = (
                             servise_month.operations_add_diff_all + float(data["amount"])
                         )
-                        # if data["bank_to"] == "1":
-                        #     if servise_month.operations_add_ip:
-                        #         servise_month.operations_add_ip = (
-                        #             servise_month.operations_add_ip + float(data["amount"])
-                        #         )
-                        #     else:
-                        #         servise_month.operations_add_ip = float(data["amount"])
-
-                        # elif data["bank_to"] == "2":
-                        #     if servise_month.operations_add_ооо:
-                        #         servise_month.operations_add_ооо = (
-                        #             servise_month.operations_add_ооо + float(data["amount"])
-                        #         )
-                        #     else:
-                        #         servise_month.operations_add_ооо = float(data["amount"])
-                        # elif data["bank_to"] == "3":
-                        #     if servise_month.operations_add_nal:
-                        #         servise_month.operations_add_nal = (
-                        #             servise_month.operations_add_nal + float(data["amount"])
-                        #         )
-                        #     else:
-                        #         servise_month.operations_add_nal = float(data["amount"])
-                       
+                  
                         servise_month.save()
-                    # исходящая операция оплаты
-                    elif data["bank_to"] == "5":
-                        pass
+                    
                 
-                elif "operaccount" in data:
-                    pass                
-                elif "salary" in data:
-                    print("salary")
+               
                 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:

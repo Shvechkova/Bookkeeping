@@ -10,3 +10,126 @@
     margin-right: 10px;
     transform: rotate(90deg);
   }
+
+  .background-bank-ooo{
+    background-color: rgb(241, 243, 237);
+    border-radius: 25px;
+  }
+  .background-bank-ip{
+    background-color: rgb(237, 240, 243);
+    border-radius: 25px;
+  }
+  .background-bank-nal{
+    background-color: rgb(255, 252, 232);
+    border-radius: 25px;
+  }
+  
+  .outside_wr{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .outside_title_categ{
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .outside_wr .oper-account-grid {
+      margin-left: -40px; /* Ширина ячейки с номером */
+  }
+  .outside_wr .oper-account-cell-num {
+      width: 40px;
+  }
+  
+  .outside_name_title {
+    width: 350px;
+    flex-shrink: 0;
+    font-weight: 500;
+      white-space: normal;
+  }
+  .inp_operation_bank{
+    color: rgb(134, 7, 7);
+  }
+  .inp_operation_bank p{
+    color: rgb(134, 7, 7);
+  }
+  .checkbox-persent{
+    width: 47px;
+    height: 44px;
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+    color: #fff;
+    background-color: #000;
+    position: absolute;
+    
+    margin-left: -10px;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    /* top: -50%; */
+    /* display: flex
+; */
+    border: 1px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+
+    display: flex;
+    left: -10px;
+    top: 12%;
+    height: 20px;
+    z-index: 2000;
+    border: 2px solid #e6e6e6;
+    border-radius: 13px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-clip: content-box;
+    background-color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+   
+    
+  }
+.oper-account-cell-2{
+    overflow: visible;
+}
+
+
+/* input[type="checkbox"].checkbox-persent {
+    border: 2px solid #c9c9c9;
+    border-radius: 13px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-clip: content-box;
+    background-color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+  } */
+  
+  input[type="checkbox"].checkbox-persent:checked {
+    border: 2px solid #dddddd;
+    background-color: #e7e6e7;
+    border-radius: 50%;
+  }
+  
+  input[type="checkbox"].checkbox-persent:checked::after {
+    content: "";
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: #dadada;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+  }

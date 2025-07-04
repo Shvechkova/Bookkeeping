@@ -1,0 +1,26 @@
+<ul class="header_nav">
+    <li class="header_nav-link">
+          {% url 'bank:storage_banking' as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">Накопительные счета</span>
+          {% else %}
+                <a class="menu_service" href="{% url 'bank:storage_banking' %}">Накопительные счета</a>
+          {% endif %}
+    </li>
+    <li class="header_nav-link">
+          {% url 'bank:storage_bonus' as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">Премии</span>
+          {% else %}
+                <a class="menu_service" href="{% url 'bank:storage_bonus' %}">Премии</a>
+          {% endif %}
+    </li>
+    <li class="header_nav-link">
+          {% url 'bank:storage_servise' as the_url %}
+          {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">Остатки рекламных бюджетов</span>
+          {% else %}
+                <a class="menu_service" href="{% url 'bank:storage_servise' %}">Остатки рекламных бюджетов</a>
+          {% endif %}
+    </li>
+</ul>

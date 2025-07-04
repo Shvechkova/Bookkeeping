@@ -13,7 +13,7 @@ router.register(r"v1/percentgroupbank", view_sets.CategPercentGroupBankViews)
 
 
 urlpatterns = [
-    path("storage/", views.storage, name="storage"),
+    
     
     path("inside/", views.inside, name="inside"),
     path("inside/oper_accaunt/", views.oper_accaunt, name="oper_accaunt"),
@@ -25,5 +25,10 @@ urlpatterns = [
     path("outside/ip/", views.outside_ip, name="outside_ip"),
     path("outside/nal/", views.outside_nal, name="outside_nal"),
     
+    path("storage/", views.storage_all, name="storage"),
+    path("storage/banking", views.storage_banking, name="storage_banking"),
+    path("storage/bonus", views.storage_bonus, name="storage_bonus"),
+    path("storage/servise", views.storage_servise, name="storage_servise"),
+    
     # path("<slug:slug>/", views.service_one, name="service_one"),
-]
+]   

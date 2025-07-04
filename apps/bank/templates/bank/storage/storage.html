@@ -15,7 +15,7 @@
             <div class="oper-account-grid">
                 <div class="oper-account-row oper-account-total">
                     <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell oper-account-service">{{ arr_service.name }}</div>
+                    <div class="oper-account-cell outside_name_title">{{ arr_service.name }}</div>
                     {% for month in months_current_year %}
                         <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
                     {% endfor %}
@@ -27,12 +27,12 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-header">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                     </div>
                     {% for service_name, service_data in category.group.items %}
                         <div class="oper-account-row">
                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                            <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
+                            <div class="oper-account-cell outside_name_title">{{ service_name }}</div>
                             {% for month, month_data in service_data.items %}
                                 <div class="oper-account-cell oper-account-value"
                                      data-month-number="{{ month_data.month_number }}">
@@ -58,7 +58,7 @@
             <div class="oper-account-grid">
                 <div class="oper-account-row oper-account-total">
                     <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell oper-account-service">{{ arr_bonus_2.name }}</div>
+                    <div class="oper-account-cell outside_name_title">{{ arr_bonus_2.name }}</div>
                     {% for month in months_current_year %}
                         <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
                     {% endfor %}
@@ -70,12 +70,12 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-header">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                     </div>
                     {% for service_name, service_data in category.group.items %}
                         <div class="oper-account-row">
                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                            <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
+                            <div class="oper-account-cell outside_name_title">{{ service_name }}</div>
                             {% for month, month_data in service_data.items %}
                                 <div class="oper-account-cell oper-account-value"
                                      data-month-number="{{ month_data.month_number }}">
@@ -101,7 +101,7 @@
             <div class="oper-account-grid">
                 <div class="oper-account-row oper-account-total">
                     <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell oper-account-service">{{ arr_bonus_1.name }}</div>
+                    <div class="oper-account-cell outside_name_title">{{ arr_bonus_1.name }}</div>
                     {% for month in months_current_year %}
                         <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
                     {% endfor %}
@@ -113,12 +113,12 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-header">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                     </div>
                     {% for service_name, service_data in category.group.items %}
                         <div class="oper-account-row">
                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                            <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
+                            <div class="oper-account-cell outside_name_title">{{ service_name }}</div>
                             {% for month, month_data in service_data.items %}
                                 <div class="oper-account-cell oper-account-value"
                                      data-month-number="{{ month_data.month_number }}">
@@ -144,7 +144,7 @@
             <div class="oper-account-grid">
                 <div class="oper-account-row oper-account-total">
                     <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell oper-account-service">{{ arr_out.name }}</div>
+                    <div class="oper-account-cell outside_name_title">{{ arr_out.name }}</div>
                     {% for month in months_current_year %}
                         <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
                     {% endfor %}
@@ -156,12 +156,12 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-header">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                     </div>
                     {% for service_name, service_data in category.group.items %}
                         <div class="oper-account-row">
                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                            <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
+                            <div class="oper-account-cell outside_name_title">{{ service_name }}</div>
                             {% for month, month_data in service_data.items %}
                                 <div class="oper-account-cell oper-account-value"
                                      data-month-number="{{ month_data.month_number }}">
@@ -187,7 +187,7 @@
             <div class="oper-account-grid">
                 <div class="oper-account-row oper-account-total">
                     <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell oper-account-service">{{ arr_in.name }}</div>
+                    <div class="oper-account-cell outside_name_title">{{ arr_in.name }}</div>
                     {% for month in months_current_year %}
                         <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
                     {% endfor %}
@@ -199,12 +199,12 @@
                 <div class="oper-account-grid">
                     <div class="oper-account-row oper-account-header">
                         <div class="oper-account-cell oper-account-num"></div>
-                        <div class="oper-account-cell oper-account-service">{{ category.name }}</div>
+                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                     </div>
                     {% for service_name, service_data in category.group.items %}
                         <div class="oper-account-row">
                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                            <div class="oper-account-cell oper-account-service">{{ service_name }}</div>
+                            <div class="oper-account-cell outside_name_title">{{ service_name }}</div>
                             {% for month, month_data in service_data.items %}
                                 <div class="oper-account-cell oper-account-value"
                                      data-month-number="{{ month_data.month_number }}">

@@ -223,7 +223,7 @@ if (salaryBtnPercent) {
   console.log(salaryBtnPercent)
   let old_elem;
   let valueOld;
-    const pageName = document.getElementById('page_name').value
+  const pageName = document.getElementById('page_name').value
   console.log("page_name", pageName)
   salaryBtnPercent.forEach((element) => {
     element.addEventListener("click", (event) => {
@@ -296,6 +296,11 @@ function addSalaryOperationPercent(element, btnAdd,pageName) {
     form.append("percent", dataAmount);
     const categId = element.getAttribute("data-sub-categ-id");
     form.append("category", categId);
+    const dataBetweenId = element.getAttribute("data-between-id");
+    if(dataBetweenId != ""){
+      form.append("category", categId);
+    }
+      
 
 
     if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
@@ -333,4 +338,88 @@ function addSalaryOperationPercent(element, btnAdd,pageName) {
 
   
   
+}
+
+
+const chakboxInp = document.querySelectorAll(".checkbox-persent");
+if (chakboxInp){
+  chakboxInp.forEach((element) => {
+    console.log(chakboxInp)
+    element.addEventListener("click", (event) => {
+      
+        const form = new FormData();
+
+        const dataId = element.getAttribute("data-operation-old-id");
+        const startDate = element.getAttribute("data-operation-data-start-all_2");
+        const summOper = element.getAttribute("data-summ");
+    
+        form.append("data", startDate);
+        const dataAmount = getCurrentPrice(summOper)
+        form.append("amount", dataAmount);
+        const dataBank = element.getAttribute("data-bank-in");
+        form.append("bank_in", +dataBank);
+        betweenId = element.getAttribute("data-between-id");
+        console.log(element)
+        console.log(betweenId)
+        form.append("between_bank", betweenId);
+        const bank_to = element.getAttribute("data-bank-out");
+        form.append("bank_to", bank_to);
+
+
+    
+        let endpoint
+        let method 
+        if (element.checked) {
+          // Чекбокс установлен (нажат)
+          console.log("Чекбокс нажат");
+        if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
+            form.append("id", dataId);
+            endpoint = "/api/v1/operation/" + dataId +"/"
+            method = "UPDATE"
+          } else {
+            endpoint = "/api/v1/operation/operation_save/"
+            method = "POST"
+          }
+        } else {
+          // Чекбокс снят (отжат)
+          console.log("Чекбокс снят");
+          if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
+            form.append("id", dataId);
+            endpoint = "/api/v1/operation/" + dataId +"/"
+            method = "DELITE"
+          } else {
+            endpoint = "/api/v1/operation/operation_save/"
+            method = "POST"
+          }
+        }
+        
+    
+        let object = {};
+        form.forEach((value, key) => (object[key] = value));
+        const dataJson = JSON.stringify(object);
+        console.log(dataJson)
+        let csrfToken = getCookie("csrftoken");
+        
+        fetch(endpoint, {
+          method: method,
+          body: dataJson,
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+        }).then((response) => {
+          if (response.ok === true) {
+           location.reload();
+            
+          } else {
+            // location.reload();
+           
+          }
+        });
+     
+      
+
+
+    });
+  });
 }

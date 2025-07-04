@@ -5,6 +5,7 @@ from django.db import models
 # Create your models here.
 class Bank(models.Model):
     name = models.CharField("Банк", max_length=200)
+
     # slugish = models.CharField(max_length=200, blank=True, null=True)
     class Meta:
         verbose_name = "Банк"
@@ -13,16 +14,21 @@ class Bank(models.Model):
     def __str__(self):
         return self.name
 
+
 CATEGORY_OPERACCOUNT = [
-        ('1', "Oфис"),
-        ('2', "Реклама"),
-        ('3', "Прочее"),
-        ('4', "Банковские расходы"),
-    ]
+    ("1", "Oфис"),
+    ("2", "Реклама"),
+    ("3", "Прочее"),
+    ("4", "Банковские расходы"),
+]
+
 
 class GroupeOperaccount(models.Model):
     name = models.CharField("Имя", max_length=200)
-    category = models.CharField(max_length=20, choices=CATEGORY_OPERACCOUNT, default='1')
+    category = models.CharField(
+        max_length=20, choices=CATEGORY_OPERACCOUNT, default="1"
+    )
+
     # slugish = models.CharField(max_length=200, blank=True, null=True)
     class Meta:
         verbose_name = "Группа расходов операкаунта"
@@ -46,13 +52,14 @@ class GroupeSalary(models.Model):
         blank=True,
         null=True,
     )
+
     class Meta:
         verbose_name = "Группа расходов зарплаты"
         verbose_name_plural = "Группы расходов зарплаты"
 
     def __str__(self):
         return self.name
-    
+
 
 class CategNalog(models.Model):
     name = models.CharField("Имя", max_length=200)
@@ -62,7 +69,8 @@ class CategNalog(models.Model):
         blank=True,
         null=True,
     )
-    in_page_nalog = models.BooleanField("Отображение на странице налогов",default=True)
+    in_page_nalog = models.BooleanField("Отображение на странице налогов", default=True)
+
     class Meta:
         verbose_name = "Категория налога"
         verbose_name_plural = "Категории налогов"
@@ -74,6 +82,14 @@ class CategNalog(models.Model):
 class CategForPercentGroupBank(models.Model):
     name = models.CharField("Имя", max_length=200)
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE, verbose_name="Банк")
+    category_between = models.ForeignKey(
+        "CategOperationsBetweenBank",
+        on_delete=models.CASCADE,
+        verbose_name="Категория операции между счетами",
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         verbose_name = "Категория процентных полей "
         verbose_name_plural = "Категории  процентных полей"
@@ -81,22 +97,36 @@ class CategForPercentGroupBank(models.Model):
     def __str__(self):
         return self.name
 
+
 class CategPercentGroupBank(models.Model):
     created_timestamp = models.DateTimeField(
         default=timezone.now, verbose_name="Дата добавления"
     )
     data = models.DateField(verbose_name="Дата добавления вручную")
-    category = models.ForeignKey(CategForPercentGroupBank, on_delete=models.CASCADE, verbose_name="Категория")
+    category = models.ForeignKey(
+        CategForPercentGroupBank, on_delete=models.CASCADE, verbose_name="Категория"
+    )
+    category_between = models.ForeignKey(
+        "CategOperationsBetweenBank",
+        on_delete=models.CASCADE,
+        verbose_name="Категория операции между счетами",
+        blank=True,
+        null=True,
+    )
     percent = models.FloatField("Сумма", default="0")
-    is_auto_persent = models.BooleanField("Авто процент с прошлого месяца",default=True)
+    is_auto_persent = models.BooleanField(
+        "Авто процент с прошлого месяца", default=True
+    )
+    in_need_operations= models.BooleanField("Необходимость операции", default=True)
+
     class Meta:
         verbose_name = "Проценты для сумм по категориям"
         verbose_name_plural = "Проценты для сумм по категориям"
 
     def __str__(self):
-        return (self.category,self.percent)
-    
-    
+        return (self.category, self.percent)
+
+
 class CategOperationsBetweenBank(models.Model):
     name = models.CharField("Имя", max_length=200)
     bank_in = models.ForeignKey(
@@ -115,7 +145,7 @@ class CategOperationsBetweenBank(models.Model):
         blank=True,
         null=True,
     )
-    
+
     class Meta:
         verbose_name = "Категория операций между банками"
         verbose_name_plural = "Категория операций между банками"
