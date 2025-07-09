@@ -397,13 +397,15 @@
                                             <!-- операция с процентами-->
                                             {% if month_data.percent %}
                                                 {% if month_data.percent > 0 %}
+                                                    {% comment %} Если фикс суммы был  {% endcomment %}
+                                                    {% if month_data.chek %}
+                                                    <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>
+                                                    {% else %}
                                                     <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
-                                                    
                                                     <input type="text"
                                                            class="salary_employee_item_sums_inp"
                                                            value="{{ month_data.percent|format_rub }}">
-                                                           
-                                                           
+                                                    {% endif %}    
                                                 {% else %}
                                                     <span class="salary_employee_item_sums_text ">0 ₽</span>
                                                     <input type="text"
@@ -425,9 +427,7 @@
                                                 {% endif %}
                                             {% endif %}
                                         </div>
-                                        {% comment %} {% if month_data.percent %}
-                                        <input class='checkbox-persent' type="checkbox"  value="1"> 
-                                        {% endif %} {% endcomment %}
+                                        
                                         <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
                                     </div>
                                 {% else %}

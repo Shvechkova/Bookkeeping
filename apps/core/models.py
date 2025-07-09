@@ -22,7 +22,7 @@ class LogsError(models.Model):
         verbose_name_plural = "Логи ошибок"
 
     def __str__(self):
-        return f"Тип ошибки: {self.type_error},{self.created_timestamp} "
+        return f"Тип ошибки: {self.location},{self.created_timestamp} "
     
 class Logsinfo(models.Model):
     created_timestamp = models.DateTimeField(default=timezone.now, verbose_name="Дата добавления"
@@ -44,4 +44,4 @@ class Logsinfo(models.Model):
         verbose_name_plural = "Информационные сообщения"
 
     def __str__(self):
-        return f"Тип ошибки: {self.type_error},{self.created_timestamp} "
+        return f"Тип лога: {self.location},{self.created_timestamp} "

@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from apps.client.api.serializers import ClientSerializer
 from apps.client.models import Client
-from apps.core.utils import error_alert
+from apps.core.utils import error_alert, log_alert
 from apps.employee.api.serializers import EmployeeSerializer
 from apps.employee.models import CategoryEmployee, Employee
 from apps.operation.api.serializers import OperationSerializer
@@ -28,6 +28,49 @@ class ОperationViewSet(viewsets.ModelViewSet):
     queryset = Operation.objects.all()
     serializer_class = OperationSerializer
     http_method_names = ["get", "post", "delete", "update"]
+
+
+
+    def create(self, request, *args, **kwargs):
+        try: 
+            location = "операции create"
+            info = f"Сохранение операции create   {request.data}"
+            log_alert(location, info)
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            tr = traceback.format_exc()
+            location = "операции"
+            info = f"Сохранение операции create  ошибка {e}{tr}"
+            error_alert(e, location, info)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        try:
+           
+            location = "операции update"
+            info = f"Сохранение операции update   {request.data}"
+            log_alert (location, info)
+            return super().update(request, *args, **kwargs)
+        except Exception as e:
+            tr = traceback.format_exc()
+            location = "операции update"
+            info = f"Сохранение операции update  ошибка {e}{tr}"
+            error_alert(e, location, info)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            
+            location = "операции destroy"
+            info = f"Сохранение операции destroy  {request.data}"
+            log_alert(location, info)
+            return super().destroy(request, *args, **kwargs)
+        except Exception as e:
+            tr = traceback.format_exc()
+            location = "операции destroy"
+            info = f"Сохранение операции destroy  ошибка {e}{tr}"
+            error_alert(e, location, info)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r"operation_save")
     def operation_save(self, request, *args, **kwargs):
@@ -63,24 +106,23 @@ class ОperationViewSet(viewsets.ModelViewSet):
                 
                
                 
+                location = "операции operation_save"
+                info = f"Сохранение операции operation_save   {request.data}"
+                log_alert(location, info)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                print(serializer.errors)
-                print("errorvalidetae")
-                # tr = traceback.format_exc()
-                # print("all error")
-                # location = "operation_save"
-                # info = f"Тип ошибки:{tr} {e} {serializer.errors}"
-                # e = error_alert(location, info)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                tr = traceback.format_exc()
+                location = "операции operation_save"
+                info = f"Сохранение операции operation_save ошибка {e}{tr}"
+                error_alert(e, location, info)
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as e:
-            # tr = traceback.format_exc()
-            print("all error")
-            # location = "operation_save"
-            # info = f"Тип ошибки:{tr} {e}"
-            # e = error_alert(location, info)
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            tr = traceback.format_exc()
+            location = "операции"
+            info = f"Сохранение операции  ошибка {e}{tr}"
+            error_alert(e, location, info)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -195,6 +237,13 @@ class ОperationViewSet(viewsets.ModelViewSet):
             context = {
                 "result": "ok"
             }
+            location = "операции operation_delete"
+            info = f"удаление операции operation_delete  {request.data}"
+            log_alert(location, info)
             return Response(context, status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            tr = traceback.format_exc()
+            location = "операции"
+            info = f"удаление операции operation_delete ошибка {e}{tr}"
+            error_alert(e, location, info)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)

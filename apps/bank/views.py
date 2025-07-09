@@ -1887,12 +1887,9 @@ def outside_ooo(request):
         bank=bank, name__in=names
     ).values("id", "name", "bank","category_between","category_between__bank_to")
     categ_percent_by_name = {item["name"]: item for item in categ_percents}
-    # categ_percent = CategForPercentGroupBank.objects.filter(bank=bank).values(
-    #     "id",
-    #     "name",
-    #     "bank",
-    # )
-    print(categ_percent_by_name)
+    operations_actual ={}
+    operations_old_year ={}
+
     categ_percent_value = (
         CategPercentGroupBank.objects.select_related(
             "category", "bank", "bank_categpercentgroupbank_name"
@@ -1922,7 +1919,7 @@ def outside_ooo(request):
         )
         .filter(
             Q(bank_in=bank) | Q(bank_to=bank),
-            data__year__gte=year_now,
+            # data__year__gte=year_now,
         )
         .order_by("data")
     )
@@ -1934,9 +1931,12 @@ def outside_ooo(request):
     ).exclude(name="Topvisor")
 
     # Создаем список месяцев текущего года
-    months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
+    # months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
+    # months_current_year.reverse()
+ 
+    months_current_year = MONTHS_RU
     months_current_year.reverse()
-
+    print(months_current_year)
     # Создаем словарь для сопоставления названий месяцев с их номерами
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
 
@@ -2047,10 +2047,7 @@ def outside_ooo(request):
                 "name": "Реальный налог УСН с ООО доход - 1%",
                 "total": {},
             },
-            {
-                "name": "Предполагаемый УСН по результатам месяца",
-                "total": {},
-            },
+            
             {
                 "name": "ПРОВЕРКА ДОХОД - РАСХОД",
                 "total": {},
@@ -2118,15 +2115,7 @@ def outside_ooo(request):
     }
 
     # ЗАПОЛНЕНИЕ МАССИВОВ ДАННЫМИ
-    # # Инициализируем месяцы для итогов arr_out в правильном порядке
-    # for month in months_current_year:
-    #     month_number = month_numbers[month]
-    #     arr_out["total_category"]["total"][month] = {
-    #         "amount_month": 0,
-    #         "month_number": f"{month_number:02d}",
-    #         "is_make_operations": False,
-    #     }
-
+    
     # Добавляем категории из CATEGORY_OPERACCOUNT
     for categ_oper in CATEGORY_OPERACCOUNT:
 
@@ -2148,7 +2137,9 @@ def outside_ooo(request):
         "перевод на ИП для оплаты субподряда"
     )
     categ_percent_crp = categ_percent_by_name.get("ПРИБЫЛЬ 1% ЦРП 5%")
+    print(categ_percent_crp)
     categ_percent_crp_kv = categ_percent_by_name.get("КВ 20% ЦРП 50%")
+    print(categ_percent_crp_kv)
     categ_percent_ycn = categ_percent_by_name.get(
         "НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)"
     )
@@ -2215,6 +2206,10 @@ def outside_ooo(request):
                     year_now, MONTHS_RU.index(month) + 1, 1
                 )
                 in_out["total"][month]["id_groupe"] = categ_percent_crp_kv["id"]
+                in_out["total"][month]["between_id"] = categ_percent_crp_kv["category_between"]
+                in_out["total"][month]["bank_out"] = categ_percent_crp_kv["category_between__bank_to"]
+                in_out["total"][month]["amount_month_chek"] = 0
+                in_out["total"][month]["chek"] = False
 
                 percent_obj = next(
                     (
@@ -2228,9 +2223,10 @@ def outside_ooo(request):
                 in_out["total"][month]["percent"] = (
                     percent_obj["percent"] if percent_obj else 0
                 )
-                in_out["total"][month]["operation_id"] = (
+                in_out["total"][month]["operation_percent_id"] = (
                     percent_obj["id"] if percent_obj else 0
                 )
+            
             elif in_out["name"] == "ПРЕМИИ":
                 in_out["total"][month]["is_make_operations"] = True
                 in_out["total"][month]["bank_out"] = between_id_for_arr_in_out_all[
@@ -2546,7 +2542,7 @@ def outside_ooo(request):
                 ] += operation.amount
 
             elif operation.nalog.id == 4:
-                print(operation, "operation.nalog.id 4")
+     
                 arr_inside_all["category"][0]["total"]["total"][month_name][
                     "amount_month"
                 ] += operation.amount
@@ -2554,7 +2550,7 @@ def outside_ooo(request):
                     "amount_month"
                 ] += operation.amount
             elif operation.nalog.id == 9:
-                print(operation, "operation.nalog.id 9", operation.amount)
+         
                 arr_in_out_after_all_total["category"][1]["total"][month_name][
                     "amount_month"
                 ] += operation.amount
@@ -2658,7 +2654,7 @@ def outside_ooo(request):
                             "перевод на ИП для оплаты субподряда"
                         ][prev_month]["expected"] += operation.amount
                 elif operation.between_bank.name == "ПРЕМИИ":
-                    # print("ПРЕМИИ!", operation, month, operation.amount)
+                  
                     name_to_find = "ПРЕМИИ"
                     item = next(
                         (
@@ -2687,6 +2683,22 @@ def outside_ooo(request):
                 elif operation.between_bank.name == "ПРИБЫЛЬ 1% ЦРП 5%":
                     name_to_find = "ПРИБЫЛЬ 1% ЦРП 5%"
                     print("ПРИБЫЛЬ 1% ЦРП 5%")
+                    print(operation)
+                    item = next(
+                        (
+                            x
+                            for x in arr_in_out_all["category"]
+                            if x["name"] == name_to_find
+                        ),
+                        None,
+                    )
+                    if item:
+                        item["total"][month_name]["amount_month_chek"] += operation.amount
+                        item["total"][month_name]["operation_id"] = operation.id
+                        item["total"][month_name]["chek"] = True
+                elif operation.between_bank.name == "КВ 20% ЦРП 50%":
+                    name_to_find = "КВ 20% ЦРП 50%"
+                    print("КВ 20% ЦРП 50%")
                     print(operation)
                     item = next(
                         (
@@ -2742,15 +2754,24 @@ def outside_ooo(request):
         
         
         # ПРИБЫЛЬ 1% ЦРП 5%
-        in_out_all_crp = (
-            diff_in_out * arr_in_out_all["category"][1]["total"][month]["percent"] / 100
-        )
+        if arr_in_out_all["category"][1]["total"][month]["chek"] == True:
+           
+            in_out_all_crp = arr_in_out_all["category"][1]["total"][month]["amount_month_chek"]
+        else:
+            in_out_all_crp = (
+                diff_in_out * arr_in_out_all["category"][1]["total"][month]["percent"] / 100
+            )
         arr_in_out_all["category"][1]["total"][month]["amount_month"] = in_out_all_crp
 
         # КВ 20% ЦРП 50%
-        in_out_all_crp_kv = (
-            diff_in_out * arr_in_out_all["category"][2]["total"][month]["percent"] / 100
-        )
+        if arr_in_out_all["category"][2]["total"][month]["chek"] == True:
+            
+            in_out_all_crp_kv = arr_in_out_all["category"][2]["total"][month]["amount_month_chek"]
+            
+        else:
+            in_out_all_crp_kv = (
+                diff_in_out * arr_in_out_all["category"][2]["total"][month]["percent"] / 100
+            )
         arr_in_out_all["category"][2]["total"][month][
             "amount_month"
         ] = in_out_all_crp_kv
@@ -2761,7 +2782,7 @@ def outside_ooo(request):
             + in_out_all_crp_kv
             + arr_in_out_all["category"][3]["total"][month]["amount_month"]
         )
-        arr_in_out_all["category"][4]["total"][month]["amount_month"] = in_out_all_total
+        arr_in_out_all["category"][4]["total"][month]["amount_month"] = in_out_all_total 
 
         # ДОХОД - РЕАЛЬНЫЙ РАСХОД в текущем месяце
         all_out_dop = arr_inside_all["total_category"]["total"][month_name][
@@ -2789,7 +2810,7 @@ def outside_ooo(request):
         )
 
         # ПРОВЕРКА ДОХОД - РАСХОД
-        arr_in_out_after_all["category"][4]["total"][month]["amount_month"] = (
+        arr_in_out_after_all["category"][3]["total"][month]["amount_month"] = (
             diff_in_out_real - ycno
         )
 
@@ -2820,12 +2841,17 @@ def outside_ooo(request):
         if i < len(months_current_year) + 1:
             next_month = months_current_year[i - 1]
             if next_month in months_current_year:
-                arr_start_month["total"][next_month]["amount_month"] = all_sum_month
+                # Если это январь (последний месяц в списке), выводим 0
+                if next_month == months_current_year[-1]:
+                    arr_start_month["total"][next_month]["amount_month"] = 0
+                else:
+                    arr_start_month["total"][next_month]["amount_month"] = all_sum_month
         else:
             next_month = None
-
-        print(months_current_year)
-
+    
+    
+    
+    
     context = {
         "title": title,
         "year_now": year_now,
@@ -3284,7 +3310,7 @@ def outside_ip(request):
                 "month_number": MONTHS_RU.index(month) + 1,
                 "is_make_operations": False,
             }
-    print(arr_out)
+
     
     
     # распределение операций
@@ -3922,7 +3948,7 @@ def storage_bonus(request):
 
 def storage_servise(request):
     title = "Остатки рекламных бюджетов"
-    print(title)
+
     type_url = "storage_servise"
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
@@ -3985,7 +4011,7 @@ def storage_servise(request):
             "month_number": MONTHS_RU.index(month) + 1,
         }
         
-    print(operations)
+
     # распределение операций
     for operation in operations:
         month_name = MONTHS_RU[operation.data.month - 1]

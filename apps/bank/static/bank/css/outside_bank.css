@@ -1,5 +1,6 @@
 .inp_operation_bank{
     width: 75%;
+    cursor: pointer;
 }
 .btn_add_operation_bank{
     top: 0;
@@ -49,6 +50,7 @@
   }
   .inp_operation_bank{
     color: rgb(134, 7, 7);
+    cursor: pointer;
   }
   .inp_operation_bank p{
     color: rgb(134, 7, 7);
@@ -130,6 +132,7 @@
     background: #dadada;
     border-radius: 50%;
     position: absolute;
-    top: 4px;
-    left: 4px;
-  }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

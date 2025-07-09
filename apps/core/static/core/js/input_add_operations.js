@@ -386,7 +386,7 @@ if (chakboxInp){
           if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
             form.append("id", dataId);
             endpoint = "/api/v1/operation/" + dataId +"/"
-            method = "DELITE"
+            method = "DELETE"
           } else {
             endpoint = "/api/v1/operation/operation_save/"
             method = "POST"

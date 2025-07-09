@@ -7,7 +7,7 @@ def error_alert(error, location, info):
            location=location, info=info
         )
 
-def log_alert(error, location, info):
+def log_alert( location, info):
     error_alert = Logsinfo.objects.create(
            location=location, info=info
         )
