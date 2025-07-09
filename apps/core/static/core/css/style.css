@@ -2305,3 +2305,8 @@ input[type="radio"]:checked {
   gap: 7px;
   padding: 20px 0;
 }
+
+.inside_wr{
+  display: flex;
+  gap: 100px;
+}
