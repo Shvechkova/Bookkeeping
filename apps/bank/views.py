@@ -1950,7 +1950,7 @@ def outside_ooo(request):
         )
         .order_by("data")
     )
-    print(operations_old)
+ 
      
 
     # Получаем все сервисы одним запросом
@@ -1961,22 +1961,17 @@ def outside_ooo(request):
 
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
-    print(months_current_year)
+
     months_current_year.reverse()
-    print(months_current_year)
 
     # Создаем словарь для сопоставления названий месяцев с их номерами
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
-    print(month_numbers)
+  
 
     months_current_year_old = MONTHS_RU.copy()
-    print(months_current_year_old)
     months_current_year_old.reverse()
-    print(months_current_year_old)
     month_numbers_old = {month: i + 1 for i, month in enumerate(months_current_year_old)}
-    print(month_numbers_old)
-
-    print(month_numbers)
+    
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
     arr_start_month = {
@@ -2158,11 +2153,34 @@ def outside_ooo(request):
     arr_in_out_after_all_total_old = copy.deepcopy(arr_in_out_after_all_total)
     arr_inside_all_old = copy.deepcopy(arr_inside_all)
     
+   
+    old_oper_arr = {}
     
-    # ЗАПОЛНЕНИЕ МАССИВОВ ДАННЫМИ
-
-    # Добавляем категории из CATEGORY_OPERACCOUNT
-    
+    old_oper_arr = fill_operations_arrays(
+        operations_old,
+        arr_in_old,
+        arr_out_old,
+        arr_in_out_all_old,
+        arr_inside_all_old,
+        arr_in_out_after_all_old,
+        arr_in_out_after_all_total_old,
+        arr_start_month_old,
+        months_current_year_old,
+        year_now,
+        bank,
+        get_id_categ_oper,
+        CATEGORY_OPERACCOUNT,
+        MONTHS_RU,
+        cate_oper_beetwen_by_name,
+        categ_percent_by_name,
+        categoru_nalog,
+        month_numbers_old,
+        categ_percent_list,
+        services,
+        other_categ_subkontract,
+        is_old_oper=True,
+        old_oper_arr=None,
+        )
 
     (
         arr_in,
@@ -2194,34 +2212,10 @@ def outside_ooo(request):
         categ_percent_list,
         services,
         other_categ_subkontract,
-        is_old_oper=False
+        is_old_oper=False,
+        old_oper_arr=old_oper_arr,
     )
-    old_oper_arr = {}
-    
-    old_oper_arr = fill_operations_arrays(
-        operations_old,
-        arr_in_old,
-        arr_out_old,
-        arr_in_out_all_old,
-        arr_inside_all_old,
-        arr_in_out_after_all_old,
-        arr_in_out_after_all_total_old,
-        arr_start_month_old,
-        months_current_year_old,
-        year_now,
-        bank,
-        get_id_categ_oper,
-        CATEGORY_OPERACCOUNT,
-        MONTHS_RU,
-        cate_oper_beetwen_by_name,
-        categ_percent_by_name,
-        categoru_nalog,
-        month_numbers_old,
-        categ_percent_list,
-        services,
-        other_categ_subkontract,
-        is_old_oper=True
-    )
+
 
     context = {
         "title": title,
@@ -3403,7 +3397,8 @@ def fill_operations_arrays(
     categ_percent_list,
     services,
     other_categ_subkontract,
-    is_old_oper
+    is_old_oper,
+    old_oper_arr
     
 ):
     between_id_for_arr_in_out_all = cate_oper_beetwen_by_name.get("ПРЕМИИ")
@@ -3414,9 +3409,9 @@ def fill_operations_arrays(
         "перевод на ИП для оплаты субподряда"
     )
     categ_percent_crp = categ_percent_by_name.get("ПРИБЫЛЬ 1% ЦРП 5%")
-    print(categ_percent_crp)
+
     categ_percent_crp_kv = categ_percent_by_name.get("КВ 20% ЦРП 50%")
-    print(categ_percent_crp_kv)
+  
     categ_percent_ycn = categ_percent_by_name.get(
         "НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)"
     )
@@ -3427,7 +3422,7 @@ def fill_operations_arrays(
     categoru_nalog_ysn = categoru_nalog.get(name="ФАКТИЧЕСКАЯ ОПЛАТА УСН")
 
     if is_old_oper:
-        print(operations)
+       
         def reverse_months_in_dict(d):
             if isinstance(d, dict):
                 months = [m for m in MONTHS_RU if m in d]
@@ -3447,7 +3442,7 @@ def fill_operations_arrays(
         years = set()
         for operation in operations:
             years.add(operation.data.year)
-        for year in sorted(years, reverse=True):
+        for year in sorted(years):
             # Фильтруем операции за этот год
             operations_year = [op for op in operations if op.data.year == year]
             # Копируем структуры для этого года
@@ -3473,7 +3468,7 @@ def fill_operations_arrays(
                         "month_number": MONTHS_RU.index(month) + 1,
                         "is_make_operations": False,
                     }
-            print(arr_inside_all_y)
+         
             
             # Добавляем месяцы
             for i, month in enumerate(months_year):
@@ -4012,8 +4007,7 @@ def fill_operations_arrays(
                                 item["total"][month_name]["operation_id"] = operation.id
                         elif operation.between_bank.name == "ПРИБЫЛЬ 1% ЦРП 5%":
                             name_to_find = "ПРИБЫЛЬ 1% ЦРП 5%"
-                            print("ПРИБЫЛЬ 1% ЦРП 5%")
-                            print(operation)
+                            
                             item = next(
                                 (
                                     x
@@ -4030,8 +4024,7 @@ def fill_operations_arrays(
                                 item["total"][month_name]["chek"] = True
                         elif operation.between_bank.name == "КВ 20% ЦРП 50%":
                             name_to_find = "КВ 20% ЦРП 50%"
-                            print("КВ 20% ЦРП 50%")
-                            print(operation)
+                           
                             item = next(
                                 (
                                     x
@@ -4174,40 +4167,56 @@ def fill_operations_arrays(
                 to_ip = arr_in_out_after_all_total_y["category"][2]["total"][month][
                     "amount_month"
                 ]
-                all_sum_month = diff_in_out_real - nalog_ycn - to_ip
-                arr_in_out_after_all_total_y["category"][3]["total"][month][
-                    "amount_month"
-                ] = all_sum_month
+               
+                for i, month in enumerate(months_year):
+                    
+                    if i + 1 < len(months_year):
+                        month_prev = months_year[i + 1]
+                        prev_all_sum_month = arr_in_out_after_all_total_y["category"][3]["total"][month_prev]["amount_month"]
+                    else:
+                        prev_year = year - 1
+                        last_month = "Декабрь"
+                        prev_all_sum_month = 0
+                        prev_year_data = operations_by_year.get(prev_year)
+                        if prev_year_data:
+                            try:
+                                category_list = prev_year_data["arr_in_out_after_all_total"]["category"]
+                                prev_all_sum_month = category_list[3]["total"][last_month]["amount_month"]
+                            except Exception as e:
+                                print("Ошибка при доступе к остатку прошлого года:", e)
+                                prev_all_sum_month = 0
+
+                    all_sum_month = diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
+                    arr_in_out_after_all_total_y["category"][3]["total"][month]["amount_month"] = all_sum_month
+             
+                
 
                 # Р/С на начало месяца
                 # получить следующий месяц
-                if i < len(months_year) + 1:
-                    next_month = months_year[i - 1]
-                    if next_month in months_year:
-                        # Если это январь (последний месяц в списке), выводим 0
-                        if next_month == months_year[-1]:
-                            arr_start_month_y["total"][next_month]["amount_month"] = 0
-                        else:
-                            arr_start_month_y["total"][next_month]["amount_month"] = all_sum_month
-                else:
-                    next_month = None
+                
+                for i, month in enumerate(months_year):
+                    if i == len(months_year) - 1:
+                        # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года
+                        prev_year = year - 1
+                        last_month = "Декабрь"
+                        last_balance = 0
+                        prev_year_data = operations_by_year.get(prev_year)
+                        if prev_year_data:
+                            
+                            print(f"prev_year_data for {prev_year}:", prev_year_data.keys())
+                            try:
+                                category_list = prev_year_data["arr_in_out_after_all_total"]["category"]
+                                
+                                last_balance = category_list[3]["total"][last_month]["amount_month"]
+                            except Exception as e:
+                                print("Ошибка при доступе к остатку прошлого года:", e)
+                                last_balance = 0
+                        arr_start_month_y["total"][month]["amount_month"] = last_balance
+                    else:
+                        next_month = months_year[i + 1]
+                        arr_start_month_y["total"][month]["amount_month"] = arr_in_out_after_all_total_y["category"][3]["total"][next_month]["amount_month"]
 
-            
-            # def reverse_months_in_dict(d):
-            #     if isinstance(d, dict):
-            #         # Проверяем, что это словарь месяцев
-            #         months = [m for m in MONTHS_RU if m in d]
-            #         if len(months) > 1 and set(months) == set(MONTHS_RU):
-            #             # Это словарь месяцев, разворачиваем
-            #             items = [(m, d[m]) for m in MONTHS_RU if m in d]
-            #             items.reverse()
-            #             return {k: v for k, v in items}
-            #         else:
-            #             return {k: reverse_months_in_dict(v) for k, v in d.items()}
-            #     elif isinstance(d, list):
-            #         return [reverse_months_in_dict(x) for x in d]
-            #     else:
-            #         return d
+
 
             arr_in_y = reverse_months_in_dict(arr_in_y)
             arr_out_y = reverse_months_in_dict(arr_out_y)
@@ -4230,7 +4239,7 @@ def fill_operations_arrays(
                 "year": year,
             }
             operations_by_year[year] = operations_actual
-        print(operations_by_year)
+    
         return operations_by_year
     else:
         pass
@@ -4242,9 +4251,7 @@ def fill_operations_arrays(
             "перевод на ИП для оплаты субподряда"
         )
         categ_percent_crp = categ_percent_by_name.get("ПРИБЫЛЬ 1% ЦРП 5%")
-        print(categ_percent_crp)
         categ_percent_crp_kv = categ_percent_by_name.get("КВ 20% ЦРП 50%")
-        print(categ_percent_crp_kv)
         categ_percent_ycn = categ_percent_by_name.get(
             "НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)"
         )
@@ -4802,8 +4809,7 @@ def fill_operations_arrays(
                             item["total"][month_name]["operation_id"] = operation.id
                     elif operation.between_bank.name == "ПРИБЫЛЬ 1% ЦРП 5%":
                         name_to_find = "ПРИБЫЛЬ 1% ЦРП 5%"
-                        print("ПРИБЫЛЬ 1% ЦРП 5%")
-                        print(operation)
+               
                         item = next(
                             (
                                 x
@@ -4820,8 +4826,7 @@ def fill_operations_arrays(
                             item["total"][month_name]["chek"] = True
                     elif operation.between_bank.name == "КВ 20% ЦРП 50%":
                         name_to_find = "КВ 20% ЦРП 50%"
-                        print("КВ 20% ЦРП 50%")
-                        print(operation)
+                   
                         item = next(
                             (
                                 x
@@ -4962,24 +4967,70 @@ def fill_operations_arrays(
             to_ip = arr_in_out_after_all_total["category"][2]["total"][month][
                 "amount_month"
             ]
-            all_sum_month = diff_in_out_real - nalog_ycn - to_ip
-            arr_in_out_after_all_total["category"][3]["total"][month][
-                "amount_month"
-            ] = all_sum_month
+            
+            for i, month in enumerate(months_current_year):
+                if i + 1 < len(months_current_year):
+                    month_prev = months_current_year[i + 1]
+                    prev_all_sum_month = arr_in_out_after_all_total["category"][3]["total"][month_prev]["amount_month"]
+                else:
+                    # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                    prev_all_sum_month = 0
+                    if old_oper_arr:
+                        prev_year = year_now - 1
+                        last_month = "Декабрь"
+                        prev_year_data = old_oper_arr.get(prev_year)
+                        if prev_year_data:
+                            try:
+                                category_list = prev_year_data["arr_in_out_after_all_total"]["category"]
+                                prev_all_sum_month = category_list[3]["total"][last_month]["amount_month"]
+                            except Exception as e:
+                                print("Ошибка при доступе к остатку прошлого года (old_oper_arr):", e)
+                                prev_all_sum_month = 0
 
+                all_sum_month = diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
+                arr_in_out_after_all_total["category"][3]["total"][month]["amount_month"] = all_sum_month
+                    
+            # for i, month in enumerate(months_current_year):
+            #     if i + 1 < len(months_current_year):
+            #         month_prev = months_current_year[i + 1]
+            #         prev_all_sum_month = arr_in_out_after_all_total["category"][3]["total"][month_prev]["amount_month"]
+            #     else:
+            #         prev_all_sum_month = 0
+
+            #     all_sum_month = diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
+            #     arr_in_out_after_all_total["category"][3]["total"][month]["amount_month"] = all_sum_month
+            
+     
             # Р/С на начало месяца
             # получить следующий месяц
-            if i < len(months_current_year) + 1:
-                next_month = months_current_year[i - 1]
-                if next_month in months_current_year:
-                    # Если это январь (последний месяц в списке), выводим 0
-                    if next_month == months_current_year[-1]:
-                        arr_start_month["total"][next_month]["amount_month"] = 0
-                    else:
-                        arr_start_month["total"][next_month]["amount_month"] = all_sum_month
-            else:
-                next_month = None
-
+            for i, month in enumerate(months_current_year):
+                if i == len(months_current_year) - 1:
+                    # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                    last_balance = 0
+                    if old_oper_arr:
+                        prev_year = year_now - 1
+                        last_month = "Декабрь"
+                        prev_year_data = old_oper_arr.get(prev_year)
+                        if prev_year_data:
+                            try:
+                                category_list = prev_year_data["arr_in_out_after_all_total"]["category"]
+                                last_balance = category_list[3]["total"][last_month]["amount_month"]
+                            except Exception as e:
+                                print("Ошибка при доступе к остатку прошлого года (old_oper_arr):", e)
+                                last_balance = 0
+                    arr_start_month["total"][month]["amount_month"] = last_balance
+                else:
+                    next_month = months_current_year[i + 1]
+                    arr_start_month["total"][month]["amount_month"] = arr_in_out_after_all_total["category"][3]["total"][next_month]["amount_month"]
+                        
+            # for i, month in enumerate(months_current_year):
+            #     if i == len(months_current_year) - 1:
+            #         # Для самого последнего месяца (например, "Январь") — 0
+            #         arr_start_month["total"][month]["amount_month"] = 0
+            #     else:
+            #         next_month = months_current_year[i + 1]
+            #         arr_start_month["total"][month]["amount_month"] = arr_in_out_after_all_total["category"][3]["total"][next_month]["amount_month"]       
+          
         return (
             arr_in,
             arr_out,
