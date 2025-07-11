@@ -1,7 +1,30 @@
+import datetime
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import routers, serializers, viewsets, mixins, status
+from django.core.cache import cache
+from apps.core.utils import error_alert, log_alert
+
+
+def clear_bank_cache():
+    """
+    Сбрасывает кеш для всех банковских страниц
+    """
+    try:
+        year_now = datetime.datetime.now().year
+        # Сбрасываем кеш для всех банков (1, 2, 3)
+        for bank_id in [1, 2, 3]:
+            cache_key = f"bank_{bank_id}_context_{year_now}"
+            cache.delete(cache_key)
+        
+        location = "clear_bank_cache"
+        info = f"Кеш банковских страниц сброшен для года {year_now}"
+        log_alert(location, info)
+    except Exception as e:
+        location = "clear_bank_cache"
+        info = f"Ошибка при сбросе кеша банковских страниц: {e}"
+        error_alert(e, location, info)
 
 
 from apps.client.api.serializers import ClientSerializer
@@ -23,11 +46,47 @@ class ServicesClientMonthlyInvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = ServicesClientMonthlyInvoiceSerializer
     http_method_names = ["get", "post", "put", 'delete']
 
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        # Сбрасываем кеш после создания записи
+        clear_bank_cache()
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        # Сбрасываем кеш после обновления записи
+        clear_bank_cache()
+        return response
+
+    def destroy(self, request, *args, **kwargs):
+        response = super().destroy(request, *args, **kwargs)
+        # Сбрасываем кеш после удаления записи
+        clear_bank_cache()
+        return response
+
 
 class SubcontractMonthViewSet(viewsets.ModelViewSet):
     queryset = SubcontractMonth.objects.all()
     serializer_class = SubcontractMonthSerializer
     http_method_names = ["get", "post", "put", "delete"]
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        # Сбрасываем кеш после создания записи
+        clear_bank_cache()
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        # Сбрасываем кеш после обновления записи
+        clear_bank_cache()
+        return response
+
+    def destroy(self, request, *args, **kwargs):
+        response = super().destroy(request, *args, **kwargs)
+        # Сбрасываем кеш после удаления записи
+        clear_bank_cache()
+        return response
 
     @action(detail=False, methods=["get"], url_path=r"(?P<pk>\d+)/subcontract_li")
     def subcontract_list(self, request, pk):
@@ -66,12 +125,32 @@ class SubcontractMonthViewSet(viewsets.ModelViewSet):
                 if serializer.is_valid():
                     serializer.save()
 
+        # Сбрасываем кеш после обновления контрактов
+        clear_bank_cache()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SubcontractAdvPlatformView(viewsets.ModelViewSet):
     queryset = AdvPlatform.objects.all()
     serializer_class = AdvPlatformSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        # Сбрасываем кеш после создания записи
+        clear_bank_cache()
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        # Сбрасываем кеш после обновления записи
+        clear_bank_cache()
+        return response
+
+    def destroy(self, request, *args, **kwargs):
+        response = super().destroy(request, *args, **kwargs)
+        # Сбрасываем кеш после удаления записи
+        clear_bank_cache()
+        return response
 
     @action(detail=False, methods=["get"], url_path=r"adv")
     def subcontract_platform(self, request):

@@ -4,25 +4,25 @@
 }
 .btn_add_operation_bank{
     top: 0;
-    height: 40px;
+    height: 2.5rem;
 }
 .shrink-item-vert-im svg {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 0.625rem;
+    margin-right: 0.625rem;
     transform: rotate(90deg);
   }
 
   .background-bank-ooo{
     background-color: rgb(241, 243, 237);
-    border-radius: 25px;
+    border-radius: 1.5625rem;
   }
   .background-bank-ip{
     background-color: rgb(237, 240, 243);
-    border-radius: 25px;
+    border-radius: 1.5625rem;
   }
   .background-bank-nal{
-    background-color: rgb(255, 252, 232);
-    border-radius: 25px;
+    background-color: rgb(247, 243, 231);
+    border-radius: 1.5625rem;
   }
   
   .outside_wr{
@@ -31,19 +31,19 @@
     gap: 0;
   }
   .outside_title_categ{
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
   }
   
   .outside_wr .oper-account-grid {
-      margin-left: -40px; /* Ширина ячейки с номером */
+      margin-left: -2.5rem; /* Ширина ячейки с номером */
   }
   .outside_wr .oper-account-cell-num {
-      width: 40px;
+      width: 2.5rem;
   }
   
   .outside_name_title {
-    width: 350px;
+    width: 21.875rem;
     flex-shrink: 0;
     font-weight: 500;
       white-space: normal;
@@ -56,16 +56,16 @@
     color: rgb(134, 7, 7);
   }
   .checkbox-persent{
-    width: 47px;
-    height: 44px;
+    width: 2.9375rem;
+    height: 2.75rem;
     font-weight: 400;
-    font-size: 20px;
+    font-size: 1.25rem;
     text-align: center;
     color: #fff;
     background-color: #000;
     position: absolute;
     
-    margin-left: -10px;
+    margin-left: -0.625rem;
     display: flex
 ;
     justify-content: center;
@@ -74,18 +74,18 @@
     /* display: flex
 ; */
     border: 1px solid #000;
-    border-radius: 5px;
+    border-radius: 0.3125rem;
     cursor: pointer;
 
     display: flex;
-    left: -10px;
+    left: -0.625rem;
     top: 12%;
-    height: 20px;
+    height: 1.25rem;
     z-index: 2000;
     border: 2px solid #e6e6e6;
-    border-radius: 13px;
-    width: 24px;
-    height: 24px;
+    border-radius: 0.8125rem;
+    width: 1.5rem;
+    height: 1.5rem;
     color: #fff;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -127,8 +127,8 @@
   input[type="checkbox"].checkbox-persent:checked::after {
     content: "";
     display: block;
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
     background: #dadada;
     border-radius: 50%;
     position: absolute;

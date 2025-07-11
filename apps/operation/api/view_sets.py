@@ -9,6 +9,7 @@ from django.db.models import Avg, Count, Min, Sum
 from django.db.models import Q, F, OrderBy, Case, When, Value
 from sql_util.utils import SubquerySum
 from dateutil.relativedelta import relativedelta
+from django.core.cache import cache
 
 from apps.client.api.serializers import ClientSerializer
 from apps.client.models import Client
@@ -24,6 +25,26 @@ from apps.service.api.serializers import (
 from apps.service.models import Service, ServicesClientMonthlyInvoice
 
 
+def clear_bank_cache():
+    """
+    Сбрасывает кеш для всех банковских страниц
+    """
+    try:
+        year_now = datetime.datetime.now().year
+        # Сбрасываем кеш для всех банков (1, 2, 3)
+        for bank_id in [1, 2, 3]:
+            cache_key = f"bank_{bank_id}_context_{year_now}"
+            cache.delete(cache_key)
+        
+        location = "clear_bank_cache"
+        info = f"Кеш банковских страниц сброшен для года {year_now}"
+        log_alert(location, info)
+    except Exception as e:
+        location = "clear_bank_cache"
+        info = f"Ошибка при сбросе кеша банковских страниц: {e}"
+        error_alert(e, location, info)
+
+
 class ОperationViewSet(viewsets.ModelViewSet):
     queryset = Operation.objects.all()
     serializer_class = OperationSerializer
@@ -36,7 +57,10 @@ class ОperationViewSet(viewsets.ModelViewSet):
             location = "операции create"
             info = f"Сохранение операции create   {request.data}"
             log_alert(location, info)
-            return super().create(request, *args, **kwargs)
+            response = super().create(request, *args, **kwargs)
+            # Сбрасываем кеш после создания операции
+            clear_bank_cache()
+            return response
         except Exception as e:
             tr = traceback.format_exc()
             location = "операции"
@@ -50,7 +74,10 @@ class ОperationViewSet(viewsets.ModelViewSet):
             location = "операции update"
             info = f"Сохранение операции update   {request.data}"
             log_alert (location, info)
-            return super().update(request, *args, **kwargs)
+            response = super().update(request, *args, **kwargs)
+            # Сбрасываем кеш после обновления операции
+            clear_bank_cache()
+            return response
         except Exception as e:
             tr = traceback.format_exc()
             location = "операции update"
@@ -64,7 +91,10 @@ class ОperationViewSet(viewsets.ModelViewSet):
             location = "операции destroy"
             info = f"Сохранение операции destroy  {request.data}"
             log_alert(location, info)
-            return super().destroy(request, *args, **kwargs)
+            response = super().destroy(request, *args, **kwargs)
+            # Сбрасываем кеш после удаления операции
+            clear_bank_cache()
+            return response
         except Exception as e:
             tr = traceback.format_exc()
             location = "операции destroy"
@@ -103,8 +133,8 @@ class ОperationViewSet(viewsets.ModelViewSet):
                   
                         servise_month.save()
                     
-                
-               
+                # Сбрасываем кеш после сохранения операции
+                clear_bank_cache()
                 
                 location = "операции operation_save"
                 info = f"Сохранение операции operation_save   {request.data}"
@@ -233,6 +263,10 @@ class ОperationViewSet(viewsets.ModelViewSet):
                     servise_month.save()
 
             operation.delete()
+            
+            # Сбрасываем кеш после удаления операции
+            clear_bank_cache()
+            
             print(999999)
             context = {
                 "result": "ok"

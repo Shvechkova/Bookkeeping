@@ -1,6 +1,6 @@
 .salary-container {
   font-family: Montserrat; 
-  font-size: 20px;
+  font-size: 1.25rem;
   width: 100%;
   margin: 0 auto;
   white-space: nowrap
@@ -17,7 +17,7 @@
 }
 .salary-header {
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 }
 .salary-header > div,
 .salary-row > div,
@@ -28,18 +28,18 @@
 .salary-grand-total > div {
   /* flex: 1 1 0; */
  
-  min-width: 120px;
+  min-width: 7.5rem;
   box-sizing: border-box;
 }
 .salary-employee {
   font-weight: 700;
-  margin-top: 20px;
+  margin-top: 1.25rem;
   background: #fff;
 }
 .salary-group {
   font-weight: 600;
   background: #fff;
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 .salary-category {
   color: #000;
@@ -53,13 +53,13 @@
   font-weight: 900;
   background: #f5f5f5;
   color: #000;
-  margin-top: 20px;
+  margin-top: 1.25rem;
 }
 .salary-debt {
   color: #000;
 }
 .salary-index {
-  min-width: 40px;
+  min-width: 2.5rem;
   font-weight: 700;
 }
 .salary-month {
@@ -70,17 +70,18 @@
 .salary-category-months {
   display: flex;
   flex-direction: row;
-  margin-left: 10px;
-  gap: 8px;
+  margin-left: 0.625rem;
+  gap: 0.5rem;
 }
 .salary-category-month-row {
-  min-width: 90px;
+  min-width: 5.625rem;
   color: #222;
   margin-bottom: 0;
+  /* text-align: left; */
 }
 .salary-category-month-label {
   color: #888;
-  margin-right: 4px;
+  margin-right: 0.25rem;
 }
 .salary-employee-row,
 .salary-group-row,
@@ -93,7 +94,7 @@
 .salary-group-row > div,
 .salary-category-row > div,
 .salary-total-row > div {
-  min-width: 120px;
+  min-width: 7.5rem;
   
   box-sizing: border-box;
 }
@@ -121,7 +122,7 @@
 .salary-header > div,
 .salary-category-month-row,
 .salary-total-row > div {
-  min-width: 120px;
+  min-width: 7.5rem;
 
  
   box-sizing: border-box;
@@ -130,8 +131,8 @@
 
 .salary-content {
     display: flex;
-    gap: 50px;
-    margin-right: 40px;
+    gap: 3.125rem;
+    margin-right: 2.5rem;
 }
 
 .salary-current {
@@ -141,9 +142,9 @@
 .salary-old {
     flex: 1;
 
-    padding-left: 20px;
+    padding-left: 1.25rem;
     display: flex;
-    gap:  80px;
+    gap:  5rem;
 }
 .salary-old .salary-employee-row{
   /* background: #f8f8f8; */
@@ -154,12 +155,12 @@
 }
  .salary-old .salary-category-row{
   background: #f8f8f8;
-  width: 120px;
+  width: 7.5rem;
   
 } 
 .salary-old .salary-total-row{
   background: #f8f8f8;
-  width: 120px;
+  width: 7.5rem;
   
 } 
 .salary-old .salary-month{
@@ -167,38 +168,38 @@
   
 } 
 .salary-old-year {
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
     /* background: #f8f8f8;
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px; */
-    padding: 20px;
-    margin: -20px;
+    padding: 1.25rem;
+    margin: -1.25rem;
    
 }
 .salary-employee-wrap_one_year{
    background: #f8f8f8;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-    padding-left: 10px;
-    margin-left: -10px; 
+    border-bottom-left-radius: 1.5625rem;
+    border-bottom-right-radius: 1.5625rem;
+    border-top-left-radius: 1.5625rem;
+    border-top-right-radius: 1.5625rem;
+    padding-left: 0.625rem;
+    margin-left: -0.625rem; 
 }
 
 .salary-old-year h3 {
-    margin-bottom: 15px;
-    padding-bottom: 5px;
+    margin-bottom: 0.9375rem;
+    padding-bottom: 0.3125rem;
     border-bottom: 2px solid #ccc;
 }
 .salary-sorting{
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 .salary-sorting h3{
-  margin-right: 20px;
+  margin-right: 1.25rem;
 }
 .btn_sorting_salary{
   cursor: pointer;
@@ -210,12 +211,12 @@
 }
 
 .salary_employee_item_sum_nalog{
-  margin: -10px;
+  margin: -0.625rem;
   cursor: pointer;
-  padding: 10px;
+  padding: 0.625rem;
 }
 .salary_employee_item_sum_nalog_active {
-  border-radius: 5px;
+  border-radius: 0.3125rem;
   background-color: #f5f5f5;
   color: black;
   

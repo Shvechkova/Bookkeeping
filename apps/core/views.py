@@ -1,4 +1,5 @@
 import datetime
+from functools import cache
 from django.shortcuts import render
 
 from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth
@@ -13,6 +14,20 @@ def index(request):
 
     return render(request, "core/index.html", context)
 
+def cache_delete(request):
+    print("cache_delete")
+    from django.core.cache import cache
+    print(cache._dir)
+    cache.delete("bank_1_context_2025")
+    cache.clear()
+    print(cache.get("bank_1_context_2025")) 
+    title = "cache_delete"
+    context = {
+        "title": title,
+
+    }
+    return render(request, "core/index.html", context)
+    
 def test(request):
     title = "TEST"
 

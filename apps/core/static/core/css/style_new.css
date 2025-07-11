@@ -1,11 +1,11 @@
 .invoice_month_title {
   color: rgb(0, 0, 0);
   font-family: Montserrat;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  margin-bottom: 33px;
+  margin-bottom: 2.0625rem;
   display: flex;
   background: none;
   align-items: center;
@@ -22,72 +22,72 @@
 
 .invoice_wrap {
   display: flex;
-  padding: 20px 16.5px;
-  margin-left: 40px;
+  padding: 1.25rem 1.03125rem;
+  margin-left: 2.5rem;
   align-items: flex-end;
 }
 
 .invoice_month_counter {
-  width: 15px;
+  width: 0.9375rem;
   margin-left: 0;
 }
 
 .invoice_month_client_name {
-  width: 130px;
+  width: 8.125rem;
 }
 
 .invoice_month_contract_name {
-  width: 110px;
+  width: 6.875rem;
 }
 
 .invoice_month_summ_invoce {
-  width: 120px;
+  width: 7.5rem;
 }
 
 .invoice_month_summ_adv {
-  width: 110px;
+  width: 6.875rem;
 }
 
 .invoice_month_in_main {
-  width: 120px;
+  width: 7.5rem;
 }
 
 .invoice_month_suborder_main {
-  width: 150px;
+  width: 9.375rem;
 }
 
 .invoice_month_in_additional {
-  width: 100px;
+  width: 6.25rem;
 }
 
 .invoice_month_out_main {
-  width: 120px;
+  width: 7.5rem;
 }
 
 .invoice_month_suborder {
-  gap: 40px;
+  gap: 2.5rem;
 }
 
 .invoice_month_in {
-  gap: 40px;
+  gap: 2.5rem;
 }
 
 .invoice_month_out {
-  gap: 40px;
+  gap: 2.5rem;
 }
 
 .invoice_month_out_additional {
-  width: 100px;
+  width: 6.25rem;
 }
 
 .invoice_month_suborder_additional {
-  width: 100px;
+  width: 6.25rem;
 }
 
 .bg_green_round_first {
   background-color: rgb(243, 252, 242);
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-top-left-radius: 1.5625rem;
+  border-top-right-radius: 1.5625rem;
 }
 
 .bg_green {
@@ -96,8 +96,8 @@
 
 .bg_green_round_last {
   background-color: rgb(243, 252, 242);
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+  border-bottom-left-radius: 1.5625rem;
+  border-bottom-right-radius: 1.5625rem;
 }
 
 .bg_red {
@@ -105,25 +105,25 @@
 }
 
 .bg_red_round_first {
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-top-left-radius: 1.5625rem;
+  border-top-right-radius: 1.5625rem;
   background-color: rgb(255, 237, 237);
 }
 
 .bg_red_round_last {
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+  border-bottom-left-radius: 1.5625rem;
+  border-bottom-right-radius: 1.5625rem;
   background-color: rgb(255, 237, 237);
 }
 
 .btn_month_invoce-shrink {
-  height: 20px;
-  margin-left: 5px;
+  height: 1.25rem;
+  margin-left: 0.3125rem;
   color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 25px;
+  font-size: 1.5625rem;
   cursor: pointer;
   font-weight: 500;
   background: rgb(0, 0, 0);
@@ -136,8 +136,8 @@
 
 .bg_gray_round_first {
   background-color: rgb(244, 244, 244);
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-top-left-radius: 1.5625rem;
+  border-top-right-radius: 1.5625rem;
 }
 
 .bg_gray {
@@ -146,8 +146,8 @@
 
 .bg_gray_round_last {
   background-color: rgb(244, 244, 244);
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+  border-bottom-left-radius: 1.5625rem;
+  border-bottom-right-radius: 1.5625rem;
 }
 
 .invoice_month_item {
@@ -304,7 +304,7 @@
 .font-bold {
   color: rgb(0, 0, 0);
   font-family: Montserrat;
-  font-size: 20px !important;
+  font-size: 1.25rem !important;
   font-style: normal;
   font-weight: 700 !important;
   line-height: normal;
@@ -319,25 +319,25 @@
 }
 
 .small_bold {
-  font-size: 15px !important;
+  font-size: 0.9375rem !important;
   font-weight: 700 !important;
 }
 
 .small {
-  font-size: 15px !important;
+  font-size: 0.9375rem !important;
 }
 
 .salary-employee-big-row {
-  width: 270px;
-  height: 44px;
+  width: 16.875rem;
+  height: 2.75rem;
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
 .salary-employee-smal-row {
-  width: 120px;
-  height: 44px;
+  width: 7.5rem;
+  height: 2.75rem;
   
   display: flex;
   flex-direction: row;
@@ -345,15 +345,15 @@
 }
 
 .salary-employee-row {
-  gap: 80px;
+  gap: 5rem;
 }
 
 .salary-header {
-  gap: 80px;
+  gap: 5rem;
 }
 
 .salary-employee-wrap_one {
-  margin-bottom: 33px;
+  margin-bottom: 2.0625rem;
   display: flex;
   flex-direction: column;
   /* height: 44px; */
@@ -361,16 +361,16 @@
 }
 
 .salary-category-row {
-  gap: 80px;
+  gap: 5rem;
 }
 
 .salary-total-row {
-  gap: 80px;
+  gap: 5rem;
 }
 
 .salary-employee-num {
   position: absolute;
-  left: -30PX;
+  left: -1.875rem;
   /* left: 0;
   padding-left: 10px; */
   min-width: 0 !important;
@@ -385,8 +385,8 @@
 }
 
 .salary-employee-name svg {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 0.625rem;
+  margin-right: 0.625rem;
   transform: rotate(90deg);
 }
 
@@ -411,8 +411,8 @@
   border-radius: 25px;
 }
 .bg-need-spase{
-   margin-top: -60px!important;
-   padding-top: 60px;
+   margin-top: -3.75rem!important;
+   padding-top: 3.75rem;
 }
 .salary-totals .salary-total-row{
   /* background-color: #FFF; */
@@ -427,7 +427,7 @@
 .employee-total-year, .category-total-year {
   font-size: 0.9em;
   color: #666;
-  margin-left: 8px;
+  margin-left: 0.5rem;
 }
 .employee-total-year {
   font-weight: bold;

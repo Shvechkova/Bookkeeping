@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  margin: 50px;
+  margin: 3.125rem;
 }
 
 .main {
@@ -20,9 +20,9 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 0 0.9375rem;
 }
 
 
