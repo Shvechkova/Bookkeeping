@@ -2305,7 +2305,30 @@ def outside_ip(request):
         )
         .order_by("data")
     )
-
+    operations_old = (
+        Operation.objects.select_related(
+            "bank_in",
+            "bank_to",
+            "operaccount",
+            "salary",
+            "nalog",
+            "employee",
+            "monthly_bill",
+            "monthly_bill__service",
+            "suborder",
+            "suborder__month_bill",
+            "suborder__month_bill__service",
+            "suborder__platform",
+            "suborder__category_employee",
+            "suborder_other",
+            "between_bank",
+        )
+        .filter(
+            Q(bank_in=bank) | Q(bank_to=bank),
+            data__year__lt=year_now,
+        )
+        .order_by("data")
+    )
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
@@ -2317,15 +2340,14 @@ def outside_ip(request):
     other_categ_subkontract = SubcontractOtherCategory.objects.filter(bank=bank)
     names_btw = [
         "вывод $ для оплаты субподряда (вручную)",
-        "вывод остатков ООО в Хранилище"
+        "вывод остатков ООО в Хранилище",
+        "остаток ПРИБЫЛЬ 1% ЦРП 5%",
+        "остаток КВ 0,5 % ЦРП 50%"
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         bank_in=bank, name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-
-    
-    
     
     names = [
         "ПРИБЫЛЬ 1% ЦРП 5%",
@@ -2346,10 +2368,6 @@ def outside_ip(request):
         .values("id", "category", "data", "percent", "category_id")
     )
     categ_percent_list = list(categ_percent_value)
-    print(categ_percent_value)
-    print(categ_percent_list)
-    # categ_percent_crp = categ_percent_by_name.get("ПРИБЫЛЬ 1% ЦРП 5%")
-    # categ_percent_crp_kv = categ_percent_by_name.get("КВ 20% ЦРП 50%")
 
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
@@ -2529,15 +2547,70 @@ def outside_ip(request):
         "name": "на конец месяца",
         "total": {},
     }
+    
+    
+    
+    
+    
+    arr_start_month_ip_old = copy.deepcopy(arr_start_month_ip)
+    arr_in_ip_old = copy.deepcopy(arr_in_ip)
+    arr_out_ip_old = copy.deepcopy(arr_out_ip)
+    arr_in_out_all_ip_old = copy.deepcopy(arr_in_out_all_ip)
+    arr_real_diff_ip_old = copy.deepcopy(arr_real_diff_ip)
+    arr_inside_all_ip_old = copy.deepcopy(arr_inside_all_ip)
+    arr_in_out_after_all_ip_old = copy.deepcopy(arr_in_out_after_all_ip)
+    arr_summ_to_persent_ip_old = copy.deepcopy(arr_summ_to_persent_ip)
+    arr_keep_ip_old = copy.deepcopy(arr_keep_ip)
+    arr_end_month_ip_old = copy.deepcopy(arr_end_month_ip)
+   
+    old_oper_arr = {}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     cache_key = f"bank_{1}_context_{year_now}"
     context_ooo = cache.get(cache_key)
     context_ooo = cache.get(cache_key)
-    
+
     # cache_key = f"bank_{1}_context_{year_now}"
     # context_ooo = cache.get(cache_key)
-    
+    old_oper_arr = fill_operations_arrays_ip(
+            categ_percent_by_name,
+            categ_percent_list,
+            services,
+            other_categ_subkontract,
+            arr_start_month_ip_old,
+            arr_inside_all_ip_old,
+            arr_out_ip_old,
+            arr_in_out_all_ip_old,
+            arr_in_ip_old,
+            arr_in_out_after_all_ip_old,
+            arr_summ_to_persent_ip_old,
+            arr_keep_ip_old,
+            arr_end_month_ip_old,
+            CATEGORY_OPERACCOUNT,
+            months_current_year,
+            month_numbers,
+            year_now,
+            operations_old,
+            bank,
+            arr_real_diff_ip_old,
+            context_ooo,
+            cate_oper_beetwen_by_name,
+            categoru_nalog,
+            is_old_oper=True,
+            old_oper_arr=None
+        )
+    print(old_oper_arr)
 
-    arr_in_ip, arr_out_ip, arr_real_diff_ip, arr_in_out_all_ip, arr_inside_all_ip,arr_keep_ip = (
+    arr_start_month, arr_in, arr_out, arr_in_out_all, arr_real_diff,arr_inside_all,arr_in_out_after_all,arr_summ_to_persent,arr_keep_ip,arr_end_month_ip = (
         fill_operations_arrays_ip(
             categ_percent_by_name,
             categ_percent_list,
@@ -2562,26 +2635,28 @@ def outside_ip(request):
             context_ooo,
             cate_oper_beetwen_by_name,
             categoru_nalog,
-            old_oper_arr=None
+            is_old_oper=False,
+            old_oper_arr=old_oper_arr
         )
     )
-
+    print(old_oper_arr,"3")
     context = {
         "title": title,
         "type_url": type_url,
         "bank": bank.id,
         "year_now":year_now,
         "months_current_year": months_current_year,
-        "arr_in": arr_in_ip,
-        "arr_out": arr_out_ip,
-        "arr_real_diff": arr_real_diff_ip,
-        "arr_in_out_all": arr_in_out_all_ip,
-        "arr_inside_all": arr_inside_all_ip,
-        "arr_in_out_after_all": arr_in_out_after_all_ip,
-        "arr_summ_to_persent": arr_summ_to_persent_ip,
+        "arr_in": arr_in,
+        "arr_out": arr_out,
+        "arr_real_diff": arr_real_diff,
+        "arr_in_out_all": arr_in_out_all,
+        "arr_inside_all": arr_inside_all,
+        "arr_in_out_after_all": arr_in_out_after_all,
+        "arr_summ_to_persent": arr_summ_to_persent,
         "arr_keep": arr_keep_ip,
         "arr_end_month": arr_end_month_ip,
-        "arr_start_month": arr_start_month_ip,
+        "arr_start_month": arr_start_month,
+        "old_oper_arr": old_oper_arr,
     }
     return render(request, "bank/outside/outside_ip.html", context)
 

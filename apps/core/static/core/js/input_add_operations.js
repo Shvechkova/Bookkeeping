@@ -172,9 +172,16 @@ function addSalaryOperation(element, btnAdd,pageName) {
     let endpoint
     let method 
     if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
-      form.append("id", dataId);
-      endpoint = "/api/v1/operation/" + dataId +"/"
-      method = "UPDATE"
+      if (dataAmount == 0 ){
+        form.append("id", dataId);
+        endpoint = "/api/v1/operation/" + dataId +"/"
+        method = "DELETE"
+      }else{
+        form.append("id", dataId);
+        endpoint = "/api/v1/operation/" + dataId +"/"
+        method = "UPDATE"
+      }
+      
     } else {
       endpoint = "/api/v1/operation/operation_save/"
       method = "POST"
@@ -357,67 +364,71 @@ if (chakboxInp){
         const dataAmount = getCurrentPrice(summOper)
         form.append("amount", dataAmount);
         const dataBank = element.getAttribute("data-bank-in");
-        form.append("bank_in", +dataBank);
-        betweenId = element.getAttribute("data-between-id");
-        console.log(element)
-        console.log(betweenId)
-        form.append("between_bank", betweenId);
-        const bank_to = element.getAttribute("data-bank-out");
-        form.append("bank_to", bank_to);
+        if (dataBank !== "NONE_OPERATION"){
+          form.append("bank_in", +dataBank);
+          betweenId = element.getAttribute("data-between-id");
+          console.log(element)
+          console.log(betweenId)
+          form.append("between_bank", betweenId);
+          const bank_to = element.getAttribute("data-bank-out");
+          form.append("bank_to", bank_to);
 
 
-    
-        let endpoint
-        let method 
-        if (element.checked) {
-          // Чекбокс установлен (нажат)
-          console.log("Чекбокс нажат");
-        if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
-            form.append("id", dataId);
-            endpoint = "/api/v1/operation/" + dataId +"/"
-            method = "UPDATE"
-          } else {
-            endpoint = "/api/v1/operation/operation_save/"
-            method = "POST"
-          }
-        } else {
-          // Чекбокс снят (отжат)
-          console.log("Чекбокс снят");
-          if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
-            form.append("id", dataId);
-            endpoint = "/api/v1/operation/" + dataId +"/"
-            method = "DELETE"
-          } else {
-            endpoint = "/api/v1/operation/operation_save/"
-            method = "POST"
-          }
-        }
-        
-    
-        let object = {};
-        form.forEach((value, key) => (object[key] = value));
-        const dataJson = JSON.stringify(object);
-        console.log(dataJson)
-        let csrfToken = getCookie("csrftoken");
-        
-        fetch(endpoint, {
-          method: method,
-          body: dataJson,
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-          },
-        }).then((response) => {
-          if (response.ok === true) {
-           location.reload();
-            
-          } else {
-            // location.reload();
-           
-          }
-        });
-     
       
+          let endpoint
+          let method 
+          if (element.checked) {
+            // Чекбокс установлен (нажат)
+            console.log("Чекбокс нажат");
+          if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
+              form.append("id", dataId);
+              endpoint = "/api/v1/operation/" + dataId +"/"
+              method = "UPDATE"
+            } else {
+              endpoint = "/api/v1/operation/operation_save/"
+              method = "POST"
+            }
+          } else {
+            // Чекбокс снят (отжат)
+            console.log("Чекбокс снят");
+            if (dataId != "" & dataId != "None" & dataId != "{}" & dataId != 0){
+              form.append("id", dataId);
+              endpoint = "/api/v1/operation/" + dataId +"/"
+              method = "DELETE"
+            } else {
+              endpoint = "/api/v1/operation/operation_save/"
+              method = "POST"
+            }
+          }
+          
+      
+          let object = {};
+          form.forEach((value, key) => (object[key] = value));
+          const dataJson = JSON.stringify(object);
+          console.log(dataJson)
+          let csrfToken = getCookie("csrftoken");
+          console.log(betweenId)
+          if (betweenId !== "NONE_OPERATION"){
+            fetch(endpoint, {
+              method: method,
+              body: dataJson,
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+              },
+            }).then((response) => {
+              if (response.ok === true) {
+              location.reload();
+                
+              } else {
+                // location.reload();
+              
+              }
+            });
+          }
+            
+      
+        }
 
 
     });
