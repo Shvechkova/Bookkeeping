@@ -1733,13 +1733,14 @@ def fill_operations_arrays_ooo(
                         prev_year_data = old_oper_arr.get(prev_year)
                         if prev_year_data:
                             try:
+                                arr_end_month_ip["total"][month]["amount_month"]
+                                category_list = prev_year_data["arr_end_month_ip"][
+                                    "category"
+                                ]
+                                prev_all_sum_month = prev_year_data["arr_end_month_ip"][
+                                    "total"
+                                ][last_month]["amount_month"]
 
-                                category_list = prev_year_data[
-                                    "arr_in_out_after_all_total"
-                                ]["category"]
-                                prev_all_sum_month = category_list[3]["total"][
-                                    last_month
-                                ]["amount_month"]
                             except Exception as e:
                                 print(
                                     "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
@@ -5100,14 +5101,38 @@ def get_operations_by_year_mini(operations_by_year):
             if "group" in cat:
                 new_cat["group"] = sum_category_group(cat["group"])
             if "total" in cat:
-                total = sum(month_data.get("amount_month", 0) for month_data in cat["total"].values())
+                if isinstance(cat["total"], dict):
+                    total = sum(
+                        month_data.get("amount_month", 0)
+                        for month_data in cat["total"].values()
+                        if isinstance(month_data, dict)
+                    )
+                elif isinstance(cat["total"], (int, float)):
+                    total = cat["total"]
+                else:
+                    try:
+                        total = float(cat["total"])
+                    except Exception:
+                        total = 0
                 new_cat["total"] = total
             result.append(new_cat)
         return result
 
     def sum_total_category(total_category):
         if "total" in total_category:
-            total = sum(month_data.get("amount_month", 0) for month_data in total_category["total"].values())
+            if isinstance(total_category["total"], dict):
+                total = sum(
+                    month_data.get("amount_month", 0)
+                    for month_data in total_category["total"].values()
+                    if isinstance(month_data, dict)
+                )
+            elif isinstance(total_category["total"], (int, float)):
+                total = total_category["total"]
+            else:
+                try:
+                    total = float(total_category["total"])
+                except Exception:
+                    total = 0
             return {"total": total}
         return {}
 
@@ -5119,12 +5144,17 @@ def get_operations_by_year_mini(operations_by_year):
         ]:
             block = data.get(key, {})
             mini_block = {}
+            mini_block["name"] = block.get("name", "")  # Добавлено: переносим название блока
             if "category" in block:
                 mini_block["category"] = sum_category_list(block["category"])
             if "total_category" in block:
                 mini_block["total_category"] = sum_total_category(block["total_category"])
             if "total" in block and isinstance(block["total"], dict):
-                total = sum(month_data.get("amount_month", 0) for month_data in block["total"].values())
+                total = sum(
+                    month_data.get("amount_month", 0)
+                    for month_data in block["total"].values()
+                    if isinstance(month_data, dict)
+                )
                 mini_block["total"] = total
             mini[key] = mini_block
         mini["months_current_year"] = data.get("months_current_year", [])
