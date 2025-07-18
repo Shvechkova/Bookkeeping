@@ -4,6 +4,7 @@ from django.db.models.functions import ExtractMonth
 from apps.core.utils import (
     create_month_categ_persent,
     fill_operations_arrays_ip,
+    fill_operations_arrays_nal,
     fill_operations_arrays_ooo,
     get_id_categ_oper,
 )
@@ -2150,7 +2151,7 @@ def outside_ooo(request):
             "total": {},
         },
     }
-    
+
     arr_start_month_old = copy.deepcopy(arr_start_month)
     arr_in_old = copy.deepcopy(arr_in)
     arr_out_old = copy.deepcopy(arr_out)
@@ -2158,9 +2159,9 @@ def outside_ooo(request):
     arr_in_out_after_all_old = copy.deepcopy(arr_in_out_after_all)
     arr_in_out_after_all_total_old = copy.deepcopy(arr_in_out_after_all_total)
     arr_inside_all_old = copy.deepcopy(arr_inside_all)
-   
+
     old_oper_arr = {}
-    
+
     old_oper_arr = fill_operations_arrays_ooo(
         operations_old,
         arr_in_old,
@@ -2220,10 +2221,10 @@ def outside_ooo(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
-    
+
     # Пример для формирования и чтения кеша для банка
     cache_key = f"bank_{bank.id}_context_{year_now}"
-    
+
     context_cash = cache.get(cache_key)
     print(f"Пробуем получить из кеша: {cache_key}")
     context_cash = cache.get(cache_key)
@@ -2245,9 +2246,9 @@ def outside_ooo(request):
             # "old_oper_arr": old_oper_arr,
         }
         print(f"Сохраняем в кеш: {context_cash}")
-        cache.set(cache_key, context_cash, 60*60)
+        cache.set(cache_key, context_cash, 60 * 60)
     else:
-        print(f"Кеш найден для ключа {cache_key}") 
+        print(f"Кеш найден для ключа {cache_key}")
 
     context = {
         "title": title,
@@ -2262,7 +2263,7 @@ def outside_ooo(request):
         "months_current_year": months_current_year,
         "arr_in_out_after_all_total": arr_in_out_after_all_total,
         "arr_start_month": arr_start_month,
-            "old_oper_arr": old_oper_arr,
+        "old_oper_arr": old_oper_arr,
     }
 
     return render(request, "bank/outside/outside_ooo.html", context)
@@ -2270,6 +2271,7 @@ def outside_ooo(request):
 
 def outside_ip(request):
     from django.core.cache import cache
+
     locale.setlocale(locale.LC_ALL, "")
     title = "ИП"
     type_url = "outside"
@@ -2336,19 +2338,19 @@ def outside_ip(request):
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
 
     services = Service.objects.all()
-    
+
     other_categ_subkontract = SubcontractOtherCategory.objects.filter(bank=bank)
     names_btw = [
         "вывод $ для оплаты субподряда (вручную)",
         "вывод остатков ООО в Хранилище",
         "остаток ПРИБЫЛЬ 1% ЦРП 5%",
-        "остаток КВ 0,5 % ЦРП 50%"
+        "остаток КВ 0,5 % ЦРП 50%",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         bank_in=bank, name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    
+
     names = [
         "ПРИБЫЛЬ 1% ЦРП 5%",
         "КВ 20% ЦРП 50%",
@@ -2359,7 +2361,7 @@ def outside_ip(request):
         bank=bank, name__in=names
     ).values("id", "name", "bank", "category_between", "category_between__bank_to")
     categ_percent_by_name = {item["name"]: item for item in categ_percents}
-    
+
     categ_percent_value = (
         CategPercentGroupBank.objects.select_related(
             "category", "bank", "bank_categpercentgroupbank_name"
@@ -2431,7 +2433,6 @@ def outside_ip(request):
     arr_in_out_all_ip = {
         "name": None,
         "category": [
-          
             {
                 "name": "ПРИБЫЛЬ 1% ЦРП 5%",
                 "total": {},
@@ -2547,11 +2548,7 @@ def outside_ip(request):
         "name": "на конец месяца",
         "total": {},
     }
-    
-    
-    
-    
-    
+
     arr_start_month_ip_old = copy.deepcopy(arr_start_month_ip)
     arr_in_ip_old = copy.deepcopy(arr_in_ip)
     arr_out_ip_old = copy.deepcopy(arr_out_ip)
@@ -2562,19 +2559,9 @@ def outside_ip(request):
     arr_summ_to_persent_ip_old = copy.deepcopy(arr_summ_to_persent_ip)
     arr_keep_ip_old = copy.deepcopy(arr_keep_ip)
     arr_end_month_ip_old = copy.deepcopy(arr_end_month_ip)
-   
+
     old_oper_arr = {}
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     cache_key = f"bank_{1}_context_{year_now}"
     context_ooo = cache.get(cache_key)
     context_ooo = cache.get(cache_key)
@@ -2582,69 +2569,77 @@ def outside_ip(request):
     # cache_key = f"bank_{1}_context_{year_now}"
     # context_ooo = cache.get(cache_key)
     old_oper_arr = fill_operations_arrays_ip(
-            categ_percent_by_name,
-            categ_percent_list,
-            services,
-            other_categ_subkontract,
-            arr_start_month_ip_old,
-            arr_inside_all_ip_old,
-            arr_out_ip_old,
-            arr_in_out_all_ip_old,
-            arr_in_ip_old,
-            arr_in_out_after_all_ip_old,
-            arr_summ_to_persent_ip_old,
-            arr_keep_ip_old,
-            arr_end_month_ip_old,
-            CATEGORY_OPERACCOUNT,
-            months_current_year,
-            month_numbers,
-            year_now,
-            operations_old,
-            bank,
-            arr_real_diff_ip_old,
-            context_ooo,
-            cate_oper_beetwen_by_name,
-            categoru_nalog,
-            is_old_oper=True,
-            old_oper_arr=None
-        )
-    print(old_oper_arr)
-
-    arr_start_month, arr_in, arr_out, arr_in_out_all, arr_real_diff,arr_inside_all,arr_in_out_after_all,arr_summ_to_persent,arr_keep_ip,arr_end_month_ip = (
-        fill_operations_arrays_ip(
-            categ_percent_by_name,
-            categ_percent_list,
-            services,
-            other_categ_subkontract,
-            arr_start_month_ip,
-            arr_inside_all_ip,
-            arr_out_ip,
-            arr_in_out_all_ip,
-            arr_in_ip,
-            arr_in_out_after_all_ip,
-            arr_summ_to_persent_ip,
-            arr_keep_ip,
-            arr_end_month_ip,
-            CATEGORY_OPERACCOUNT,
-            months_current_year,
-            month_numbers,
-            year_now,
-            operations,
-            bank,
-            arr_real_diff_ip,
-            context_ooo,
-            cate_oper_beetwen_by_name,
-            categoru_nalog,
-            is_old_oper=False,
-            old_oper_arr=old_oper_arr
-        )
+        categ_percent_by_name,
+        categ_percent_list,
+        services,
+        other_categ_subkontract,
+        arr_start_month_ip_old,
+        arr_inside_all_ip_old,
+        arr_out_ip_old,
+        arr_in_out_all_ip_old,
+        arr_in_ip_old,
+        arr_in_out_after_all_ip_old,
+        arr_summ_to_persent_ip_old,
+        arr_keep_ip_old,
+        arr_end_month_ip_old,
+        CATEGORY_OPERACCOUNT,
+        months_current_year,
+        month_numbers,
+        year_now,
+        operations_old,
+        bank,
+        arr_real_diff_ip_old,
+        context_ooo,
+        cate_oper_beetwen_by_name,
+        categoru_nalog,
+        is_old_oper=True,
+        old_oper_arr=None,
     )
-    print(old_oper_arr,"3")
+
+    (
+        arr_start_month,
+        arr_in,
+        arr_out,
+        arr_in_out_all,
+        arr_real_diff,
+        arr_inside_all,
+        arr_in_out_after_all,
+        arr_summ_to_persent,
+        arr_keep_ip,
+        arr_end_month_ip,
+    ) = fill_operations_arrays_ip(
+        categ_percent_by_name,
+        categ_percent_list,
+        services,
+        other_categ_subkontract,
+        arr_start_month_ip,
+        arr_inside_all_ip,
+        arr_out_ip,
+        arr_in_out_all_ip,
+        arr_in_ip,
+        arr_in_out_after_all_ip,
+        arr_summ_to_persent_ip,
+        arr_keep_ip,
+        arr_end_month_ip,
+        CATEGORY_OPERACCOUNT,
+        months_current_year,
+        month_numbers,
+        year_now,
+        operations,
+        bank,
+        arr_real_diff_ip,
+        context_ooo,
+        cate_oper_beetwen_by_name,
+        categoru_nalog,
+        is_old_oper=False,
+        old_oper_arr=old_oper_arr,
+    )
+
     context = {
         "title": title,
         "type_url": type_url,
         "bank": bank.id,
-        "year_now":year_now,
+        "year_now": year_now,
         "months_current_year": months_current_year,
         "arr_in": arr_in,
         "arr_out": arr_out,
@@ -2695,7 +2690,30 @@ def outside_nal(request):
         )
         .order_by("data")
     )
-
+    operations_old = (
+        Operation.objects.select_related(
+            "bank_in",
+            "bank_to",
+            "operaccount",
+            "salary",
+            "nalog",
+            "employee",
+            "monthly_bill",
+            "monthly_bill__service",
+            "suborder",
+            "suborder__month_bill",
+            "suborder__month_bill__service",
+            "suborder__platform",
+            "suborder__category_employee",
+            "suborder_other",
+            "between_bank",
+        )
+        .filter(
+            Q(bank_in=bank) | Q(bank_to=bank),
+            data__year__lt=year_now,
+        )
+        .order_by("data")
+    )
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
@@ -2704,6 +2722,37 @@ def outside_nal(request):
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
 
     services = Service.objects.all()
+    names_btw = [
+        "зачисление на ИП для оплаты субподряда",
+        "откладываем в хранилище на будущие расходы",
+        "ПРЕМИИ",
+        "остаток ПРИБЫЛЬ 1% ЦРП 5%",
+        "остаток КВ 0,5 % ЦРП 50%",
+        "остаток $"
+    ]
+    cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
+        bank_in=bank, name__in=names_btw
+    ).values("id", "name", "bank_in", "bank_to")
+    cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
+
+    names = [
+        "на квартальную премию",
+        "КВ с $",
+        "ПРИБЫЛЬ 1% ЦРП 5%",
+        "КВ 0,5 % ЦРП 50%"
+    ]
+    categ_percents = CategForPercentGroupBank.objects.filter(
+        bank=bank, name__in=names
+    ).values("id", "name", "bank", "category_between", "category_between__bank_to")
+    categ_percent_by_name = {item["name"]: item for item in categ_percents}
+    categ_percent_value = (
+        CategPercentGroupBank.objects.select_related(
+            "category", "bank", "bank_categpercentgroupbank_name"
+        )
+        .annotate(month=ExtractMonth("data"))
+        .values("id", "category", "data", "percent", "category_id")
+    )
+    categ_percent_list = list(categ_percent_value)
 
     # СТАРТОВЫЕ МАССИВЫ
     # ПОСТУПЛЕНИЯ
@@ -2752,7 +2801,7 @@ def outside_nal(request):
         "name": None,
         "category": [
             {
-                "name": "РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)",
+                "name": "ПОСТУПЛЕНИЯ-СУБПОДРЯД (реальный доход)",
                 "total": {},
             },
             {
@@ -2760,7 +2809,7 @@ def outside_nal(request):
                 "total": {},
             },
             {
-                "name": "КВ 20% ЦРП 50%",
+                "name": "КВ 0,5 % ЦРП 50%",
                 "total": {},
             },
             {
@@ -2803,11 +2852,11 @@ def outside_nal(request):
         "name": None,
         "category": [
             {
-                "name": "на квартальную премию собственникам",
+                "name": "на квартальную премию",
                 "total": {},
             },
             {
-                "name": "компенсация владельцу с ИП",
+                "name": "КВ с $",
                 "total": {},
             },
         ],
@@ -2839,79 +2888,62 @@ def outside_nal(request):
         },
     }
 
-    # Добавляем месяцы
-    for i, month in enumerate(months_current_year):
-        month_number = month_numbers[month]
-        # Для итогов поступления
-        arr_in["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": MONTHS_RU.index(month) + 1,
-            "is_make_operations": False,
-        }
-        arr_out["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
-        # arr_out["category"][0]["group"][name] = {}
-        # arr_out["category"][0]["group"][name][month] = {
-        #             "amount_month": 0,
-        #             "month_number": MONTHS_RU.index(month) + 1,
-        #             "is_make_operations": False,
-        #         }
-    # Добавляем месяцы по сервисам
-    for service in services:
-        name = f"{service.name}({service.name_long_ru})"
-        arr_in["category"][0]["group"][name] = {}
-        arr_out["category"][0]["group"][name] = {}
-        for i, month in enumerate(months_current_year):
+    arr_in_old = copy.deepcopy(arr_in)
+    arr_out_old = copy.deepcopy(arr_out)
+    arr_in_out_all_old = copy.deepcopy(arr_in_out_all)
+    arr_real_diff_old = copy.deepcopy(arr_real_diff)
+    arr_inside_all_old = copy.deepcopy(arr_inside_all)
+    arr_summ_to_persent_old = copy.deepcopy(arr_summ_to_persent)
+    arr_keep_old = copy.deepcopy(arr_keep)
 
-            # Для услуг
-            month_number = month_numbers[month]
-            arr_in["category"][0]["group"][name][month] = {
-                "amount_month": 0,
-                "month_number": MONTHS_RU.index(month) + 1,
-                "is_make_operations": False,
-            }
+    old_oper_arr = {}
 
-            arr_out["category"][0]["group"][name][month] = {
-                "amount_month": 0,
-                "month_number": MONTHS_RU.index(month) + 1,
-                "is_make_operations": False,
-            }
+    old_oper_arr = fill_operations_arrays_nal(
+        categ_percent_by_name,
+        categ_percent_list,
+        services,
+        arr_in_old,
+        arr_out_old,
+        arr_in_out_all_old,
+        arr_real_diff_old,
+        arr_inside_all_old,
+        arr_summ_to_persent_old,
+        arr_keep_old,
+        CATEGORY_OPERACCOUNT,
+        months_current_year,
+        month_numbers,
+        year_now,
+        operations_old,
+        bank,
+        cate_oper_beetwen_by_name,
+        is_old_oper=True,
+        old_oper_arr=None,
+    )
+    print(arr_in)
+    arr_in,arr_out,arr_in_out_all,arr_real_diff,arr_inside_all,arr_summ_to_persent,arr_keep = fill_operations_arrays_nal(
+        categ_percent_by_name,
+        categ_percent_list,
+        services,
+        arr_in,
+        arr_out,
+        arr_in_out_all,
+        arr_real_diff,
+        arr_inside_all,
+        arr_summ_to_persent,
+        arr_keep,
+        CATEGORY_OPERACCOUNT,
+        months_current_year,
+        month_numbers,
+        year_now,
+        operations,
+        bank,
+        cate_oper_beetwen_by_name,
+        is_old_oper=False,
+        old_oper_arr=old_oper_arr,
+    )
+    print(arr_in)
 
-    # распределение операций
-    for operation in operations:
-        month_name = MONTHS_RU[operation.data.month - 1]
-        prev_month = MONTHS_RU[operation.data.month]
 
-        if operation.monthly_bill and operation.suborder is None:
-            # поступления по договорам услуг
-
-            service_name = f"{operation.monthly_bill.service.name}({operation.monthly_bill.service.name_long_ru})"
-
-            if service_name in arr_in["category"][0]["group"]:
-                arr_in["category"][0]["group"][service_name][month_name][
-                    "amount_month"
-                ] += operation.amount
-                arr_in["total_category"]["total"][month_name][
-                    "amount_month"
-                ] += operation.amount
-
-        # операции расхода по договорам услуг
-        elif operation.suborder:
-            service_name = f"{operation.suborder.month_bill.service.name}({operation.suborder.month_bill.service.name_long_ru})"
-            if service_name in arr_out["category"][0]["group"]:
-                arr_out["category"][0]["group"][service_name][month_name][
-                    "amount_month"
-                ] += operation.amount
-                arr_out["category"][0]["group"][service_name][month_name][
-                    "operation_id"
-                ] = operation.id
-            # Добавляем в общий итог по месяцу операции
-            arr_out["total_category"]["total"][month_name][
-                "amount_month"
-            ] += operation.amount
 
     context = {
         "title": title,
@@ -2926,6 +2958,7 @@ def outside_nal(request):
         "arr_inside_all": arr_inside_all,
         "arr_summ_to_persent": arr_summ_to_persent,
         "arr_keep": arr_keep,
+        "old_oper_arr": old_oper_arr,
     }
     return render(request, "bank/outside/outside_nal.html", context)
 
