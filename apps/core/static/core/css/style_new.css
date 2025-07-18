@@ -442,3 +442,7 @@ cursor: pointer;
 .wrapper_nalog_all{
   display: flex;
 }
+.section_oper_wr_year_title{
+  top: -10px;
+  position: absolute;
+}

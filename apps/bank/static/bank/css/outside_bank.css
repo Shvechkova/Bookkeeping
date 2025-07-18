@@ -29,6 +29,7 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    position: relative;
   }
   .outside_title_categ{
     font-size: 1.25rem;

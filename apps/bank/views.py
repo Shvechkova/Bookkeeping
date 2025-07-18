@@ -7,6 +7,7 @@ from apps.core.utils import (
     fill_operations_arrays_nal,
     fill_operations_arrays_ooo,
     get_id_categ_oper,
+    get_operations_by_year_mini,
 )
 import pymorphy3
 import itertools
@@ -2714,6 +2715,7 @@ def outside_nal(request):
         )
         .order_by("data")
     )
+    print("operations_old",operations_old)
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
@@ -2753,7 +2755,7 @@ def outside_nal(request):
         .values("id", "category", "data", "percent", "category_id")
     )
     categ_percent_list = list(categ_percent_value)
-
+    
     # СТАРТОВЫЕ МАССИВЫ
     # ПОСТУПЛЕНИЯ
     arr_in = {
@@ -2919,7 +2921,8 @@ def outside_nal(request):
         is_old_oper=True,
         old_oper_arr=None,
     )
-    print(arr_in)
+    
+    
     arr_in,arr_out,arr_in_out_all,arr_real_diff,arr_inside_all,arr_summ_to_persent,arr_keep = fill_operations_arrays_nal(
         categ_percent_by_name,
         categ_percent_list,
@@ -2941,10 +2944,8 @@ def outside_nal(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
-    print(arr_in)
-
-
-
+   
+    operations_by_year_mini = get_operations_by_year_mini(old_oper_arr)
     context = {
         "title": title,
         "year_now": year_now,
@@ -2959,6 +2960,7 @@ def outside_nal(request):
         "arr_summ_to_persent": arr_summ_to_persent,
         "arr_keep": arr_keep,
         "old_oper_arr": old_oper_arr,
+        "operations_by_year_mini":operations_by_year_mini
     }
     return render(request, "bank/outside/outside_nal.html", context)
 
