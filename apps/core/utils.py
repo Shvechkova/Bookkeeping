@@ -738,7 +738,13 @@ def fill_operations_arrays_ooo(
                                 ] += operation.amount
                                 item["total"][month_name]["operation_id"] = operation.id
                                 item["total"][month_name]["chek"] = True
-
+                    elif operation.bank_to == bank:
+                        arr_in_y["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                        if operation.between_bank.name == "зачисление на ООО":
+                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][month_name]["operation_id"] = operation.id
+                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][month_name]["amount_month"] += operation.amount
                 else:
                     # операции между счетами
                     # операции расход
@@ -1250,7 +1256,7 @@ def fill_operations_arrays_ooo(
                     "month_number": MONTHS_RU.index(month) + 1,
                     "is_make_operations": False,
                 }
-
+                
                 # Для итогов
                 arr_in["total_category"]["total"][month] = {
                     "amount_month": 0,
@@ -1584,7 +1590,30 @@ def fill_operations_arrays_ooo(
                             ] += operation.amount
                             item["total"][month_name]["operation_id"] = operation.id
                             item["total"][month_name]["chek"] = True
-
+                elif operation.bank_to == bank:
+                    arr_in["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+                    if operation.between_bank.name == "зачисление на ООО":
+                        arr_in["category"][1]["group"]["зачисление из хранилища"][month_name]["operation_id"] = operation.id
+                        arr_in["category"][1]["group"]["зачисление из хранилища"][month_name]["amount_month"] += operation.amount
+                        
+                        
+                        # name_to_find = "зачисление из хранилища"
+                        # item = next(
+                        #     (
+                        #         x
+                        #         for x in arr_in["category"][1]["group"]
+                        #         if x == name_to_find
+                        #     ),
+                        #     None,
+                        # )
+                        # if item:
+                        #     item["total"][month_name][
+                        #         "amount_month"
+                        #     ] += operation.amount
+                        #     item["total"][month_name]["operation_id"] = operation.id
+                    
             else:
                 # операции между счетами
                 # операции расход
@@ -1949,9 +1978,9 @@ def fill_operations_arrays_ip(
                     "amount_month": 0,
                     "expected": 0,
                 }
-                arr_out_y["category"][1]["group"][
-                    "вывод остатков ООО в Хранилище"
-                ][month] = {
+                arr_out_y["category"][1]["group"]["вывод остатков ООО в Хранилище"][
+                    month
+                ] = {
                     "is_make_operations": True,
                     "bank_out": between_id_for_ooo_ip_to_storage["bank_to"],
                     "date_start": datetime.datetime(
@@ -2234,6 +2263,20 @@ def fill_operations_arrays_ip(
                         "month_number": MONTHS_RU.index(month) + 1,
                         "is_make_operations": False,
                     }
+                    arr_in_y["category"][1]["group"][
+                        "зачисление $ для оплаты субподряда"
+                    ][month] = {
+                        "amount_month": 0,
+                        "month_number": MONTHS_RU.index(month) + 1,
+                        "is_make_operations": False,
+                    }
+                    arr_in_y["category"][1]["group"][
+                        "зачисление из хранилища"
+                    ][month] = {
+                        "amount_month": 0,
+                        "month_number": MONTHS_RU.index(month) + 1,
+                        "is_make_operations": False,
+                    }
                     # Для переводов с ооо
                     arr_in_y["category"][1]["group"]["ПЕРЕВОД ОСТАТКОВ С ООО"][
                         month
@@ -2405,7 +2448,7 @@ def fill_operations_arrays_ip(
                             == "вывод остатков ООО в Хранилище"
                         ):
                             arr_out_y["total_category"]["total"][month_name][
-                            "amount_month"
+                                "amount_month"
                             ] += operation.amount
                             arr_out_y["category"][1]["group"][
                                 "вывод остатков ООО в Хранилище"
@@ -2413,7 +2456,7 @@ def fill_operations_arrays_ip(
                             arr_out_y["category"][1]["group"][
                                 "вывод остатков ООО в Хранилище"
                             ][month_name]["operation_id"] = operation.id
-                            
+
                             arr_keep_y["category"][2]["total"][month_name][
                                 "amount_month"
                             ] += operation.amount
@@ -2497,6 +2540,26 @@ def fill_operations_arrays_ip(
                         ):
                             arr_in_y["category"][1]["group"][
                                 "перевод с ООО для оплаты субподряда"
+                            ][month_name]["amount_month"] += operation.amount
+                            arr_in_y["total_category"]["total"][month_name][
+                                "amount_month"
+                            ] += operation.amount
+                        elif (
+                            operation.between_bank.name
+                            == "зачисление на ИП для оплаты субподряда"
+                        ):
+                            arr_in_y["category"][1]["group"][
+                                "зачисление $ для оплаты субподряда"
+                            ][month_name]["amount_month"] += operation.amount
+                            arr_in_y["total_category"]["total"][month_name][
+                                "amount_month"
+                            ] += operation.amount
+                        elif (
+                            operation.between_bank.name
+                            == "зачисление на ИП"
+                        ):
+                            arr_in_y["category"][1]["group"][
+                                "зачисление из хранилища"
                             ][month_name]["amount_month"] += operation.amount
                             arr_in_y["total_category"]["total"][month_name][
                                 "amount_month"
@@ -2899,9 +2962,7 @@ def fill_operations_arrays_ip(
                 "amount_month": 0,
                 "expected": 0,
             }
-            arr_out["category"][1]["group"]["вывод остатков ООО в Хранилище"][
-                month
-            ] = {
+            arr_out["category"][1]["group"]["вывод остатков ООО в Хранилище"][month] = {
                 "is_make_operations": True,
                 "bank_out": between_id_for_ooo_ip_to_storage["bank_to"],
                 "date_start": datetime.datetime(
@@ -3184,6 +3245,20 @@ def fill_operations_arrays_ip(
                     "month_number": MONTHS_RU.index(month) + 1,
                     "is_make_operations": False,
                 }
+                arr_in["category"][1]["group"]["зачисление $ для оплаты субподряда"][
+                    month
+                ] = {
+                    "amount_month": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                    "is_make_operations": False,
+                }
+                arr_in["category"][1]["group"]["зачисление из хранилища"][
+                    month
+                ] = {
+                    "amount_month": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                    "is_make_operations": False,
+                }
                 # Для переводов с ооо
                 arr_in["category"][1]["group"]["ПЕРЕВОД ОСТАТКОВ С ООО"][month] = {
                     "amount_month": 0,
@@ -3356,8 +3431,7 @@ def fill_operations_arrays_ip(
                         arr_out["category"][1]["group"][
                             "вывод остатков ООО в Хранилище"
                         ][month_name]["operation_id"] = operation.id
-                        
-                        
+
                         arr_keep_ip["category"][2]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
@@ -3433,6 +3507,26 @@ def fill_operations_arrays_ip(
                     ):
                         arr_in["category"][1]["group"][
                             "перевод с ООО для оплаты субподряда"
+                        ][month_name]["amount_month"] += operation.amount
+                        arr_in["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                    elif (
+                        operation.between_bank.name
+                        == "зачисление на ИП для оплаты субподряда"
+                    ):
+                        arr_in["category"][1]["group"][
+                            "зачисление $ для оплаты субподряда"
+                        ][month_name]["amount_month"] += operation.amount
+                        arr_in["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                    elif (
+                        operation.between_bank.name
+                        == "зачисление на ИП"
+                    ):
+                        arr_in["category"][1]["group"][
+                            "зачисление из хранилища"
                         ][month_name]["amount_month"] += operation.amount
                         arr_in["total_category"]["total"][month_name][
                             "amount_month"
@@ -3830,7 +3924,7 @@ def fill_operations_arrays_nal(
         # Получаем уникальные года из операций
         years = set()
         for operation in operations:
-            print(operation)
+         
             years.add(operation.data.year)
 
         for year in sorted(years):
@@ -5307,21 +5401,28 @@ def fill_operations_arrays_keep_banking(
     arr_start_month,
     arr_in,
     arr_out,
+    arr_stop_month_bank,
     CATEGORY_OPERACCOUNT,
     months_current_year,
     month_numbers,
     year_now,
     operations,
     bank,
+    cate_oper_beetwen_by_name,
     is_old_oper=False,
     old_oper_arr=None,
 ):
-    pass
+    between_id_to_ooo = cate_oper_beetwen_by_name.get("зачисление на ООО")
+    between_id_to_ip = cate_oper_beetwen_by_name.get("зачисление на ИП")
     # Добавляем месяцы
     for i, month in enumerate(months_current_year):
         month_number = month_numbers[month]
         # рс на анчало меясца
         arr_start_month["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+        }
+        arr_stop_month_bank["total"][month] = {
             "amount_month": 0,
             "month_number": MONTHS_RU.index(month) + 1,
         }
@@ -5338,6 +5439,56 @@ def fill_operations_arrays_keep_banking(
                 "month_number": MONTHS_RU.index(month) + 1,
             }
 
+        arr_out["total_category"]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+            "is_make_operations": False,
+        }
+        for category in arr_out["category"]:
+
+            if category["name"] == "зачисление на ООО":
+                category["total"][month] = {
+                    "is_make_operations": True,
+                    "bank_out": between_id_to_ooo["bank_to"],
+                    "date_start": datetime.datetime(
+                        year_now, MONTHS_RU.index(month) + 1, 1
+                    ),
+                    "operation_id": 0,
+                    "type_operations": "between",
+                    "between_id": between_id_to_ooo["id"],
+                    "amount_month": 0,
+                    "expected": 0,
+                }
+            elif category["name"] == "зачисление на ИП":
+                category["total"][month] = {
+                    "is_make_operations": True,
+                    "bank_out": between_id_to_ip["bank_to"],
+                    "date_start": datetime.datetime(
+                        year_now, MONTHS_RU.index(month) + 1, 1
+                    ),
+                    "operation_id": 0,
+                    "type_operations": "between",
+                    "between_id": between_id_to_ip["id"],
+                    "amount_month": 0,
+                    "expected": 0,
+                }
+            elif category["name"] == "покупки/траты":
+                category["total"][month] = {
+                    "amount_month": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                    "is_make_operations": True,
+                    "bank_out": 5,
+                    "date_start": datetime.datetime(
+                        year_now, MONTHS_RU.index(month) + 1, 1
+                    ),
+                    "operation_id": 0,
+                }
+            else:
+                category["total"][month] = {
+                    "amount_month": 0,
+                    "month_number": MONTHS_RU.index(month) + 1,
+                }
+
     # распределение операций
     for operation in operations:
         month_name = MONTHS_RU[operation.data.month - 1]
@@ -5350,8 +5501,37 @@ def fill_operations_arrays_keep_banking(
         if operation.monthly_bill and operation.suborder is None:
             # поступления по договорам услуг
             pass
-        elif operation.bank_in.id == 3:
+        
+        elif operation.salary and operation.employee:
             print(operation)
+            if operation.salary.name == "Возврат долга":
+                name_to_find = "возврат долга"
+                item = next(
+                    (x for x in arr_in["category"] if x["name"] == name_to_find),
+                    None,
+                )
+                if item:
+                    item["total"][month_name]["amount_month"] += operation.amount
+                    item["total"][month_name]["operation_id"] = operation.id
+                    arr_in["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+            if operation.salary.name == "Выдано в долг":
+                name_to_find = "в долг"
+                item = next(
+                    (x for x in arr_out["category"] if x["name"] == name_to_find),
+                    None,
+                )
+                print(item)
+                if item:
+                    item["total"][month_name]["amount_month"] += operation.amount
+                    item["total"][month_name]["operation_id"] = operation.id
+                    arr_out["total_category"]["total"][month_name][
+                        "amount_month"
+                    ] += operation.amount
+        
+        elif operation.bank_in.id == 3:
+       
             if operation.between_bank.name in [
                 "остаток $",
                 "остаток ПРИБЫЛЬ 1% ЦРП 5%",
@@ -5369,9 +5549,9 @@ def fill_operations_arrays_keep_banking(
                     arr_in["total_category"]["total"][month_name][
                         "amount_month"
                     ] += operation.amount
-                    
+
         elif operation.bank_in.id == 2:
-             if operation.between_bank.name in [
+            if operation.between_bank.name in [
                 "вывод остатков ООО в Хранилище",
             ]:
 
@@ -5386,5 +5566,127 @@ def fill_operations_arrays_keep_banking(
                     arr_in["total_category"]["total"][month_name][
                         "amount_month"
                     ] += operation.amount
+
+        elif operation.bank_in.id == 4:
+            if operation.between_bank:
+                if operation.between_bank.name in [
+                    "зачисление на ООО",
+                ]:
+
+                    name_to_find = "зачисление на ООО"
+                    item = next(
+                        (x for x in arr_out["category"] if x["name"] == name_to_find),
+                        None,
+                    )
+                    if item:
+                        item["total"][month_name]["amount_month"] += operation.amount
+                        item["total"][month_name]["operation_id"] = operation.id
+                        arr_out["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                elif operation.between_bank.name in [
+                    "зачисление на ИП",
+                ]:
+
+                    name_to_find = "зачисление на ИП"
+                    item = next(
+                        (x for x in arr_out["category"] if x["name"] == name_to_find),
+                        None,
+                    )
+                    if item:
+                        item["total"][month_name]["amount_month"] += operation.amount
+                        item["total"][month_name]["operation_id"] = operation.id
+                        arr_out["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+            else:    
+                if  operation.bank_to.id == 5 and operation.salary == None:
                 
+                    name_to_find = "покупки/траты"
+                    item = next(
+                        (x for x in arr_out["category"] if x["name"] == name_to_find),
+                        None,
+                    )
+                    if item:
+                        item["total"][month_name]["amount_month"] += operation.amount
+                        item["total"][month_name]["operation_id"] = operation.id
+                        arr_out["total_category"]["total"][month_name][
+                            "amount_month"
+                        ] += operation.amount
+                
+        
+
+    # разные общие суммы
+    for i, month in enumerate(months_current_year):
+        total_in = arr_in["total_category"]["total"][month]["amount_month"]
+        total_out = arr_out["total_category"]["total"][month]["amount_month"]
+
+        # ИТОГО Накопительные счета БЕЗ ПРЕМИЙ
+        for i, month in enumerate(months_current_year):
+            if i + 1 < len(months_current_year):
+                month_prev = months_current_year[i + 1]
+                prev_all_sum_month = arr_stop_month_bank["total"][month_prev][
+                    "amount_month"
+                ]
+            else:
+                # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                prev_all_sum_month = 0
+                if old_oper_arr:
+                    prev_year = year_now - 1
+
+                    last_month = "Декабрь"
+                    prev_year_data = old_oper_arr.get(prev_year)
+                    if prev_year_data:
+                        try:
+                            arr_stop_month_bank["total"][month]["amount_month"]
+                            category_list = prev_year_data["arr_end_month_ip"][
+                                "category"
+                            ]
+                            prev_all_sum_month = prev_year_data["arr_end_month_ip"][
+                                "total"
+                            ][last_month]["amount_month"]
+
+                        except Exception as e:
+                            print(
+                                "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
+                                e,
+                            )
+                            prev_all_sum_month = 0
+
+            all_sum_month = total_in - total_out + prev_all_sum_month
+
+            arr_stop_month_bank["total"][month]["amount_month"] = all_sum_month
+
+        # НАКОПИТЕЛЬНЫЕ СЧЕТА И НАЛИЧНЫЕ на начало месяца
+        # получить следующий месяц
+        for i, month in enumerate(months_current_year):
+            if i == len(months_current_year) - 1:
+                # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                last_balance = 0
+                if old_oper_arr:
+                    prev_year = year_now - 1
+                    last_month = "Декабрь"
+                    prev_year_data = old_oper_arr.get(prev_year)
+
+                    if prev_year_data:
+                        try:
+                            category_list = prev_year_data[
+                                "arr_in_out_after_all_total"
+                            ]["category"]
+                            last_balance = category_list[3]["total"][last_month][
+                                "amount_month"
+                            ]
+                        except Exception as e:
+                            print(
+                                "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
+                                e,
+                            )
+                            last_balance = 0
+                arr_start_month["total"][month]["amount_month"] = last_balance
+            else:
+                next_month = months_current_year[i + 1]
+                arr_start_month["total"][month]["amount_month"] = arr_stop_month_bank[
+                    "total"
+                ][next_month]["amount_month"]
+
     return arr_start_month, arr_in, arr_out

@@ -3192,7 +3192,7 @@ def storage_all(request):
 
 
 def storage_banking(request):
-    title = "Накопительные счета + наличные + премии"
+    title = "Накопительные счета"
     type_url = "storage_banking"
 
     data = datetime.datetime.now()
@@ -3258,6 +3258,19 @@ def storage_banking(request):
     # Создаем словарь для сопоставления названий месяцев с их номерами
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
 
+    names_btw = [
+        "зачисление на ООО",
+        "зачисление на ИП",
+    ]
+    cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
+        bank_in=bank, name__in=names_btw
+    ).values("id", "name", "bank_in", "bank_to")
+    cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
+
+    
+    
+    
+    
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
     arr_start_month = {
@@ -3284,10 +3297,10 @@ def storage_banking(request):
                 "name": "возврат долга",
                 "total": {},
             },
-            {
-                "name": "прочие возвраты",
-                "total": {},
-            },
+            # {
+            #     "name": "прочие возвраты",
+            #     "total": {},
+            # },
         ],
         "total_category": {
             "name": "ИТОГО поступления",
@@ -3296,12 +3309,12 @@ def storage_banking(request):
     }
     # Расход:
     arr_out = {
-        "name": "Поступления:",
+        "name": "Расход:",
         "category": [
-            {
-                "name": "перевод на вклад",
-                "total": {},
-            },
+            # {
+            #     "name": "перевод на вклад",
+            #     "total": {},
+            # },
             {
                 "name": "в долг",
                 "total": {},
@@ -3324,7 +3337,21 @@ def storage_banking(request):
             "total": {},
         },
     }
-
+    
+    arr_bonus_1 = {
+        "name": "на квартальные премии 1:",
+        "category": [
+            {
+                "name": "с $",
+                "total": {},
+            },
+        ],
+    }
+    # Р/С на начало месяца
+    arr_stop_month_bank = {
+        "name": "ИТОГО Накопительные счета БЕЗ ПРЕМИЙ",
+        "total": {},
+    }
     # # ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ
     # arr_service = {
     #     "name": "ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ:",
@@ -3358,12 +3385,14 @@ def storage_banking(request):
         arr_start_month,
         arr_in,
         arr_out,
+        arr_stop_month_bank,
         CATEGORY_OPERACCOUNT,
         months_current_year,
         month_numbers,
         year_now,
         operations,
         bank,
+        cate_oper_beetwen_by_name,
         is_old_oper=False,
         old_oper_arr=None,
     )
@@ -3377,6 +3406,7 @@ def storage_banking(request):
         "arr_start_month": arr_start_month,
         "arr_in": arr_in,
         "arr_out": arr_out,
+        "arr_stop_month_bank": arr_stop_month_bank,
     }
 
     return render(request, "bank/storage/storage_banking.html", context)
