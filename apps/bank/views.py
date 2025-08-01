@@ -2222,6 +2222,18 @@ def outside_ooo(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
+    operations_by_year_mini = get_operations_by_year_mini(
+        old_oper_arr,
+        key_arr=[
+            "arr_in",
+            "arr_out",
+            "arr_in_out_all",
+            "arr_inside_all",
+            "arr_in_out_after_all",
+            "arr_in_out_after_all_total",
+            "arr_start_month",
+        ],
+    )
 
     # Пример для формирования и чтения кеша для банка
     cache_key = f"bank_{bank.id}_context_{year_now}"
@@ -2251,6 +2263,7 @@ def outside_ooo(request):
     else:
         print(f"Кеш найден для ключа {cache_key}")
 
+    print("operations_by_year_mini", operations_by_year_mini)
     context = {
         "title": title,
         "year_now": year_now,
@@ -2265,6 +2278,7 @@ def outside_ooo(request):
         "arr_in_out_after_all_total": arr_in_out_after_all_total,
         "arr_start_month": arr_start_month,
         "old_oper_arr": old_oper_arr,
+        "operations_by_year_mini": operations_by_year_mini,
     }
 
     return render(request, "bank/outside/outside_ooo.html", context)
@@ -2635,7 +2649,23 @@ def outside_ip(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
-
+    print("old_oper_arr перед mini:", old_oper_arr)
+    operations_by_year_mini = get_operations_by_year_mini(
+        old_oper_arr,
+        key_arr=[
+            "arr_start_month",
+            "arr_inside_all",
+            "arr_out",
+            "arr_in_out_all",
+            "arr_in",
+            "arr_in_out_after_all",
+            "arr_summ_to_persent",
+            "arr_keep",
+            "arr_end_month",
+            "arr_real_diff",
+        ],
+    )
+    print(operations_by_year_mini)
     context = {
         "title": title,
         "type_url": type_url,
@@ -2653,6 +2683,7 @@ def outside_ip(request):
         "arr_end_month": arr_end_month_ip,
         "arr_start_month": arr_start_month,
         "old_oper_arr": old_oper_arr,
+        "operations_by_year_mini": operations_by_year_mini,
     }
     return render(request, "bank/outside/outside_ip.html", context)
 
@@ -2715,7 +2746,7 @@ def outside_nal(request):
         )
         .order_by("data")
     )
-    print("operations_old",operations_old)
+    print("operations_old", operations_old)
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
@@ -2730,19 +2761,14 @@ def outside_nal(request):
         "ПРЕМИИ",
         "остаток ПРИБЫЛЬ 1% ЦРП 5%",
         "остаток КВ 0,5 % ЦРП 50%",
-        "остаток $"
+        "остаток $",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         bank_in=bank, name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
 
-    names = [
-        "на квартальную премию",
-        "КВ с $",
-        "ПРИБЫЛЬ 1% ЦРП 5%",
-        "КВ 0,5 % ЦРП 50%"
-    ]
+    names = ["на квартальную премию", "КВ с $", "ПРИБЫЛЬ 1% ЦРП 5%", "КВ 0,5 % ЦРП 50%"]
     categ_percents = CategForPercentGroupBank.objects.filter(
         bank=bank, name__in=names
     ).values("id", "name", "bank", "category_between", "category_between__bank_to")
@@ -2755,7 +2781,7 @@ def outside_nal(request):
         .values("id", "category", "data", "percent", "category_id")
     )
     categ_percent_list = list(categ_percent_value)
-    
+
     # СТАРТОВЫЕ МАССИВЫ
     # ПОСТУПЛЕНИЯ
     arr_in = {
@@ -2921,9 +2947,16 @@ def outside_nal(request):
         is_old_oper=True,
         old_oper_arr=None,
     )
-    
-    
-    arr_in,arr_out,arr_in_out_all,arr_real_diff,arr_inside_all,arr_summ_to_persent,arr_keep = fill_operations_arrays_nal(
+
+    (
+        arr_in,
+        arr_out,
+        arr_in_out_all,
+        arr_real_diff,
+        arr_inside_all,
+        arr_summ_to_persent,
+        arr_keep,
+    ) = fill_operations_arrays_nal(
         categ_percent_by_name,
         categ_percent_list,
         services,
@@ -2944,8 +2977,19 @@ def outside_nal(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
-   
-    operations_by_year_mini = get_operations_by_year_mini(old_oper_arr)
+
+    operations_by_year_mini = get_operations_by_year_mini(
+        old_oper_arr,
+        key_arr=[
+            "arr_in",
+            "arr_out",
+            "arr_in_out_all",
+            "arr_real_diff",
+            "arr_inside_all",
+            "arr_summ_to_persent",
+            "arr_keep",
+        ],
+    )
     context = {
         "title": title,
         "year_now": year_now,
@@ -2960,7 +3004,7 @@ def outside_nal(request):
         "arr_summ_to_persent": arr_summ_to_persent,
         "arr_keep": arr_keep,
         "old_oper_arr": old_oper_arr,
-        "operations_by_year_mini":operations_by_year_mini
+        "operations_by_year_mini": operations_by_year_mini,
     }
     return render(request, "bank/outside/outside_nal.html", context)
 
@@ -3147,8 +3191,161 @@ def storage_all(request):
 
 
 def storage_banking(request):
-    title = "Накопительные счета"
+    title = "Накопительные счета + наличные + премии"
     type_url = "storage_banking"
+    
+    data = datetime.datetime.now()
+    year_now = datetime.datetime.now().year
+    month_now = datetime.datetime.now().month
+    # Получаем только нужный банк
+    bank = Bank.objects.get(id=4)
+
+    operations = (
+        Operation.objects.select_related(
+            "bank_in",
+            "bank_to",
+            "operaccount",
+            "salary",
+            "nalog",
+            "employee",
+            "monthly_bill",
+            "monthly_bill__service",
+            "suborder",
+            "suborder__month_bill",
+            "suborder__month_bill__service",
+            "suborder__platform",
+            "suborder__category_employee",
+            "suborder_other",
+            "between_bank",
+        )
+        .filter(
+            Q(bank_in=bank) | Q(bank_to=bank),
+            data__year__gte=year_now,
+        )
+        .order_by("data")
+    )
+    operations_old = (
+        Operation.objects.select_related(
+            "bank_in",
+            "bank_to",
+            "operaccount",
+            "salary",
+            "nalog",
+            "employee",
+            "monthly_bill",
+            "monthly_bill__service",
+            "suborder",
+            "suborder__month_bill",
+            "suborder__month_bill__service",
+            "suborder__platform",
+            "suborder__category_employee",
+            "suborder_other",
+            "between_bank",
+        )
+        .filter(
+            Q(bank_in=bank) | Q(bank_to=bank),
+            data__year__lt=year_now,
+        )
+        .order_by("data")
+    )
+    print("operations_old", operations_old)
+    
+    # Создаем список месяцев текущего года
+    months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
+    months_current_year.reverse()
+    
+    # Создаем словарь для сопоставления названий месяцев с их номерами
+    month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
+    
+    # СТАРТОВЫЕ МАССИВЫ
+    # Р/С на начало месяца
+    arr_start_month_ip = {
+        "name": "на начало месяца",
+        "total": {},
+    }
+    # ПОСТУПЛЕНИЯ
+    arr_in = {
+        "name": "Поступления:",
+        "category": [
+            {
+                "name": "$",
+                "total": {},
+            },
+            {
+                "name": "ИП",
+                "total": {},
+            },
+            {
+                "name": "из остатков рекламных бюджетов",
+                "total": {},
+            },
+            {
+                "name": "возврат долга",
+                "total": {},
+            },
+            {
+                "name": "прочие возвраты",
+                "total": {},
+            },
+        ],
+        "total_category": {
+            "name": "ИТОГО поступления",
+            "total": {},
+        },
+    }
+    # Расход:
+    arr_out = {
+        "name": "Поступления:",
+        "category": [
+            {
+                "name": "перевод на вклад",
+                "total": {},
+            },
+            {
+                "name": "в долг",
+                "total": {},
+            },
+            {
+                "name": "покупки/траты",
+                "total": {},
+            },
+            {
+                "name": "зачисление на ООО",
+                "total": {},
+            },
+            {
+                "name": "зачисление на ИП",
+                "total": {},
+            },
+        ],
+        "total_category": {
+            "name": "ИТОГО Расход",
+            "total": {},
+        },
+    }
+
+
+
+
+    (
+        arr_in,
+        arr_out,
+    ) = fill_operations_arrays_nal(
+        
+        arr_in,
+        arr_out,
+        
+        CATEGORY_OPERACCOUNT,
+        months_current_year,
+        month_numbers,
+        year_now,
+        operations,
+        bank,
+        is_old_oper=False,
+        old_oper_arr=None,
+    )
+    
+    
     context = {
         "title": title,
         "type_url": type_url,

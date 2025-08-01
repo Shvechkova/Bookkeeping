@@ -21,7 +21,7 @@
     border-radius: 1.5625rem;
   }
   .background-bank-nal{
-    background-color: rgb(247, 243, 231);
+    background-color: rgb(247, 243, 231)!important;
     border-radius: 1.5625rem;
   }
   
@@ -136,4 +136,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.outside_wr_mini{
+  padding-right: 3rem;
+  
+  display: none;
 }

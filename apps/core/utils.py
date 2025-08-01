@@ -1733,14 +1733,13 @@ def fill_operations_arrays_ooo(
                         prev_year_data = old_oper_arr.get(prev_year)
                         if prev_year_data:
                             try:
-                                arr_end_month_ip["total"][month]["amount_month"]
-                                category_list = prev_year_data["arr_end_month_ip"][
-                                    "category"
-                                ]
-                                prev_all_sum_month = prev_year_data["arr_end_month_ip"][
-                                    "total"
-                                ][last_month]["amount_month"]
 
+                                category_list = prev_year_data[
+                                    "arr_in_out_after_all_total"
+                                ]["category"]
+                                prev_all_sum_month = category_list[3]["total"][
+                                    last_month
+                                ]["amount_month"]
                             except Exception as e:
                                 print(
                                     "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
@@ -4441,7 +4440,7 @@ def fill_operations_arrays_nal(
                 # "operations_by_year_mini":operations_by_year_mini
             }
             operations_by_year[year] = operations_actual
-            operations_by_year_mini = get_operations_by_year_mini(operations_by_year)
+  
         operations_by_year = dict(sorted(operations_by_year.items(), reverse=True))
         
         
@@ -5079,7 +5078,7 @@ def fill_operations_arrays_nal(
             arr_keep,
         )
 
-def get_operations_by_year_mini(operations_by_year):
+def get_operations_by_year_mini(operations_by_year,key_arr=None):
     """
     Формирует словарь с той же структурой, что и operations_actual,
     но внутри только суммы за год по категориям, без детализации по месяцам.
@@ -5087,14 +5086,37 @@ def get_operations_by_year_mini(operations_by_year):
     """
     def sum_category_group(group):
         result = {}
-        for name, months in group.items():
-            total = 0
-            for month_data in months.values():
-                total += month_data.get("amount_month", 0)
-            result[f"{name} ({total})"] = total
+        for name, data in group.items():
+            # Проверяем, является ли data словарем с месяцами или вложенной структурой
+            if isinstance(data, dict):
+                # Проверяем, есть ли в data месяцы (например, "январь", "февраль" и т.д.)
+                has_months = any(isinstance(month_data, dict) and "amount_month" in month_data 
+                               for month_data in data.values())
+                
+                if has_months:
+                    # Это месяцы, суммируем их
+                    total = 0
+                    for month_data in data.values():
+                        if isinstance(month_data, dict):
+                            total += month_data.get("amount_month", 0)
+                    result[name] = total
+                else:
+                    # Это вложенная структура (например, SEO содержит ИП Галаев, Другое)
+                    nested_result = {}
+                    for sub_name, sub_data in data.items():
+                        if isinstance(sub_data, dict):
+                            sub_total = 0
+                            for month_data in sub_data.values():
+                                if isinstance(month_data, dict):
+                                    sub_total += month_data.get("amount_month", 0)
+                            nested_result[sub_name] = sub_total
+                    result[name] = nested_result
+            else:
+                # Если это не словарь, просто копируем значение
+                result[name] = data
         return result
 
-    def sum_category_list(category_list):
+    def sum_category_list(category_list, use_december_for_balance=False):
         result = []
         for cat in category_list:
             new_cat = {"name": cat.get("name", "")}
@@ -5102,19 +5124,38 @@ def get_operations_by_year_mini(operations_by_year):
                 new_cat["group"] = sum_category_group(cat["group"])
             if "total" in cat:
                 if isinstance(cat["total"], dict):
-                    total = sum(
-                        month_data.get("amount_month", 0)
-                        for month_data in cat["total"].values()
-                        if isinstance(month_data, dict)
-                    )
+                    # Проверяем, есть ли в total поля name и total (структура для arr_inside_all)
+                    if "name" in cat["total"] and "total" in cat["total"]:
+                        # Это структура с name и total (например, "ВЫПЛАЧЕННЫЕ НАЛОГИ (без УСН)")
+                        total_sum = sum(
+                            month_data.get("amount_month", 0)
+                            for month_data in cat["total"]["total"].values()
+                            if isinstance(month_data, dict)
+                        )
+                        new_cat["total"] = {
+                            "name": cat["total"]["name"],
+                            "total": total_sum
+                        }
+                    else:
+                        # Это обычный словарь с месяцами
+                        if use_december_for_balance and cat.get("name") == "ОСТАТОК на Р/С на конец месяца (после уплаты УСН и вывода остатков)":
+                            # Для остатка на Р/С используем значение за декабрь
+                            total = get_december_value(cat["total"])
+                        else:
+                            # Для остальных категорий суммируем все месяцы
+                            total = sum(
+                                month_data.get("amount_month", 0)
+                                for month_data in cat["total"].values()
+                                if isinstance(month_data, dict)
+                            )
+                        new_cat["total"] = total
                 elif isinstance(cat["total"], (int, float)):
-                    total = cat["total"]
+                    new_cat["total"] = cat["total"]
                 else:
                     try:
-                        total = float(cat["total"])
+                        new_cat["total"] = float(cat["total"])
                     except Exception:
-                        total = 0
-                new_cat["total"] = total
+                        new_cat["total"] = 0
             result.append(new_cat)
         return result
 
@@ -5133,28 +5174,56 @@ def get_operations_by_year_mini(operations_by_year):
                     total = float(total_category["total"])
                 except Exception:
                     total = 0
-            return {"total": total}
+            return {"total": total,"name":total_category.get("name", "")}
         return {}
+
+    def get_december_value(total_dict):
+        """
+        Получает значение за декабрь (последний месяц года) из словаря total
+        """
+        if not isinstance(total_dict, dict):
+            return 0
+        
+        # Ищем декабрь (месяц 12) или последний доступный месяц
+        december_value = 0
+        last_month_value = 0
+        
+        for month_key, month_data in total_dict.items():
+            if isinstance(month_data, dict) and "amount_month" in month_data:
+                month_value = month_data.get("amount_month", 0)
+                # Если это декабрь (месяц 12)
+                if month_key == "12" or month_key == 12:
+                    december_value = month_value
+                # Сохраняем последнее значение для случая, если декабрь не найден
+                last_month_value = month_value
+        
+        # Возвращаем значение декабря, если найдено, иначе последнее значение
+        return december_value if december_value != 0 else last_month_value
 
     operations_by_year_mini = {}
     for year, data in operations_by_year.items():
         mini = {}
-        for key in [
-            "arr_in", "arr_out", "arr_in_out_all", "arr_real_diff", "arr_inside_all", "arr_summ_to_persent", "arr_keep"
-        ]:
+        for key in key_arr:
             block = data.get(key, {})
             mini_block = {}
             mini_block["name"] = block.get("name", "")  # Добавлено: переносим название блока
             if "category" in block:
-                mini_block["category"] = sum_category_list(block["category"])
+                # Для arr_in_out_after_all_total используем логику декабря для остатка на Р/С
+                use_december_for_balance = (key == "arr_in_out_after_all_total")
+                mini_block["category"] = sum_category_list(block["category"], use_december_for_balance)
             if "total_category" in block:
                 mini_block["total_category"] = sum_total_category(block["total_category"])
             if "total" in block and isinstance(block["total"], dict):
-                total = sum(
-                    month_data.get("amount_month", 0)
-                    for month_data in block["total"].values()
-                    if isinstance(month_data, dict)
-                )
+                # Для arr_start_month и arr_end_month берем значение за декабрь
+                if key in ["arr_start_month", "arr_end_month"]:
+                    total = get_december_value(block["total"])
+                else:
+                    # Для остальных массивов берем сумму всех месяцев
+                    total = sum(
+                        month_data.get("amount_month", 0)
+                        for month_data in block["total"].values()
+                        if isinstance(month_data, dict)
+                    )
                 mini_block["total"] = total
             mini[key] = mini_block
         mini["months_current_year"] = data.get("months_current_year", [])

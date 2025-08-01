@@ -2,13 +2,11 @@
 {% load static %}
 {% load format_filters %}
 {% block content %}
-
     <link rel="stylesheet"
           href="{% static 'bank/css/inside_one_oper_accaunt.css' %}">
     <link rel="stylesheet" href="{% static 'bank/css/outside_bank.css' %}">
     <script src="{% static 'bank/js/oper_account_cell_width.js' %}"></script>
     <input type="hidden" id="page_name" value="{{ title }}" />
-
     <!-- arr_service -->
     <section class="oper_account">
         <div class="category-block">
@@ -51,7 +49,6 @@
             </div>
         {% endfor %}
     </section>
-
     <!-- arr_bonus_2 -->
     <section class="oper_account">
         <div class="category-block">
@@ -94,7 +91,6 @@
             </div>
         {% endfor %}
     </section>
-
     <!-- arr_bonus_1 -->
     <section class="oper_account">
         <div class="category-block">
@@ -137,7 +133,6 @@
             </div>
         {% endfor %}
     </section>
-
     <!-- arr_out -->
     <section class="oper_account">
         <div class="category-block">
@@ -180,7 +175,6 @@
             </div>
         {% endfor %}
     </section>
-
     <!-- arr_in -->
     <section class="oper_account">
         <div class="category-block">
@@ -223,5 +217,4 @@
             </div>
         {% endfor %}
     </section>
-
 {% endblock content %}

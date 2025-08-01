@@ -729,7 +729,15 @@ function ShrinkMoreElem(elementItem,is_none){
   if (shrinkItemMore){
     elementItem.setAttribute("data-attr-shrink-item-more-tag", is_none);
     const allElemAttr = document.querySelectorAll(`[data-attr-shrink-item-more=${shrinkItemMore}]`);
-    
+    // Проверка наличия data-атрибута
+    let toElement = null;
+    if (elementItem.hasAttribute('data-attr-shrink-item-to-element')) {
+      console.log('data-id существует');
+      toElement = elementItem.getAttribute("data-attr-shrink-item-to-element");
+      elementItemDop = elementItem.parentElement.parentElement.querySelector(".outside_wr_mini")
+      console.log("elementItemDop",elementItemDop)
+      
+    }
     // Проверяем все элементы на наличие атрибута data-attr-shrink-item-more-tag = false
     const allElementsHaveFalseTag = Array.from(allElemAttr).every(elem => 
       elem.getAttribute("data-attr-shrink-item-more-tag") === "false"
@@ -744,6 +752,13 @@ function ShrinkMoreElem(elementItem,is_none){
       all_elem.forEach(elem => {
         elem.style.display = "none";
       });
+      if (elementItem.hasAttribute('data-attr-shrink-item-to-element')) {
+        console.log('data-id существует');
+        toElement = elementItem.getAttribute("data-attr-shrink-item-to-element");
+        elementItemDop = elementItem.parentElement.parentElement.querySelector(".outside_wr_mini")
+        console.log("elementItemDop",elementItemDop)
+        elementItemDop.style.display = "block";
+      }
     }else{
       all_elem = document.querySelectorAll(
         `[data-attr-shrink-item-more-last=${shrinkItemMore}]`
@@ -752,6 +767,13 @@ function ShrinkMoreElem(elementItem,is_none){
       all_elem.forEach(elem => {
         elem.style.display = "block";
       });
+      if (elementItem.hasAttribute('data-attr-shrink-item-to-element')) {
+        console.log('data-id существует');
+        toElement = elementItem.getAttribute("data-attr-shrink-item-to-element");
+        elementItemDop = elementItem.parentElement.parentElement.querySelector(".outside_wr_mini")
+        console.log("elementItemDop",elementItemDop)
+        elementItemDop.style.display = "none";
+      }
     }
     
     // console.log("shrinkItemMore",shrinkItemMore)
