@@ -34,20 +34,20 @@
 .salary-employee {
   font-weight: 700;
   margin-top: 1.25rem;
-  background: #fff;
+  /* background: #fff; */
 }
 .salary-group {
   font-weight: 600;
-  background: #fff;
+  /* background: #fff; */
   margin-top: 0.5rem;
 }
 .salary-category {
   color: #000;
-  background: #fff;
+  /* background: #fff; */
 }
 .salary-total-row {
   font-weight: 700;
-  background: #fff;
+  /* background: #fff; */
 }
 .salary-grand-total {
   font-weight: 900;
@@ -65,7 +65,7 @@
 .salary-month {
   font-weight: 700;
   color: #000;
-  background: #fff;
+  /* background: #fff; */
 }
 .salary-category-months {
   display: flex;
@@ -107,7 +107,7 @@
   background: #f8f8f8;
 }
 .salary-category-row {
-  background: #fff;
+  /* background: #fff; */
 }
 .salary-total-row {
   font-weight: 700;
@@ -137,6 +137,7 @@
 
 .salary-current {
     flex: 1;
+    
 }
 
 .salary-old {
@@ -222,3 +223,11 @@
   
 }
 
+.background-salary{
+  background-color: rgb(235, 235, 235)!important;
+  border-radius: 1.5625rem;
+  padding: 1rem;
+  margin: -1rem;
+  margin-bottom: 2rem;
+  
+}

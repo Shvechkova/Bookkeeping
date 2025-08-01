@@ -4,6 +4,7 @@ from django.db.models.functions import ExtractMonth
 from apps.core.utils import (
     create_month_categ_persent,
     fill_operations_arrays_ip,
+    fill_operations_arrays_keep_banking,
     fill_operations_arrays_nal,
     fill_operations_arrays_ooo,
     get_id_categ_oper,
@@ -3193,7 +3194,7 @@ def storage_all(request):
 def storage_banking(request):
     title = "Накопительные счета + наличные + премии"
     type_url = "storage_banking"
-    
+
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
@@ -3249,17 +3250,17 @@ def storage_banking(request):
         .order_by("data")
     )
     print("operations_old", operations_old)
-    
+
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
-    
+
     # Создаем словарь для сопоставления названий месяцев с их номерами
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
-    
+
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
-    arr_start_month_ip = {
+    arr_start_month = {
         "name": "на начало месяца",
         "total": {},
     }
@@ -3275,10 +3276,10 @@ def storage_banking(request):
                 "name": "ИП",
                 "total": {},
             },
-            {
-                "name": "из остатков рекламных бюджетов",
-                "total": {},
-            },
+            # {
+            #     "name": "из остатков рекламных бюджетов",
+            #     "total": {},
+            # },
             {
                 "name": "возврат долга",
                 "total": {},
@@ -3324,17 +3325,39 @@ def storage_banking(request):
         },
     }
 
+    # # ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ
+    # arr_service = {
+    #     "name": "ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ:",
+    #     "category": [
+    #         {
+    #             "name": "на начало месяца",
+    #             "group": {},
+    #         },
+    #         {
+    #             "name": "Поступления:",
+    #             "group": {
+    #                 "$": {},
+    #                 "ИП": {},
+    #                 "ООО": {},
+    #             },
+    #         },
+    #         {
+    #             "name": "Расход:",
+    #             "group": {
+    #                 "Забираем в наше хранилище": {},
+    #             },
+    #         },
+    #     ],
+    #     "total_category": {
+    #         "name": "ИТОГО Остатки",
+    #         "total": {},
+    #     },
+    # }
 
-
-
-    (
+    arr_start_month, arr_in, arr_out = fill_operations_arrays_keep_banking(
+        arr_start_month,
         arr_in,
         arr_out,
-    ) = fill_operations_arrays_nal(
-        
-        arr_in,
-        arr_out,
-        
         CATEGORY_OPERACCOUNT,
         months_current_year,
         month_numbers,
@@ -3344,11 +3367,16 @@ def storage_banking(request):
         is_old_oper=False,
         old_oper_arr=None,
     )
-    
-    
+
     context = {
         "title": title,
+        "year_now": year_now,
+        "bank": bank.id,
+        "months_current_year": months_current_year,
         "type_url": type_url,
+        "arr_start_month": arr_start_month,
+        "arr_in": arr_in,
+        "arr_out": arr_out,
     }
 
     return render(request, "bank/storage/storage_banking.html", context)

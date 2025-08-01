@@ -24,6 +24,11 @@
     background-color: rgb(247, 243, 231)!important;
     border-radius: 1.5625rem;
   }
+  .background-bank-storage-nal{
+    background-color: rgb(232, 247, 231)!important;
+    border-radius: 1.5625rem;
+  }
+  
   
   .outside_wr{
     display: flex;
