@@ -1,6 +1,8 @@
 from django.utils import timezone
 from django.db import models
 
+from apps.employee.models import Employee
+
 
 # Create your models here.
 class Bank(models.Model):
@@ -126,6 +128,32 @@ class CategPercentGroupBank(models.Model):
     def __str__(self):
         return (self.category, self.percent)
 
+class PercentEmployee(models.Model):
+    created_timestamp = models.DateTimeField(
+        default=timezone.now, verbose_name="Дата добавления"
+    )
+    data = models.DateField(verbose_name="Дата добавления вручную")
+    category = models.ForeignKey(
+        CategForPercentGroupBank, on_delete=models.CASCADE, verbose_name="Категория"
+    )
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        verbose_name="Сотрудник",
+        
+    )
+    percent = models.FloatField("Сумма", default="0")
+    is_auto_persent = models.BooleanField(
+        "Авто процент с прошлого месяца", default=True
+    )
+    in_need_operations= models.BooleanField("Необходимость операции", default=True)
+
+    class Meta:
+        verbose_name = "Проценты для сумм по сотрудникам"
+        verbose_name_plural = "Проценты для сумм по сотрудникам"
+
+    def __str__(self):
+        return (self.category, self.percent)
 
 class CategOperationsBetweenBank(models.Model):
     name = models.CharField("Имя", max_length=200)

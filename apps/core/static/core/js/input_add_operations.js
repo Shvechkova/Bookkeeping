@@ -331,20 +331,41 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
     if (dataBetweenId != "") {
       form.append("category", categId);
     }
-
-    if (
-      (dataId != "") &
-      (dataId != "None") &
-      (dataId != "{}") &
-      (dataId != 0)
-    ) {
-      form.append("id", dataId);
-      endpoint = "/api/v1/percentgroupbank/" + dataId + "/";
-      method = "UPDATE";
-    } else {
-      endpoint = "/api/v1/percentgroupbank/";
-      method = "POST";
+    const dataSubcategName= element.getAttribute("data-sub-categ-name");
+    if(dataSubcategName == "employee"){
+      const dataEmployee = element.getAttribute("data-id-people");
+      form.append("employee", +dataEmployee);
+      if (
+        (dataId != "") &
+        (dataId != "None") &
+        (dataId != "{}") &
+        (dataId != 0)
+      ) {
+        form.append("id", dataId);
+        endpoint = "/api/v1/percentemployee/" + dataId + "/";
+        method = "UPDATE";
+      } else {
+        endpoint = "/api/v1/percentemployee/";
+        method = "POST";
+      }
     }
+    else{
+      if (
+        (dataId != "") &
+        (dataId != "None") &
+        (dataId != "{}") &
+        (dataId != 0)
+      ) {
+        form.append("id", dataId);
+        endpoint = "/api/v1/percentgroupbank/" + dataId + "/";
+        method = "UPDATE";
+      } else {
+        endpoint = "/api/v1/percentgroupbank/";
+        method = "POST";
+      }
+    }
+    
+    
 
     let object = {};
     form.forEach((value, key) => (object[key] = value));

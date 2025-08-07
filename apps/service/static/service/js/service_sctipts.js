@@ -55,6 +55,9 @@ if (sortDate) {
   const sortMonthReload = sessionStorage.getItem("sortMonth");
   if (sortMonthReload) {
     sortDate.setAttribute("bill-sorting-date", sortMonthReload);
+  }else{
+     sessionStorage.setItem("sortMonth", "1");
+    sortDate.setAttribute("bill-sorting-date", "1");
   }
 
   const btnSort = document.querySelectorAll(".btn_sorting_month");

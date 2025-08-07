@@ -231,3 +231,109 @@
   margin-bottom: 2rem;
   
 }
+.salary-employee-big-row{
+
+}
+.checkbox-persent{
+  width: 2.9375rem;
+  height: 2.75rem;
+  font-weight: 400;
+  font-size: 1.25rem;
+  text-align: center;
+  color: #fff;
+  background-color: #000;
+  position: absolute;
+  
+  margin-left: -0.625rem;
+  display: flex
+;
+  justify-content: center;
+  align-items: center;
+  /* top: -50%; */
+  /* display: flex
+; */
+  border: 1px solid #000;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+
+  display: flex;
+  left: -1.625rem;
+  top: -12%;
+  height: 1.25rem;
+  z-index: 2000;
+  border: 2px solid #e6e6e6;
+  border-radius: 0.8125rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-clip: content-box;
+  background-color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+ 
+  
+}
+input[type="checkbox"].checkbox-persent:checked {
+  border: 2px solid #dddddd;
+  background-color: #e7e6e7;
+  border-radius: 50%;
+}
+
+input[type="checkbox"].checkbox-persent:checked::after {
+  content: "";
+  display: block;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: #dadada;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.salary_employee_item_wrapper_percent{
+
+
+
+}
+  
+/* Стили для отображения процентов */
+.percent-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  min-height: 2rem;
+}
+
+.percent-value {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.125rem;
+}
+
+.percent-date {
+  font-size: 0.625rem;
+  color: #666;
+  font-weight: 400;
+}
+
+/* Для старых операций */
+.salary-old .percent-info {
+  font-size: 0.625rem;
+  min-height: 1.5rem;
+}
+
+.salary-old .percent-value {
+  font-size: 0.75rem;
+}
+
+.salary-old .percent-date {
+  font-size: 0.5rem;
+}

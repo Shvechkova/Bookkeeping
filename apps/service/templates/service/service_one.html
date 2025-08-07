@@ -14,7 +14,7 @@
     <input type="hidden" id="page_name" value="{{ title }}" />
     <div class="open-modal btn_month_bill"
          data-name="modal-add-bill"
-         data-date="Июнь 2025"
+         data-date="-"
          data-cat-service="{{ title }}">+</div>
     <input type="hidden" id="page_name_abc" value="{{ title_name }}" />
     <div class="bill-sorting-date" data-sort-month="1" bill-sorting-date="1">
@@ -39,6 +39,7 @@
                 <h3 class="bill_month-title">{{ date_invoice|join:" " }}</h3>
                 <div class="invoice_month">
                     {% for service_month_invoices in service_month_invoices %}
+                    {{service_month_invoices}}
                         <div class="invoice_month_line">
                             <div class="btn_bill">
                                 {% if forloop.first %}<div class="invoice_month_title">&nbsp;</div>{% endif %}
@@ -109,6 +110,7 @@
                                     </div>
                                 </div>
                             {% endif %}
+                            
                             <div class="invoice_month_suborder invoice_wrap invoice_wrap_len {% if forloop.first %}bg_gray_round_first{% else %}bg_gray{% endif %} {% if  forloop.last %}bg_gray_round_last{% else %}bg_gray{% endif %} ">
                                 <div class="invoice_month_suborder_main">
                                     {% if forloop.first %}
@@ -129,6 +131,7 @@
                                             </div>
                                         </div>
                                     {% endif %}
+                                    
                                     <div class="invoice_month_item add_sabcontactor "
                                          data-name="modal-add-subcontract"
                                          {% if title_name == "ADV" %} data-type-suborder="suborder" {% else %} data-type-suborder="awords" {% endif %}
@@ -254,11 +257,12 @@
                                         </div>
                                     </div>
                                 {% else %}
-                                    {% for suborder in suborders %}
+                                {
+                                 {% for suborder in suborders %}
                                         <div class="invoice_month_suborder_additional invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}"
                                              data-attr-shrink-item='invoice_month_suborder_additional_{{ title }}_{{ date_invoice|join:"_" }}'>
                                             {% if forloop.parentloop.first %}
-                                                <div class="invoice_month_title small_bold">{{ suborder.category_employee.name }}</div>
+                                                <div class="invoice_month_title small_bold">{{ suborder.category_employee.name }}333</div>
                                             {% endif %}
                                             <div class=" small invoice_month_item  invoice_month_item_no_adv_people  {% if suborder.month_bill.id == service_month_invoices.id %}suborder_out_operation_people{% endif %} "
                                                  data-sub-type="2"
@@ -274,6 +278,7 @@
                                                  data-id-sub-amount="{{ service_month_invoices.employee_all|format_rub }}"
                                                  data-id-sub="">
                                                 <div class="invoice_month_item_text ">
+                                                    {{ service_month_invoices.id }}
                                                     {% if suborder.month_bill.id == service_month_invoices.id %}
                                                         {{ suborder.amount|format_rub }} ₽
                                                         {% if service_month_invoices.sum_subcontractmonth %}
@@ -298,7 +303,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    {% endfor %}
+                                    {% endfor %} 
                                 {% endif %}
                             </div>
                             <div class="invoice_month_in invoice_wrap invoice_wrap_len {% if forloop.first %}bg_green_round_first{% else %}bg_green{% endif %} {% if  forloop.last %}bg_green_round_last{% else %}bg_green{% endif %} ">
@@ -473,8 +478,8 @@
                                                     {% else %}
                                                         <p class="result_not_after">
                                                             /к выплате
-                                                            {% if service_month_invoices.operation_amount_out_all_diff %}
-                                                                {{ service_month_invoices.operation_amount_out_all_diff|format_rub }} ₽
+                                                            {% if service_month_invoices.operation_amount_out_all_diff_no_adv %}
+                                                                {{ service_month_invoices.operation_amount_out_all_diff_no_adv|format_rub }} ₽
                                                             {% else %}
                                                                 0 ₽
                                                             {% endif %}
@@ -721,7 +726,7 @@
                                                         {% if title_name == "ADV" %}
                                                             <p class="result_not_after">/остаток {{ total.total_operation_amount_out_all_and_storage_diff|format_rub }} ₽</p>
                                                         {% else %}
-                                                            <p class="result_not_after">/к выплате {{ total.total_sum_subcontractmonth_no_adv|format_rub }} ₽</p>
+                                                            <p class="result_not_after">/к выплате {{ total.total_operation_amount_out_all_diff_no_adv|format_rub }} ₽</p>
                                                         {% endif %}
                                                     </p>
                                                 </div>

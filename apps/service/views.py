@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 import itertools
 from django.shortcuts import render
@@ -282,6 +283,8 @@ def service_one(request, slug):
                     & Q(operation__monthly_bill__id=OuterRef("pk")),
                 )
             ),
+            operation_amount_out_all_diff_no_adv=F("sum_subcontractmonth") - F("operation_amount_out_all")
+        
         )
         .annotate(
             operation_amount_out_all_and_storage=Sum(
@@ -308,7 +311,12 @@ def service_one(request, slug):
         )
         .prefetch_related()
         .filter(month_bill__service=category_service.id)
+        
     )
+    grouped = defaultdict(list)
+    for suborder in suborders:
+        grouped[suborder.category_employee.name].append(suborder)
+    
     print(2222222222222)
     import pymorphy3
 
@@ -349,6 +357,7 @@ def service_one(request, slug):
             "total_operation_amount_out_ip": 0,
             "total_operation_operation_amount_out_nal": 0,
             "total_sum_subcontractmonth_no_adv": 0,
+            "total_operation_amount_out_all_diff_no_adv": 0,
         }
         val = list(values)
    
@@ -433,6 +442,11 @@ def service_one(request, slug):
                 total["total_operation_operation_amount_out_nal"]
                 + v.operation_amount_out_nal
             )
+            if v.operation_amount_out_all_diff_no_adv:
+                total["total_operation_amount_out_all_diff_no_adv"] = (
+                    total["total_operation_amount_out_all_diff_no_adv"]
+                    + v.operation_amount_out_all_diff_no_adv
+                )
             if v.operation_amount_out_all_diff:
                 total["total_sum_subcontractmonth_no_adv"] = (
                     total["total_sum_subcontractmonth_no_adv"]
@@ -458,6 +472,7 @@ def service_one(request, slug):
         "service_month_invoice": service_month_invoice_new,
         "platform": platform,
         "suborders": suborders,
+        'grouped_suborders' : grouped
     }
     print(6666666666)
     return render(request, "service/service_one.html", context)

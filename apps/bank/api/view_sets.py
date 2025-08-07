@@ -1,7 +1,7 @@
 import datetime
 from rest_framework import viewsets
-from apps.bank.models import CategPercentGroupBank, GroupeOperaccount
-from apps.bank.api.serializers import CategPercentGroupBankSerializer, GroupeOperaccountSerializer
+from apps.bank.models import CategPercentGroupBank, GroupeOperaccount, PercentEmployee
+from apps.bank.api.serializers import CategPercentGroupBankSerializer, GroupeOperaccountSerializer, PercentEmployeeSerializer
 from rest_framework.response import Response
 from django.core.cache import cache
 from apps.core.utils import error_alert, log_alert
@@ -48,6 +48,11 @@ class GroupeOperaccountViews(viewsets.ModelViewSet):
         # Сбрасываем кеш после удаления записи
         clear_bank_cache()
         return response
+
+
+class PercentEmployeeViews(viewsets.ModelViewSet):
+    queryset = PercentEmployee.objects.all()
+    serializer_class = PercentEmployeeSerializer
 
 
 class CategPercentGroupBankViews(viewsets.ModelViewSet):

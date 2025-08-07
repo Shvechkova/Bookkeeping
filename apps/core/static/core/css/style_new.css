@@ -367,6 +367,7 @@
 
 .salary-total-row {
   gap: 5rem;
+  font-weight: 700!important;
 }
 
 .salary-employee-num {
@@ -446,4 +447,8 @@ cursor: pointer;
 .section_oper_wr_year_title{
   top: -10px;
   position: absolute;
+}
+
+.fw-700{
+  font-weight: 700!important;
 }

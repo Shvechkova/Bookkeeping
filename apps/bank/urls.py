@@ -10,7 +10,7 @@ app_name = "bank"
 router = routers.DefaultRouter()
 router.register(r"v1/groupeoperaccount", view_sets.GroupeOperaccountViews)
 router.register(r"v1/percentgroupbank", view_sets.CategPercentGroupBankViews)
-
+router.register(r"v1/percentemployee", view_sets.PercentEmployeeViews)
 
 urlpatterns = [
     

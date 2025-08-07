@@ -132,10 +132,31 @@ function addMonthBill(dataBill, elem, el) {
     const form = document.getElementById("month_bill");
     const service_name = document.getElementById("page_name").value;
     const contractId = document.getElementById("contract_main").value;
-    const dataDate = el.getAttribute("data-date");
-    const dataDateSplit = dataDate.split(" ");
-    const dataMonth = dataDateSplit[0];
-    const dataYear = +dataDateSplit[1];
+    let dataDate = el.getAttribute("data-date");
+    const nameServise = document.querySelector("#page_name_abc").value;
+    let contractName, dateBill;
+    if (dataDate == "-") {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth() возвращает 0–11
+      const day = String(now.getDate()).padStart(2, '0');
+      contractName = nameServise + "/" + year + "-" + month;
+      dateBill = `${year}-${month}-${day}`;
+      // dataDate = new Date().toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
+      // const dateBill = year + "-" + month + "-" + "01"
+    }else{
+      const dataDateSplit = dataDate.split(" ");
+      const dataMonth = dataDateSplit[0];
+      const dataYear = +dataDateSplit[1];
+      let date = new Date();
+      // let month = date.getMonth() + 1;
+      // let year = date.getFullYear();
+      let year = dataYear
+      let month = monthToInt(dataMonth)
+      contractName = nameServise + "/" + year + "-" + month;
+      dateBill = year + "-" + month + "-" + "01"
+    }
+    
     // const contract_sum = document.getElementById("contract_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
     // const adv_sum = document.getElementById("adv_all_sum").value.replace(/[^+\d]/g, '').replace(/(\d)\++/g, '$1');
 
@@ -145,15 +166,9 @@ function addMonthBill(dataBill, elem, el) {
     const diff_sum = contract_sum - adv_sum;
 
     const clientId = document.querySelector(".modal-client");
-    const nameServise = document.querySelector("#page_name_abc").value;
+    
 
-    let date = new Date();
-    // let month = date.getMonth() + 1;
-    // let year = date.getFullYear();
-    let year = dataYear
-    let month = monthToInt(dataMonth)
-    const contractName = nameServise + "/" + year + "-" + month;
-    const dateBill = year + "-" + month + "-" + "01"
+    
     const data = new FormData();
     data.append("client", clientId.value);
     data.append("service", service_name);

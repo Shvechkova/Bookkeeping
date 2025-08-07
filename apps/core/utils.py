@@ -370,23 +370,23 @@ def fill_operations_arrays_ooo(
                         "is_make_operations": False,
                     }
 
-                    # Для переводов с ИП
-                    arr_in_y["category"][1]["group"][
-                        "перевод с ИП для оплаты субподряда"
-                    ][month] = {
-                        "amount_month": 0,
-                        "month_number": MONTHS_RU.index(month) + 1,
-                        "is_make_operations": False,
-                    }
+                    # # Для переводов с ИП
+                    # arr_in_y["category"][1]["group"][
+                    #     "перевод с ИП для оплаты субподряда"
+                    # ][month] = {
+                    #     "amount_month": 0,
+                    #     "month_number": MONTHS_RU.index(month) + 1,
+                    #     "is_make_operations": False,
+                    # }
 
-                    # Для переводов с $
-                    arr_in_y["category"][1]["group"][
-                        "перевод с $ для оплаты субподряда"
-                    ][month] = {
-                        "amount_month": 0,
-                        "month_number": MONTHS_RU.index(month) + 1,
-                        "is_make_operations": False,
-                    }
+                    # # Для переводов с $
+                    # arr_in_y["category"][1]["group"][
+                    #     "перевод с $ для оплаты субподряда"
+                    # ][month] = {
+                    #     "amount_month": 0,
+                    #     "month_number": MONTHS_RU.index(month) + 1,
+                    #     "is_make_operations": False,
+                    # }
                     # Для переводов с хранилища
                     arr_in_y["category"][1]["group"]["зачисление из хранилища"][
                         month
@@ -1233,23 +1233,23 @@ def fill_operations_arrays_ooo(
                     "is_make_operations": False,
                 }
 
-                # Для переводов с ИП
-                arr_in["category"][1]["group"]["перевод с ИП для оплаты субподряда"][
-                    month
-                ] = {
-                    "amount_month": 0,
-                    "month_number": MONTHS_RU.index(month) + 1,
-                    "is_make_operations": False,
-                }
+                # # Для переводов с ИП
+                # arr_in["category"][1]["group"]["перевод с ИП для оплаты субподряда"][
+                #     month
+                # ] = {
+                #     "amount_month": 0,
+                #     "month_number": MONTHS_RU.index(month) + 1,
+                #     "is_make_operations": False,
+                # }
 
-                # Для переводов с $
-                arr_in["category"][1]["group"]["перевод с $ для оплаты субподряда"][
-                    month
-                ] = {
-                    "amount_month": 0,
-                    "month_number": MONTHS_RU.index(month) + 1,
-                    "is_make_operations": False,
-                }
+                # # Для переводов с $
+                # arr_in["category"][1]["group"]["перевод с $ для оплаты субподряда"][
+                #     month
+                # ] = {
+                #     "amount_month": 0,
+                #     "month_number": MONTHS_RU.index(month) + 1,
+                #     "is_make_operations": False,
+                # }
                 # Для переводов с хранилища
                 arr_in["category"][1]["group"]["зачисление из хранилища"][month] = {
                     "amount_month": 0,

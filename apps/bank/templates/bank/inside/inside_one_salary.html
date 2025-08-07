@@ -5,20 +5,39 @@
 {% block content %}
     <link rel="stylesheet" href="{% static 'bank/css/inside_one_salary.css' %}">
     <input type="hidden" id="page_name" value="{{ title }}" />
+    <input type="hidden" id="salary_total_kv_nal" value="" />
+    <input type="hidden" id="salary_total_kv_ip" value="" />
+
     {% include "bank/inside/includes/header_inside.html" %}
     <div class="salary-container">
+
         <div class="salary-sorting" data-sort-salary="1" salary-sorting-date="1">
             <h3>Период</h3>
             <div class = "btn_sorting_salary" data-sort-salary="1">Активные</div>
             <div class = "btn_sorting_salary" data-sort-salary="2">Архив</div>
         </div>
+        {{month_kv_nal}}
         <div class="salary-content">
             <div class="salary-current">
-                <div class="salary-header font-bold stiky-position1">
-                    <div class="salary-employee-big-row">Сотрудник</div>
-                    {% for month in months %}
-                        <div class="salary-month salary-employee-smal-row">{{ month }} {{ year_now }}</div>
+                <div class="salary-header font-bold stiky-position1 ">
+                    <div class="salary-employee-big-row">КВ $ {{ year_now }} - {{ total_kv_nal|format_rub }} ₽</div>
+                    
+                
+                    {% for month_name, month_data in month_kv_nal.items %}
+                    <div class="salary-month salary-employee-smal-row">{{ month_data.total_month|format_rub }} ₽</div>
+                     
                     {% endfor %}
+                
+            </div>
+                <div class="salary-header font-bold stiky-position1 ">
+                        <div class="salary-employee-big-row">Сотрудник</div>
+                        
+                    
+                        {% for month in months %}
+                        <div class="salary-month salary-employee-smal-row">{{ month }} {{ year_now }}</div>
+                         
+                        {% endfor %}
+                    
                 </div>
                 {% for employee in employees %}
                     <div class="salary-employee-wrap_one background-salary">
@@ -42,7 +61,7 @@
                                 {% comment %} <span class="employee-total-year">({{ employee.total_year|format_rub }} ₽)</span> {% endcomment %}
                             </div>
                             {% for total in employee.total_by_month %}
-                                <div class="salary-category-month-row salary-employee-smal-row">
+                                <div class="salary-category-month-row salary-employee-smal-row fw-700">
                                     <b>{{ total|format_rub }} ₽</b>
                                 </div>
                             {% endfor %}
@@ -57,31 +76,71 @@
                                             {% comment %} <span class="category-total-year">({{ category.total_year|format_rub }} ₽)</span> {% endcomment %}
                                         </div>
                                         {% for m in months %}
-                                            <div class="salary_employee_item_wrapper">
-                                                <div class="inp_operation salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                            <div class="salary_employee_item_wrapper {% if category.persent %} salary_employee_item_wrapper_percent {% endif %}">
+                                                {% if category.persent %}
+                                                    <input data-summ="{{ month_data.amount_month|format_rub }}"
+                                                       class='checkbox-persent'
+                                                       type="checkbox"
+                                                       value="1"
+                                                       {% if month_data.chek %}checked{% endif %}
+                                                       
+                                                       data-bank-in="{{ bank }}"
+                                                       data-bank-out="5"
+                                                       data-operation-data-month="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"m" }}"
+                                                        data-operation-data-year="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"Y" }}"
+                                                        data-operation-old-id="{{ employee.operations_by_month|get_item:category.name|get_item:m }}"
+                                                        data-operation-data-start-all_2="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:'Y-m-d' }}">
+                                                {% endif %}
+                                                {% if category.monthly_percents|get_item:m %}
+                                                   
+                                                        {{ category.monthly_percents|get_item:m|get_item:"percent" }}%
+                                                        
+                                                    
+                                                {% endif %}
+                                                <div class="{% if category.persent  %} inp_operation_percent {% else %} inp_operation {% endif %} salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }} "
                                                      data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
+                                                     data-persent="{{ category.persent }}"
+                                                     
+                                                     {% if category.persent %}
+                                                        tupe-operations="percent"
+                                                     {% endif %}
+                                                        
                                                      data-bank-in="{{ category.bank_in }}"
                                                      data-id-people="{{ employee.employee.id }}"
-                                                     data-sub-categ-name="{{ category.name_id }}"
+                                                     data-sub-categ-id="{{ category.id_groupe }}"
+                                                     data-sub-categ-name="employee"
+                                                     {% comment %} data-sub-categ-id = "employee" {% endcomment %}
                                                      data-operation-data-month="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"m" }}"
                                                      data-operation-data-year="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:"Y" }}"
                                                      data-operation-old-id="{{ employee.operations_by_month|get_item:category.name|get_item:m }}"
                                                      data-operation-data-start-all_2="{{ employee.months|get_month_by_name:m|get_item:"date_start"|date:'Y-m-d' }}"
                                                      data-prev-month="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
-                                                    {% if month_now_name == m and employee.operations_by_month|get_item:category.name|get_item:m|default:"0" == "0" %}
-                                                        <p class="salary_employee_item_sums_text oper-account-cell-zero">
+                                                        
+                                                    
+                                                     {% if month_now_name == m and employee.operations_by_month|get_item:category.name|get_item:m|default:"0" == "0" %}
+                                                       333 <p class="salary_employee_item_sums_text oper-account-cell-zero">
                                                             {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
                                                         </p>
                                                         <input type="text"
                                                                class="salary_employee_item_sums_inp"
                                                                value="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
                                                     {% else %}
-                                                        <p class="salary_employee_item_sums_text">
+                                                       5555 <p class="salary_employee_item_sums_text">
                                                             {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
                                                         </p>
                                                         <input type="text"
                                                                class="salary_employee_item_sums_inp"
-                                                               value="{{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }}">
+                                                               value="
+                                                               {% if category.monthly_percents|get_item:m %}
+                                                   
+                                                        {{ category.monthly_percents|get_item:m|get_item:"percent" }}%
+                                                        {% else %}
+                                                        {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }}
+                                                {% endif %}
+                                                              
+                                                                
+                                                               
+                                                               ">
                                                     {% endif %}
                                                 </div>
                                                 <div class="btn_add_operation_salary">ОК</div>
@@ -105,7 +164,7 @@
                                         </b>
                                     </div>
                                     {% for total in group_totals %}
-                                        <div class="salary-category-month-row salary-employee-smal-row">{{ total|format_rub }} ₽</div>
+                                        <div class="fw-700 salary-category-month-row salary-employee-smal-row">{{ total|format_rub }} ₽</div>
                                     {% endfor %}
                                 </div>
                             {% endwith %}
@@ -128,6 +187,9 @@
                     {% endfor %}
                 </div>
             </div>
+
+
+
             <div class="salary-old">
                 {% for year_data in operations_old %}
                     <div class="salary-old-year">
@@ -174,6 +236,18 @@
                                                 <div class=" salary_employee_item_wrapper salary-employee_additional_{{ employee.employee }}_ salary-old_{{ year_data.year|cut:" " }}"
                                                      data-attr-shrink-item='salary-old_{{ year_data.year|cut:" " }}'
                                                      data-attr-shrink-item-vert="salary-employee_additional_{{ employee.employee }}_">
+                                                    {% if category.persent %}
+                                                        {% if category.monthly_percents|get_item:month %}
+                                                            <div class="percent-info">
+                                                                <span class="percent-value">{{ category.monthly_percents|get_item:month|get_item:"percent" }}%</span>
+                                                                <span class="percent-date">{{ category.monthly_percents|get_item:month|get_item:"data"|date:"d.m" }}</span>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="percent-info">
+                                                                <span class="percent-value">-</span>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endif %}
                                                     <div class=" inp_operation salary_employee_item_sums salary-category-month-row salary-employee-smal-row"
                                                          data-bank-in="{{ category.bank_in }}"
                                                          data-id-people="{{ employee.employee.id }}"
