@@ -53,6 +53,7 @@ class GroupeOperaccountViews(viewsets.ModelViewSet):
 class PercentEmployeeViews(viewsets.ModelViewSet):
     queryset = PercentEmployee.objects.all()
     serializer_class = PercentEmployeeSerializer
+    http_method_names = ["get", "post", "delete", "update"]
 
 
 class CategPercentGroupBankViews(viewsets.ModelViewSet):

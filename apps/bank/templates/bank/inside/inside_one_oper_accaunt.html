@@ -198,17 +198,17 @@
                         </div>
                     {% endfor %}
                     {% comment %} <!-- Итого по месяцам за год -->
-                                                                                                                                                                                <div class="category-block">
-                                                                                                                                                                                    <div class="oper-account-grid">
-                                                                                                                                                                                        <div class="oper-account-row oper-account-total">
-                                                                                                                                                            <div class="oper-account-cell oper-account-num"></div>
-                                                                                                                            <div class="oper-account-cell oper-account-service">Итого за {{ year_data.year }} год</div>
-                                                                                                                            {% for total in year_data.totals_by_month %}
-                                                                                                                                <div class="oper-account-cell oper-account-value">
-                                                                                                                                    <b>{{ total|floatformat:0 }} ₽</b>
-                                                                                                </div>
-                                                                                            {% endfor %}
-                                                        </div>
+                                                                                                                                                                                                    <div class="category-block">
+                                                                                                                                                                                                        <div class="oper-account-grid">
+                                                                                                                                                                                                            <div class="oper-account-row oper-account-total">
+                                                                                                                                                                            <div class="oper-account-cell oper-account-num"></div>
+                                                                                                                                        <div class="oper-account-cell oper-account-service">Итого за {{ year_data.year }} год</div>
+                                                                                                                                        {% for total in year_data.totals_by_month %}
+                                                                                                                                            <div class="oper-account-cell oper-account-value">
+                                                                                                                                                <b>{{ total|floatformat:0 }} ₽</b>
+                                                                                                        </div>
+                                                                                                    {% endfor %}
+                                                            </div>
                     </div>
 </div> {% endcomment %}
 </div>

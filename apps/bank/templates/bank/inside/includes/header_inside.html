@@ -16,6 +16,22 @@
             {% endif %}
       </li>
       <li class="header_nav-link">
+            {% url 'bank:salary_new' as the_url %}
+            {% if request.path == the_url %}
+                  <span class="menu-active menu-active_service">ЗП Новый</span>
+            {% else %}
+                  <a class="menu_service" href="{% url 'bank:salary_new' %}">ЗП Новый</a>
+            {% endif %}
+      </li>
+      <li class="header_nav-link">
+            {% url 'bank:salary_new_2' as the_url %}
+            {% if request.path == the_url %}
+                  <span class="menu-active menu-active_service">ЗП Новый 2</span>
+            {% else %}
+                  <a class="menu_service" href="{% url 'bank:salary_new_2' %}">ЗП Новый 2</a>
+            {% endif %}
+      </li>
+      <li class="header_nav-link">
             {% url 'bank:nalog' as the_url %}
             {% if request.path == the_url %}
                   <span class="menu-active menu-active_service">Налоги</span>

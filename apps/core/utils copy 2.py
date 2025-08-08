@@ -743,12 +743,8 @@ def fill_operations_arrays_ooo(
                             "amount_month"
                         ] += operation.amount
                         if operation.between_bank.name == "зачисление на ООО":
-                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][
-                                month_name
-                            ]["operation_id"] = operation.id
-                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][
-                                month_name
-                            ]["amount_month"] += operation.amount
+                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][month_name]["operation_id"] = operation.id
+                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][month_name]["amount_month"] += operation.amount
                 else:
                     # операции между счетами
                     # операции расход
@@ -1260,7 +1256,7 @@ def fill_operations_arrays_ooo(
                     "month_number": MONTHS_RU.index(month) + 1,
                     "is_make_operations": False,
                 }
-
+                
                 # Для итогов
                 arr_in["total_category"]["total"][month] = {
                     "amount_month": 0,
@@ -1465,12 +1461,12 @@ def fill_operations_arrays_ooo(
 
                     service_name = f"{operation.suborder.month_bill.service.name}({operation.suborder.month_bill.service.name_long_ru})"
                     if service_name in arr_out["category"][0]["group"]["остальное"]:
-                        arr_out["category"][0]["group"]["остальное"][service_name][
-                            month_name
-                        ]["amount_month"] += operation.amount
-                        arr_out["category"][0]["group"]["остальное"][service_name][
-                            month_name
-                        ]["operation_id"] = operation.id
+                        arr_out["category"][0]["group"]["остальное"][
+                            service_name
+                        ][month_name]["amount_month"] += operation.amount
+                        arr_out["category"][0]["group"]["остальное"][
+                            service_name
+                        ][month_name]["operation_id"] = operation.id
                 # Добавляем в общий итог по месяцу операции
                 arr_out["total_category"]["total"][month_name][
                     "amount_month"
@@ -1599,241 +1595,221 @@ def fill_operations_arrays_ooo(
                         "amount_month"
                     ] += operation.amount
                     if operation.between_bank.name == "зачисление на ООО":
-                        arr_in["category"][1]["group"]["зачисление из хранилища"][
-                            month_name
-                        ]["operation_id"] = operation.id
-                        arr_in["category"][1]["group"]["зачисление из хранилища"][
-                            month_name
-                        ]["amount_month"] += operation.amount
-
-                        # name_to_find = "зачисление из хранилища"
-                        # item = next(
-                        #     (
-                        #         x
-                        #         for x in arr_in["category"][1]["group"]
-                        #         if x == name_to_find
-                        #     ),
-                        #     None,
-                        # )
-                        # if item:
-                        #     item["total"][month_name][
-                        #         "amount_month"
-                        #     ] += operation.amount
-                        #     item["total"][month_name]["operation_id"] = operation.id
-
-            else:
-                # операции между счетами
-                # операции расход
-                if operation.bank_in == bank:
-                    arr_out["total_category"]["total"][month_name][
-                        "amount_month"
-                    ] += operation.amount
-                    if operation.bank_to.id == 2:
-                        arr_out["category"][1]["group"][
-                            "перевод на ИП для оплаты субподряда"
-                        ][month_name]["amount_month"] += operation.amount
-                        arr_out["category"][1]["group"][
-                            "перевод на ИП для оплаты субподряда"
-                        ][month_name]["operation_id"] = operation.id
-
-                        if is_prev_month:
-                            arr_out["category"][1]["group"][
-                                "перевод на ИП для оплаты субподряда"
-                            ][prev_month]["expected"] += operation.amount
-                # операции доход:
+                        arr_in["category"][1]["group"]["зачисление из хранилища"][month_name]["operation_id"] = operation.id
+                        arr_in["category"][1]["group"]["зачисление из хранилища"][month_name]["amount_month"] += operation.amount
                 else:
-                    pass
-
-        # разные общие суммы
-        for i, month in enumerate(months_current_year):
-            # === Расчет "РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)" ===
-            in_sum = (
-                arr_in["total_category"]["total"].get(month, {}).get("amount_month", 0)
-            )
-            out_sum = (
-                arr_out["total_category"]["total"].get(month, {}).get("amount_month", 0)
-            )
-
-            if month not in arr_in_out_all["category"][0]["total"]:
-                arr_in_out_all["category"][0]["total"][month] = {
-                    "amount_month": 0,
-                    "month_number": MONTHS_RU.index(month) + 1,
-                }
-            diff_in_out = in_sum - out_sum
-            arr_in_out_all["category"][0]["total"][month]["amount_month"] = diff_in_out
-
-            # ПРИБЫЛЬ 1% ЦРП 5%
-            if arr_in_out_all["category"][1]["total"][month]["chek"] == True:
-
-                in_out_all_crp = arr_in_out_all["category"][1]["total"][month][
-                    "amount_month_chek"
-                ]
-            else:
-                in_out_all_crp = (
-                    diff_in_out
-                    * arr_in_out_all["category"][1]["total"][month]["percent"]
-                    / 100
-                )
-            arr_in_out_all["category"][1]["total"][month][
-                "amount_month"
-            ] = in_out_all_crp
-
-            # КВ 20% ЦРП 50%
-            if arr_in_out_all["category"][2]["total"][month]["chek"] == True:
-
-                in_out_all_crp_kv = arr_in_out_all["category"][2]["total"][month][
-                    "amount_month_chek"
-                ]
-
-            else:
-                in_out_all_crp_kv = (
-                    diff_in_out
-                    * arr_in_out_all["category"][2]["total"][month]["percent"]
-                    / 100
-                )
-            arr_in_out_all["category"][2]["total"][month][
-                "amount_month"
-            ] = in_out_all_crp_kv
-
-            # ИТОГО  РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)
-            in_out_all_total = (
-                in_out_all_crp
-                + in_out_all_crp_kv
-                + arr_in_out_all["category"][3]["total"][month]["amount_month"]
-            )
-            arr_in_out_all["category"][4]["total"][month][
-                "amount_month"
-            ] = in_out_all_total
-
-            # ДОХОД - РЕАЛЬНЫЙ РАСХОД в текущем месяце
-            all_out_dop = arr_inside_all["total_category"]["total"][month][
-                "amount_month"
-            ]
-
-            diff_in_out_real = in_sum - out_sum - all_out_dop - in_out_all_total
-            arr_in_out_after_all["category"][0]["total"][month][
-                "amount_month"
-            ] = diff_in_out_real
-
-            # НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)
-            ycno = (
-                in_sum
-                * arr_in_out_after_all["category"][1]["total"][month]["percent"]
-                / 100
-            )
-            arr_in_out_after_all["category"][1]["total"][month]["amount_month"] = ycno
-
-            # Реальный налог УСН с ООО доход - 1%
-            arr_in_out_after_all["category"][2]["total"][month]["amount_month"] = (
-                in_sum
-                * arr_in_out_after_all["category"][2]["total"][month]["percent"]
-                / 100
-            )
-
-            # ПРОВЕРКА ДОХОД - РАСХОД
-            arr_in_out_after_all["category"][3]["total"][month]["amount_month"] = (
-                diff_in_out_real - ycno
-            )
-
-            # ПРОВЕРКА ООО ДОХОД-РАСХОД = ОСТАТОК из первого общего блока
-            arr_in_out_all["category"][5]["total"][month]["amount_month"] = (
-                diff_in_out_real - ycno
-            )
-
-            # ДОХОД-РАСХОД (в текущем месяце без УСН и вывода остатков)
-            arr_in_out_after_all_total["category"][0]["total"][month][
-                "amount_month"
-            ] = diff_in_out_real
-
-            # ОСТАТОК на Р/С на конец месяца (после уплаты УСН и вывода остатков)
-            nalog_ycn = arr_in_out_after_all_total["category"][1]["total"][month][
-                "amount_month"
-            ]
-            to_ip = arr_in_out_after_all_total["category"][2]["total"][month][
-                "amount_month"
-            ]
-
-            for i, month in enumerate(months_current_year):
-                if i + 1 < len(months_current_year):
-                    month_prev = months_current_year[i + 1]
-                    prev_all_sum_month = arr_in_out_after_all_total["category"][3][
-                        "total"
-                    ][month_prev]["amount_month"]
-                else:
-                    # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
-                    prev_all_sum_month = 0
-                    if old_oper_arr:
-                        prev_year = year_now - 1
-
-                        last_month = "Декабрь"
-                        prev_year_data = old_oper_arr.get(prev_year)
-                        if prev_year_data:
-                            try:
-
-                                category_list = prev_year_data[
-                                    "arr_in_out_after_all_total"
-                                ]["category"]
-                                prev_all_sum_month = category_list[3]["total"][
-                                    last_month
-                                ]["amount_month"]
-                            except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
-                                prev_all_sum_month = 0
-
-                all_sum_month = (
-                    diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
-                )
-                arr_in_out_after_all_total["category"][3]["total"][month][
-                    "amount_month"
-                ] = all_sum_month
-
-            # for i, month in enumerate(months_current_year):
-            #     if i + 1 < len(months_current_year):
-            #         month_prev = months_current_year[i + 1]
-            #         prev_all_sum_month = arr_in_out_after_all_total["category"][3]["total"][month_prev]["amount_month"]
-            #     else:
-            #         prev_all_sum_month = 0
-
-            #     all_sum_month = diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
-            #     arr_in_out_after_all_total["category"][3]["total"][month]["amount_month"] = all_sum_month
-
-            # Р/С на начало месяца
-            # получить следующий месяц
-            for i, month in enumerate(months_current_year):
-                if i == len(months_current_year) - 1:
-                    # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
-                    last_balance = 0
-                    if old_oper_arr:
-                        prev_year = year_now - 1
-                        last_month = "Декабрь"
-                        prev_year_data = old_oper_arr.get(prev_year)
-                        if prev_year_data:
-                            try:
-                                category_list = prev_year_data[
-                                    "arr_in_out_after_all_total"
-                                ]["category"]
-                                last_balance = category_list[3]["total"][last_month][
-                                    "amount_month"
-                                ]
-                            except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
-                                last_balance = 0
-                    arr_start_month["total"][month]["amount_month"] = last_balance
-                else:
-                    next_month = months_current_year[i + 1]
-                    arr_start_month["total"][month]["amount_month"] = (
-                        arr_in_out_after_all_total["category"][3]["total"][next_month][
+                    # операции между счетами
+                    # операции расход
+                    if operation.bank_in == bank:
+                        arr_out_y["total_category"]["total"][month_name][
                             "amount_month"
-                        ]
+                        ] += operation.amount
+                        if operation.bank_to.id == 2:
+                            arr_out_y["category"][1]["group"][
+                                "перевод на ИП для оплаты субподряда"
+                            ][month_name]["amount_month"] += operation.amount
+                            arr_out_y["category"][1]["group"][
+                                "перевод на ИП для оплаты субподряда"
+                            ][month_name]["operation_id"] = operation.id
+
+                            if is_prev_month:
+                                arr_out_y["category"][1]["group"][
+                                    "перевод на ИП для оплаты субподряда"
+                                ][prev_month]["expected"] += operation.amount
+                    # операции доход:
+                    else:
+                        pass
+
+            # разные общие суммы
+            for i, month in enumerate(months_current_year):
+                # === Расчет "РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)" ===
+                in_sum = (
+                    arr_in["total_category"]["total"].get(month, {}).get("amount_month", 0)
+                )
+                out_sum = (
+                    arr_out["total_category"]["total"].get(month, {}).get("amount_month", 0)
+                )
+
+                if month not in arr_in_out_all["category"][0]["total"]:
+                    arr_in_out_all["category"][0]["total"][month] = {
+                        "amount_month": 0,
+                        "month_number": MONTHS_RU.index(month) + 1,
+                    }
+                diff_in_out = in_sum - out_sum
+                arr_in_out_all["category"][0]["total"][month]["amount_month"] = diff_in_out
+
+                # ПРИБЫЛЬ 1% ЦРП 5%
+                if arr_in_out_all["category"][1]["total"][month]["chek"] == True:
+
+                    in_out_all_crp = arr_in_out_all["category"][1]["total"][month][
+                        "amount_month_chek"
+                    ]
+                else:
+                    in_out_all_crp = (
+                        diff_in_out
+                        * arr_in_out_all["category"][1]["total"][month]["percent"]
+                        / 100
                     )
+                arr_in_out_all["category"][1]["total"][month][
+                    "amount_month"
+                ] = in_out_all_crp
+
+                # КВ 20% ЦРП 50%
+                if arr_in_out_all["category"][2]["total"][month]["chek"] == True:
+
+                    in_out_all_crp_kv = arr_in_out_all["category"][2]["total"][month][
+                        "amount_month_chek"
+                    ]
+
+                else:
+                    in_out_all_crp_kv = (
+                        diff_in_out
+                        * arr_in_out_all["category"][2]["total"][month]["percent"]
+                        / 100
+                    )
+                arr_in_out_all["category"][2]["total"][month][
+                    "amount_month"
+                ] = in_out_all_crp_kv
+
+                # ИТОГО  РЕАЛЬНЫЕ ПОСТУПЛЕНИЯ ООО (ВЫРУЧКА-СУБПОДРЯД И БУХ)
+                in_out_all_total = (
+                    in_out_all_crp
+                    + in_out_all_crp_kv
+                    + arr_in_out_all["category"][3]["total"][month]["amount_month"]
+                )
+                arr_in_out_all["category"][4]["total"][month][
+                    "amount_month"
+                ] = in_out_all_total
+
+                # ДОХОД - РЕАЛЬНЫЙ РАСХОД в текущем месяце
+                all_out_dop = arr_inside_all["total_category"]["total"][month][
+                    "amount_month"
+                ]
+
+                diff_in_out_real = in_sum - out_sum - all_out_dop - in_out_all_total
+                arr_in_out_after_all["category"][0]["total"][month][
+                    "amount_month"
+                ] = diff_in_out_real
+
+                # НАЛОГ УСН ООО доход-расходы*15% ЦРП 2- ТРП 1,5% (отложенные на выплату)
+                ycno = (
+                    in_sum
+                    * arr_in_out_after_all["category"][1]["total"][month]["percent"]
+                    / 100
+                )
+                arr_in_out_after_all["category"][1]["total"][month]["amount_month"] = ycno
+
+                # Реальный налог УСН с ООО доход - 1%
+                arr_in_out_after_all["category"][2]["total"][month]["amount_month"] = (
+                    in_sum
+                    * arr_in_out_after_all["category"][2]["total"][month]["percent"]
+                    / 100
+                )
+
+                # ПРОВЕРКА ДОХОД - РАСХОД
+                arr_in_out_after_all["category"][3]["total"][month]["amount_month"] = (
+                    diff_in_out_real - ycno
+                )
+
+                # ПРОВЕРКА ООО ДОХОД-РАСХОД = ОСТАТОК из первого общего блока
+                arr_in_out_all["category"][5]["total"][month]["amount_month"] = (
+                    diff_in_out_real - ycno
+                )
+
+                # ДОХОД-РАСХОД (в текущем месяце без УСН и вывода остатков)
+                arr_in_out_after_all_total["category"][0]["total"][month][
+                    "amount_month"
+                ] = diff_in_out_real
+
+                # ОСТАТОК на Р/С на конец месяца (после уплаты УСН и вывода остатков)
+                nalog_ycn = arr_in_out_after_all_total["category"][1]["total"][month][
+                    "amount_month"
+                ]
+                to_ip = arr_in_out_after_all_total["category"][2]["total"][month][
+                    "amount_month"
+                ]
+
+                for i, month in enumerate(months_current_year):
+                    if i + 1 < len(months_current_year):
+                        month_prev = months_current_year[i + 1]
+                        prev_all_sum_month = arr_in_out_after_all_total["category"][3][
+                            "total"
+                        ][month_prev]["amount_month"]
+                    else:
+                        # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                        prev_all_sum_month = 0
+                        if old_oper_arr:
+                            prev_year = year_now - 1
+
+                            last_month = "Декабрь"
+                            prev_year_data = old_oper_arr.get(prev_year)
+                            if prev_year_data:
+                                try:
+                                    arr_end_month_ip["total"][month]["amount_month"]
+                                    category_list = prev_year_data["arr_end_month_ip"][
+                                        "category"
+                                    ]
+                                    prev_all_sum_month = prev_year_data["arr_end_month_ip"][
+                                        "total"
+                                    ][last_month]["amount_month"]
+
+                                except Exception as e:
+                                    print(
+                                        "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
+                                        e,
+                                    )
+                                    prev_all_sum_month = 0
+
+                    all_sum_month = (
+                        diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
+                    )
+                    arr_in_out_after_all_total["category"][3]["total"][month][
+                        "amount_month"
+                    ] = all_sum_month
+
+                # for i, month in enumerate(months_current_year):
+                #     if i + 1 < len(months_current_year):
+                #         month_prev = months_current_year[i + 1]
+                #         prev_all_sum_month = arr_in_out_after_all_total["category"][3]["total"][month_prev]["amount_month"]
+                #     else:
+                #         prev_all_sum_month = 0
+
+                #     all_sum_month = diff_in_out_real - nalog_ycn - to_ip + prev_all_sum_month
+                #     arr_in_out_after_all_total["category"][3]["total"][month]["amount_month"] = all_sum_month
+
+                # Р/С на начало месяца
+                # получить следующий месяц
+                for i, month in enumerate(months_current_year):
+                    if i == len(months_current_year) - 1:
+                        # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
+                        last_balance = 0
+                        if old_oper_arr:
+                            prev_year = year_now - 1
+                            last_month = "Декабрь"
+                            prev_year_data = old_oper_arr.get(prev_year)
+                            if prev_year_data:
+                                try:
+                                    category_list = prev_year_data[
+                                        "arr_in_out_after_all_total"
+                                    ]["category"]
+                                    last_balance = category_list[3]["total"][last_month][
+                                        "amount_month"
+                                    ]
+                                except Exception as e:
+                                    print(
+                                        "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
+                                        e,
+                                    )
+                                    last_balance = 0
+                        arr_start_month["total"][month]["amount_month"] = last_balance
+                    else:
+                        next_month = months_current_year[i + 1]
+                        arr_start_month["total"][month]["amount_month"] = (
+                            arr_end_month_ip["total"][next_month]["amount_month"]
+                        )
 
         return (
+            arr_start_month,
             arr_in,
             arr_out,
             arr_in_out_all,
@@ -2277,9 +2253,9 @@ def fill_operations_arrays_ip(
                         "month_number": MONTHS_RU.index(month) + 1,
                         "is_make_operations": False,
                     }
-                    arr_in_y["category"][1]["group"]["зачисление из хранилища"][
-                        month
-                    ] = {
+                    arr_in_y["category"][1]["group"][
+                        "зачисление из хранилища"
+                    ][month] = {
                         "amount_month": 0,
                         "month_number": MONTHS_RU.index(month) + 1,
                         "is_make_operations": False,
@@ -2561,10 +2537,13 @@ def fill_operations_arrays_ip(
                             arr_in_y["total_category"]["total"][month_name][
                                 "amount_month"
                             ] += operation.amount
-                        elif operation.between_bank.name == "зачисление на ИП":
-                            arr_in_y["category"][1]["group"]["зачисление из хранилища"][
-                                month_name
-                            ]["amount_month"] += operation.amount
+                        elif (
+                            operation.between_bank.name
+                            == "зачисление на ИП"
+                        ):
+                            arr_in_y["category"][1]["group"][
+                                "зачисление из хранилища"
+                            ][month_name]["amount_month"] += operation.amount
                             arr_in_y["total_category"]["total"][month_name][
                                 "amount_month"
                             ] += operation.amount
@@ -3256,7 +3235,9 @@ def fill_operations_arrays_ip(
                     "month_number": MONTHS_RU.index(month) + 1,
                     "is_make_operations": False,
                 }
-                arr_in["category"][1]["group"]["зачисление из хранилища"][month] = {
+                arr_in["category"][1]["group"]["зачисление из хранилища"][
+                    month
+                ] = {
                     "amount_month": 0,
                     "month_number": MONTHS_RU.index(month) + 1,
                     "is_make_operations": False,
@@ -3523,10 +3504,13 @@ def fill_operations_arrays_ip(
                         arr_in["total_category"]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
-                    elif operation.between_bank.name == "зачисление на ИП":
-                        arr_in["category"][1]["group"]["зачисление из хранилища"][
-                            month_name
-                        ]["amount_month"] += operation.amount
+                    elif (
+                        operation.between_bank.name
+                        == "зачисление на ИП"
+                    ):
+                        arr_in["category"][1]["group"][
+                            "зачисление из хранилища"
+                        ][month_name]["amount_month"] += operation.amount
                         arr_in["total_category"]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
@@ -3923,7 +3907,7 @@ def fill_operations_arrays_nal(
         # Получаем уникальные года из операций
         years = set()
         for operation in operations:
-
+         
             years.add(operation.data.year)
 
         for year in sorted(years):
@@ -5500,7 +5484,7 @@ def fill_operations_arrays_keep_banking(
         if operation.monthly_bill and operation.suborder is None:
             # поступления по договорам услуг
             pass
-
+        
         elif operation.salary and operation.employee:
             print(operation)
             if operation.salary.name == "Возврат долга":
@@ -5528,9 +5512,9 @@ def fill_operations_arrays_keep_banking(
                     arr_out["total_category"]["total"][month_name][
                         "amount_month"
                     ] += operation.amount
-
+        
         elif operation.bank_in.id == 3:
-
+       
             if operation.between_bank.name in [
                 "остаток $",
                 "остаток ПРИБЫЛЬ 1% ЦРП 5%",
@@ -5598,9 +5582,9 @@ def fill_operations_arrays_keep_banking(
                         arr_out["total_category"]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
-            else:
-                if operation.bank_to.id == 5 and operation.salary == None:
-
+            else:    
+                if  operation.bank_to.id == 5 and operation.salary == None:
+                
                     name_to_find = "покупки/траты"
                     item = next(
                         (x for x in arr_out["category"] if x["name"] == name_to_find),
@@ -5612,6 +5596,8 @@ def fill_operations_arrays_keep_banking(
                         arr_out["total_category"]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
+                
+        
 
     # разные общие суммы
     for i, month in enumerate(months_current_year):
@@ -5703,40 +5689,27 @@ def fill_operations_arrays_salary(
     all_categories_qs,
     all_categories_bank,
     arr_total_employee,
-    categ_percent_kv_nal,
-    categ_percent_kv_ip,
-    categ_percent_list,
-    arr_total_salary,
-    cate_oper_beetwen_by_name,
-    operations_bonus,
-    arr_total_bonus,
-    percent_employee_data,
-    categ_emploue_percent_list,
 ):
-    between_id_nal_to_bonus = cate_oper_beetwen_by_name.get("КВ с $")
-    print(categ_percent_list, "categ_percent_list")
-    print(categ_percent_kv_nal, "categ_percent_kv_nal")
-    print(categ_percent_kv_ip, "categ_percent_kv_ip")
-    print(categ_emploue_percent_list, "categ_emploue_percent_list")
-    year = year_now
     for i, month in enumerate(months_current_year):
         month_number = month_numbers[month]
+        print(month_number,month)
         arr_total_employee["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
+            }
         # arr_nal
         arr_nal["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
+            }
         for category in arr_nal["category"]:
-            category["total"][month] = {
+            category["total"][
+                month
+            ] = {
                 "is_make_operations": True,
                 "bank_out": 5,
-                "bank_in": 3,
                 "date_start": datetime.datetime(
                     year_now, MONTHS_RU.index(month) + 1, 1
                 ),
@@ -5748,224 +5721,61 @@ def fill_operations_arrays_salary(
             }
         # arr_ooo
         arr_ooo["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
+                "amount_month": 0,
+                "month_number": f"{month_number:02d}",
+                "is_make_operations": False,
+            }
         for category in arr_ooo["category"]:
-            category["total"][month] = {
+            category["total"][
+                month
+            ] = {
                 "is_make_operations": True,
                 "bank_out": 5,
                 "date_start": datetime.datetime(
                     year_now, MONTHS_RU.index(month) + 1, 1
                 ),
                 "operation_id": 0,
-                "bank_in": 1,
                 # "type_operations": "between",
                 # "between_id": 3,
                 "amount_month": 0,
                 "expected": 0,
             }
-
-        # arr_lend
-        arr_lend["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
-        for category in arr_lend["category"]:
-            category["total"][month] = {
-                "is_make_operations": True,
-                "bank_out": 5,
-                "date_start": datetime.datetime(
-                    year_now, MONTHS_RU.index(month) + 1, 1
-                ),
-                "operation_id": 0,
-                "bank_in": 1,
-                # "type_operations": "between",
-                # "between_id": 3,
-                "amount_month": 0,
-                "expected": 0,
-            }
-
-        # arr_bonus
-        arr_bonus["total_category"]["total"][month] = {
-            "amount_month": 0,
-            "month_number": f"{month_number:02d}",
-            "is_make_operations": False,
-        }
-        for category in arr_bonus["category"]:
-            if category["name"] == "квартальная премия":
-                category["total"][month] = {
-                    "is_make_operations": True,
-                    "bank_out": 5,
-                    "date_start": datetime.datetime(
-                        year_now, MONTHS_RU.index(month) + 1, 1
-                    ),
-                    "operation_id": 0,
-                    "bank_in": 1,
-                    # "type_operations": "between",
-                    # "between_id": 3,
-                    "amount_month": 0,
-                    "expected": 0,
-                }
-            elif category["name"] == "КВ $":
-                category["total"][month] = {
-                    "percent": True,
-                    "id_groupe": categ_percent_kv_nal["id"],
-                    "between_id": categ_percent_kv_nal["category_between__bank_to"],
-                    "is_make_operations": True,
-                    "bank_out": 5,
-                    "date_start": datetime.datetime(
-                        year_now, MONTHS_RU.index(month) + 1, 1
-                    ),
-                    "operation_id": 0,
-                    "bank_in": 1,
-                    # "type_operations": "between",
-                    # "between_id": 3,
-                    "amount_month": 0,
-                    "expected": 0,
-                    "amount_month_chek": 0,
-                    "chek": False,
-                }
-                # percent_obj = next(
-                #     (
-                #         item
-                #         for item in categ_percent_list
-                #         if item["category_id"] == categ_percent_kv_nal["id"]
-                #         and item["data"].month == MONTHS_RU.index(month) + 1
-                #         and item["data"].year == year
-                #     ),
-                #     None,
-                # )
-                # category["total"][month]["percent"] = (
-                #     percent_obj["percent"] if percent_obj else 0
-                # )
-                # category["total"][month]["operation_percent_id"] = (
-                #     percent_obj["id"] if percent_obj else 0
-                # )
-            elif category["name"] == "КВ ИП":
-                category["total"][month] = {
-                    "percent": True,
-                    "id_groupe": categ_percent_kv_ip["id"],
-                    "between_id": categ_percent_kv_ip["category_between__bank_to"],
-                    "is_make_operations": True,
-                    "bank_out": 5,
-                    "date_start": datetime.datetime(
-                        year_now, MONTHS_RU.index(month) + 1, 1
-                    ),
-                    "operation_id": 0,
-                    "bank_in": 1,
-                    "amount_month": 0,
-                    "expected": 0,
-                    "amount_month_chek": 0,
-                    "chek": False,
-                }
-                # percent_obj = next(
-                #     (
-                #         item
-                #         for item in categ_percent_list
-                #         if item["category_id"] == categ_percent_kv_ip["id"]
-                #         and item["data"].month == MONTHS_RU.index(month) + 1
-                #         and item["data"].year == year
-                #     ),
-                #     None,
-                # )
-                # category["total"][month]["percent"] = (
-                #     percent_obj["percent"] if percent_obj else 0
-                # )
-                # category["total"][month]["operation_percent_id"] = (
-                #     percent_obj["id"] if percent_obj else 0
-                # )
-
-        # arr_total_salary
-        for category in arr_total_salary["category"]:
-            category["total"][month] = {
-                "amount_month": 0,
-                "month_number": f"{month_number:02d}",
-                "is_make_operations": False,
-            }
-
-        # arr_total_bonus
-        for category in arr_total_bonus["category"]:
-            category["total"][month] = {
-                "persent_bonus": 0,
-                "summ_bonus": 0,
-                "amount_month": 0,
-                "month_number": f"{month_number:02d}",
-                "is_make_operations": False,
-            }
-
-    # расчет премий общий
-    for operation_bonus in operations_bonus:
-        month_name = MONTHS_RU[operation_bonus.data.month - 1]
-        if operation_bonus.between_bank.name == "КВ с $":
-            arr_total_bonus["category"][0]["total"][month_name][
-                "amount_month"
-            ] += operation_bonus.amount
-        elif operation_bonus.between_bank.name == "компенсация владельцу с ИП":
-            arr_total_bonus["category"][1]["total"][month_name][
-                "amount_month"
-            ] += operation_bonus.amount
-        elif operation_bonus.between_bank.name == "квартальная премия":
-            arr_total_bonus["category"][2]["total"][month_name][
-                "amount_month"
-            ] += operation_bonus.amount
-    
+            
     arr_employee = {}
     for employee in employees:
         arr_employee[employee.id] = {
             "employee": employee,
             "employee_name": f"{employee.first_name} {employee.last_name}",
             "employee_id": employee.id,
-            "data_salary": [
-                copy.deepcopy(arr_total_employee),
-                copy.deepcopy(arr_ooo),
-                copy.deepcopy(arr_nal),
-                copy.deepcopy(arr_bonus),
-                copy.deepcopy(arr_lend),
-            ],
+            "data_salary": [ arr_total_employee,arr_ooo, arr_nal]
         }
-        employee_data = arr_employee[employee.id]
-        
-        
-
-
-        # распределение операций
+           
+    # распределение операций
         for operation in operations:
+            print(operation)
             employee_id = operation.employee.id
             if operation.employee.id == employee.id:
+                print(operation.employee.id ) 
                 # Сначала ищем сотрудника
                 employee_data = arr_employee[employee.id]
-
+                print(employee_data)
+            # if employee_id not in employees:
+            #     continue
+                
                 category_name = operation.salary.name
                 category_id = operation.salary.id
                 group = None
                 month_name = MONTHS_RU[operation.data.month - 1]
                 prev_month = (
-                    MONTHS_RU[operation.data.month]
-                    if operation.data.month < 12
-                    else None
+                    MONTHS_RU[operation.data.month] if operation.data.month < 12 else None
                 )
-                is_prev_month = (
-                    prev_month in months_current_year if prev_month else False
-                )
-
-                month_name = MONTHS_RU[operation.data.month - 1]
-                prev_back_month = (
-                    MONTHS_RU[operation.data.month - 2]
-                    if operation.data.month < 12
-                    else None
-                )
-                is_prev_back_month = (
-                    prev_back_month in months_current_year if prev_back_month else False
-                )
-
+                is_prev_month = prev_month in months_current_year if prev_month else False
+                
                 name_to_find = category_name
+
                 item = None
                 parent_data_salary = None
                 for data_salary in employee_data["data_salary"]:
-                    print(data_salary,"data_salary")
                     for x in data_salary["category"]:
                         if x["name"] == name_to_find:
                             item = x
@@ -5973,191 +5783,15 @@ def fill_operations_arrays_salary(
                             break
                     if item:
                         break
-
                 if item:
-                    print(item["name"], "item")
-                    if item["name"]== "КВ $" or item["name"] == "КВ ИП" or item["name"] == "квартальная премия":
-                        print(item,"item[total]")
-                        item["total"][month_name][
-                                    "amount_month_chek"
-                                ] += operation.amount
-                        item["total"][month_name]["operation_id"] = operation.id
-                        item["total"][month_name]["chek"] = True
+                    item["total"][month_name]["amount_month"] += operation.amount
+                    item["total"][month_name]["operation_id"] = operation.id
+                # if item and parent_data_salary:
+                    
+                #     employee_data["data_salary"][0]["total"][month_name]["amount_month"] += operation.amount
+                #     parent_data_salary["total_category"]["total"][month_name]["amount_month"] += operation.amount
+                
             
-                    else:
-                        item["total"][month_name]["amount_month"] += operation.amount
-                        item["total"][month_name]["operation_id"] = operation.id
-                        if is_prev_month:
-                            item["total"][prev_month]["expected"] += operation.amount
-                        
-                        
-                if item and parent_data_salary:
-                    if operation.salary.name == "Оф ЗП (10 число)":
-                        if is_prev_back_month:
-                            parent_data_salary["total_category"]["total"][
-                                prev_back_month
-                            ]["amount_month"] += operation.amount
-                            employee_data["data_salary"][0]["total"][prev_back_month][
-                                "amount_month"
-                            ] += operation.amount
-                            arr_total_salary["category"][0]["total"][prev_back_month][
-                                "amount_month"
-                            ] += operation.amount
-                        else:
-                            parent_data_salary["total_category"]["total"][month_name][
-                                "amount_month"
-                            ] += operation.amount
-                            employee_data["data_salary"][0]["total"][month_name][
-                                "amount_month"
-                            ] += operation.amount
-                            arr_total_salary["category"][0]["total"][month_name][
-                                "amount_month"
-                            ] += operation.amount
-
-                    else:
-                        if parent_data_salary["name"] == "Долги":
-                            pass
-                        else:
-                            parent_data_salary["total_category"]["total"][month_name][
-                                "amount_month"
-                            ] += operation.amount
-                            employee_data["data_salary"][0]["total"][month_name][
-                                "amount_month"
-                            ] += operation.amount
-
-                            if parent_data_salary["name"] == "ООО":
-                                arr_total_salary["category"][0]["total"][month_name][
-                                    "amount_month"
-                                ] += operation.amount
-                            elif parent_data_salary["name"] == "$":
-                                arr_total_salary["category"][1]["total"][month_name][
-                                    "amount_month"
-                                ] += operation.amount
-                            elif parent_data_salary["name"] == "Премии":
-                                pass
-                                if operation.salary.name == "КВ $":
-                                    arr_total_salary["category"][2]["total"][
-                                        month_name
-                                    ]["amount_month"] += operation.amount
-                                if operation.salary.name == "КВ ИП":
-                                    arr_total_salary["category"][3]["total"][
-                                        month_name
-                                    ]["amount_month"] += operation.amount
-                                if operation.salary.name == "квартальная премия":
-                                    arr_total_salary["category"][4]["total"][
-                                        month_name
-                                    ]["amount_month"] += operation.amount
-
-    # Рассчитываем накопительные остатки долга для каждого сотрудника
-    for employee_id, employee_data in arr_employee.items():
-        # Словарь для хранения накопительных остатков по месяцам
-        debt_balances = {}
-
-        # Сортируем месяцы в правильном порядке (от января к декабрю)
-        months_ordered = []
-        for month in range(1, 13):
-            month_name = MONTHS_RU[month - 1]
-            if month_name in months_current_year:
-                months_ordered.append(month_name)
-
-        # Рассчитываем накопительные остатки долга
-        for i, month in enumerate(months_ordered):
-            # Получаем предыдущий месяц (если это не первый месяц)
-            prev_month = None
-            if i > 0:
-                prev_month = months_ordered[i - 1]
-
-            # Получаем остаток предыдущего месяца
-            prev_balance = debt_balances.get(prev_month, 0) if prev_month else 0
-
-            # Получаем операции за текущий месяц
-            debt_issued = 0
-            debt_returned = 0
-
-            for data_salary in employee_data["data_salary"]:
-                if data_salary["name"] == "Долги":
-                    for category in data_salary["category"]:
-                        if (
-                            category["name"] == "Выдано в долг"
-                            and month in category["total"]
-                        ):
-                            debt_issued += category["total"][month]["amount_month"]
-
-                        elif (
-                            category["name"] == "Возврат долга"
-                            and month in category["total"]
-                        ):
-                            debt_returned += category["total"][month]["amount_month"]
-
-                        elif category["name"] == "Остаток долга":
-                            pass
-
-            # Рассчитываем текущий накопительный остаток
-            current_balance = prev_balance + debt_issued - debt_returned
-            current_balance = max(0, current_balance)  # Не даем остатку уйти в минус
-
-            # Сохраняем остаток
-            debt_balances[month] = current_balance
-
-            # Обновляем total_category и категорию "Остаток долга" для группы "Долги"
-            for data_salary in employee_data["data_salary"]:
-                if data_salary["name"] == "Долги":
-                    # Обновляем total_category
-                    if month in data_salary["total_category"]["total"]:
-                        data_salary["total_category"]["total"][month][
-                            "amount_month"
-                        ] = current_balance
-
-                    # Обновляем категорию "Остаток долга"
-                    for category in data_salary["category"]:
-                        if (
-                            category["name"] == "Остаток долга"
-                            and month in category["total"]
-                        ):
-                            category["total"][month]["amount_month"] = current_balance
-
-            arr_total_salary["category"][5]["total"][month][
-                "amount_month"
-            ] += current_balance
-          
-            # РАСЧЕТ ПРЕМИЙ СОТРУДНИКА
-          
-            percent_obj = next(
-            (
-                item
-                for item in categ_emploue_percent_list
-
-                if item["category_id"] == categ_percent_kv_ip["id"]
-                and item["data"].month == MONTHS_RU.index(month) + 1
-                and item["data"].year == year
-                and item["employee_id"] == employee_id
-            ),
-            None,
-        )
-            if percent_obj:
-                
-                arr_total_bonus["category"][1]["total"][month]["persent_bonus"] += percent_obj["percent"]
-                
-                employee_data["data_salary"][3]["category"][1]["total"][month]["bank_in"] = categ_percent_kv_nal["bank"]
-                employee_data["data_salary"][3]["category"][1]["total"][month]["percent"] = (
-                    percent_obj["percent"] if percent_obj else 0
-                )
-                employee_data["data_salary"][3]["category"][1]["total"][month]["operation_percent_id"] = (
-                            percent_obj["id"] if percent_obj else 0
-                        )
-                
-                # sum_kv_ip = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
-                # employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_ip
-                
-                if employee_data["data_salary"][3]["category"][1]["total"][month]["chek"] == True:
-                    sum_kv_ip_to_front = employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month_chek"]
-                    arr_total_bonus["category"][1]["total"][month]["summ_bonus"] += sum_kv_ip_to_front
-                else:
-                    sum_kv_ip_to_front = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
-                employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_ip_to_front
-                
-                
 
     
-
-    return (arr_employee, arr_total_salary, arr_total_bonus)
+    return arr_employee

@@ -7,6 +7,7 @@ from apps.core.utils import (
     fill_operations_arrays_keep_banking,
     fill_operations_arrays_nal,
     fill_operations_arrays_ooo,
+    fill_operations_arrays_salary,
     get_id_categ_oper,
     get_operations_by_year_mini,
 )
@@ -3695,3 +3696,1040 @@ def storage_servise(request):
     }
 
     return render(request, "bank/storage/storage_servise.html", context)
+
+
+def salary_new(request):
+    """
+    Новая функция для отображения страницы зарплат сотрудников в стиле outside_ip.
+    
+    Обрабатывает данные о зарплатах за текущий и предыдущие годы,
+    группирует операции по категориям и месяцам, рассчитывает итоги.
+    
+    Args:
+        request: HTTP запрос
+        
+    Returns:
+        HttpResponse: Рендеринг шаблона с данными о зарплатах
+    """
+    import locale
+    import copy
+
+    locale.setlocale(locale.LC_ALL, "")
+
+    title = "salary_new"
+    type_url = "inside"
+
+    data = datetime.datetime.now()
+    year_now = datetime.datetime.now().year
+    year_now_st = str(year_now)
+    month_now = datetime.datetime.now().month
+    date_start_year = str(year_now) + "-01-01"
+
+    month_now_name = MONTHS_RU[month_now - 1]
+    
+    # куки для установки дат сортировки
+    q_object = Q()
+
+    if request.COOKIES.get("sortSalary"):
+        active = request.COOKIES["sortSalary"]
+        if active == "1":
+            q_object &= Q(date_end__isnull=True)
+            q_object |= Q(date_end__year=year_now_st)
+        else:
+            q_object &= Q(date_end__year__lte=year_now_st)
+    else:
+        q_object &= Q(date_end__isnull=True)
+        q_object |= Q(date_end__year=year_now_st)
+    
+    # Получаем активных сотрудников с оптимизацией запросов
+    employee_now_year = Employee.objects.filter(q_object).select_related()
+
+    # Создаем морфологический анализатор
+    morph = pymorphy3.MorphAnalyzer(lang="ru")
+
+    # Создаем список месяцев текущего года в обратном порядке
+    months_current_year = []
+    for month in range(1, month_now + 1):
+        month_name = MONTHS_RU[month - 1]
+        months_current_year.append(month_name)
+
+    months_current_year.reverse()
+    
+    # Создаем словарь для сопоставления названий месяцев с их номерами
+    month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
+
+    # Получаем все категории зарплат
+    all_categories_qs = (
+        GroupeSalary.objects.all()
+        .select_related("bank")
+        .prefetch_related(Prefetch("bank"))
+    )
+    all_categories_bank = all_categories_qs.values_list("bank", "name", "id")
+
+    cat_name_id = {}
+    for cat in all_categories_qs:
+        cat_name_id[cat.name] = cat.id
+
+    # Определяем группы категорий
+    salary_groups = {
+        "group1": ["Оф ЗП (10 число)", "Оф Аванс", "Отпуск", "Оф Премия", "Больничный"],
+        "group2": ["ЗП $", "Премия $", "Отпуск $"],
+        "group3": ["КВ $", "КВ ИП", "квартальная премия"],
+        "group4": ["Выдано в долг", "Возврат долга"],
+    }
+    
+    salary_groups_bank = {}
+    names = [
+        "КВ $",
+        "КВ ИП",
+    ]
+    
+    categ_percents = CategForPercentGroupBank.objects.filter(
+         name__in=names
+    ).values("id", "name", "bank", "category_between", "category_between__bank_to")
+    categ_percent_by_name = {item["name"]: item for item in categ_percents}
+
+    # Получаем данные о процентах по категориям
+    categ_percent_value = (
+        CategPercentGroupBank.objects.select_related(
+            "category", "bank", "bank_categpercentgroupbank_name"
+        )
+        .annotate(month=ExtractMonth("data"))
+        .values("id", "category", "data", "percent", "category_id")
+    )
+    categ_percent_list = list(categ_percent_value)
+    
+    # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
+    percent_employee_data = (
+        PercentEmployee.objects.filter(
+            category__name__in=["КВ $", "КВ ИП"],
+            data__year=year_now
+        )
+        .select_related("category", "employee")
+        .annotate(month=ExtractMonth("data"))
+        .values("id", "category__name", "employee_id", "data", "percent", "month")
+    )
+    
+    # Группируем данные по сотрудникам и месяцам
+    employee_percent_by_month = {}
+    for item in percent_employee_data:
+        employee_id = item["employee_id"]
+        month = item["month"]
+        category_name = item["category__name"]
+        
+        if employee_id not in employee_percent_by_month:
+            employee_percent_by_month[employee_id] = {}
+        
+        if month not in employee_percent_by_month[employee_id]:
+            employee_percent_by_month[employee_id][month] = {}
+        
+        employee_percent_by_month[employee_id][month][category_name] = {
+            "percent": item["percent"],
+            "data": item["data"]
+        }
+    
+    categ_percent_kv_nal = categ_percent_by_name.get("КВ $")
+    categ_percent_kv_ip = categ_percent_by_name.get("КВ ИП")
+
+    # Получаем операции с оптимизацией запросов
+    operations = (
+        Operation.objects.filter(
+            salary__isnull=False,
+            data__year__gte=year_now,
+        )
+        .select_related("salary", "employee")
+        .prefetch_related()
+        .order_by("-data")
+    )
+
+    operations_old = (
+        Operation.objects.filter(
+            salary__isnull=False,
+            data__year__lt=year_now,
+        )
+        .select_related("salary", "employee")
+        .prefetch_related()
+        .order_by("-data")
+    )
+
+    # Создаем словарь соответствия категорий и банков
+    for dk in all_categories_qs:
+        salary_groups_bank[dk.name] = dk.bank.id
+
+    # СТАРТОВЫЕ МАССИВЫ в стиле outside_ip
+    # ЗАРПЛАТЫ ПО СОТРУДНИКАМ
+    arr_salary_employees = {
+        "name": "ЗАРПЛАТЫ ПО СОТРУДНИКАМ",
+        "employees": {},
+    }
+
+    # ОБЩИЕ ИТОГИ
+    arr_total_salary = {
+        "name": "ОБЩИЕ ИТОГИ",
+        "category": [
+            {
+                "name": "ИТОГО ЗП с ООО",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО ЗП с $",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО КВ $",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО КВ ИП",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО кварт. премия",
+                "total": {},
+            },
+            {
+                "name": "Итого общий долг",
+                "total": {},
+            },
+        ],
+    }
+
+    # Копии для старых операций
+    arr_salary_employees_old = copy.deepcopy(arr_salary_employees)
+    arr_total_salary_old = copy.deepcopy(arr_total_salary)
+
+    old_oper_arr = {}
+
+    # Инициализируем данные для сотрудников
+    for employee in employee_now_year:
+        arr_salary_employees["employees"][employee.id] = {
+            "employee": employee,
+            "employee_id": employee.id,
+            "groups": [
+                {
+                    "name": "ООО зарплаты",
+                    "categories": [
+                        {
+                            "name": "Оф ЗП (10 число)",
+                            "total": {},
+                        },
+                        {
+                            "name": "Оф Аванс",
+                            "total": {},
+                        },
+                        {
+                            "name": "Отпуск",
+                            "total": {},
+                        },
+                        {
+                            "name": "Оф Премия",
+                            "total": {},
+                        },
+                        {
+                            "name": "Больничный",
+                            "total": {},
+                        },
+                    ],
+                },
+                {
+                    "name": "$ зарплаты",
+                    "categories": [
+                        {
+                            "name": "ЗП $",
+                            "total": {},
+                        },
+                        {
+                            "name": "Премия $",
+                            "total": {},
+                        },
+                        {
+                            "name": "Отпуск $",
+                            "total": {},
+                        },
+                    ],
+                },
+                {
+                    "name": "КВ и премии",
+                    "categories": [
+                        {
+                            "name": "КВ $",
+                            "total": {},
+                        },
+                        {
+                            "name": "КВ ИП",
+                            "total": {},
+                        },
+                        {
+                            "name": "квартальная премия",
+                            "total": {},
+                        },
+                    ],
+                },
+                {
+                    "name": "Долги",
+                    "categories": [
+                        {
+                            "name": "Выдано в долг",
+                            "total": {},
+                        },
+                        {
+                            "name": "Возврат долга",
+                            "total": {},
+                        },
+                        {
+                            "name": "Остаток долга",
+                            "total": {},
+                        },
+                    ],
+                },
+            ],
+            "total_by_month": {},
+        }
+        
+        # Инициализируем данные по месяцам для каждого сотрудника
+        for group in arr_salary_employees["employees"][employee.id]["groups"]:
+            for category in group["categories"]:
+                for month in months_current_year:
+                    month_number = month_numbers[month]
+                    date_start = datetime.datetime(year_now, month_number, 1)
+                    category["total"][month] = {
+                        "amount_month": 0,
+                        "month_number": month_number,
+                        "date_start": date_start,
+                        "is_make_operations": True,
+                        "bank_in": salary_groups_bank.get(category["name"]),
+                        "bank_out": None,
+                        "between_id": None,
+                        "type_operations": "salary",
+                        "id_groupe": cat_name_id.get(category["name"]),
+                    }
+                    
+                    # Специальные параметры для КВ $ и КВ ИП
+                    if category["name"] in ["КВ $", "КВ ИП"]:
+                        if category["name"] == "КВ $" and categ_percent_kv_nal:
+                            category["total"][month]["between_id"] = categ_percent_kv_nal["category_between__bank_to"]
+                            category["total"][month]["id_groupe"] = categ_percent_kv_nal["id"]
+                        elif category["name"] == "КВ ИП" and categ_percent_kv_ip:
+                            category["total"][month]["between_id"] = categ_percent_kv_ip["category_between__bank_to"]
+                            category["total"][month]["id_groupe"] = categ_percent_kv_ip["id"]
+        
+        # Инициализируем итоги по месяцам для сотрудника
+        for month in months_current_year:
+            month_number = month_numbers[month]
+            date_start = datetime.datetime(year_now, month_number, 1)
+            arr_salary_employees["employees"][employee.id]["total_by_month"][month] = {
+                "amount_month": 0,
+                "month_number": month_number,
+                "date_start": date_start,
+                "is_make_operations": False,
+            }
+
+    # Инициализируем общие итоги
+    for month in months_current_year:
+        month_number = month_numbers[month]
+        date_start = datetime.datetime(year_now, month_number, 1)
+        
+        for category in arr_total_salary["category"]:
+            category["total"][month] = {
+                "amount_month": 0,
+                "month_number": month_number,
+                "date_start": date_start,
+                "is_make_operations": False,
+            }
+
+    # Обрабатываем операции текущего года
+    for operation in operations:
+        employee_id = operation.employee.id
+        if employee_id not in arr_salary_employees["employees"]:
+            continue
+            
+        month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
+        if month_name not in months_current_year:
+            continue
+
+        category = operation.salary.name
+        amount = operation.amount
+
+        # Добавляем операцию в данные сотрудника
+        for group in arr_salary_employees["employees"][employee_id]["groups"]:
+            for cat in group["categories"]:
+                if cat["name"] == category:
+                    cat["total"][month_name]["amount_month"] += amount
+                    if not cat["total"][month_name].get("operation_id"):
+                        cat["total"][month_name]["operation_id"] = operation.id
+                    break
+
+    # Рассчитываем остатки долга для каждого сотрудника
+    for employee_id, employee_data in arr_salary_employees["employees"].items():
+        debt_balances = {}
+        
+        # Создаем список месяцев в правильном порядке (от января к текущему месяцу)
+        months_ordered = []
+        for month in range(1, month_now + 1):
+            month_name = MONTHS_RU[month - 1]
+            months_ordered.append(month_name)
+
+        # Рассчитываем остатки долга
+        for i, month in enumerate(months_ordered):
+            prev_month = None
+            if i > 0:
+                prev_month = months_ordered[i - 1]
+
+            prev_balance = debt_balances.get(prev_month, 0) if prev_month else 0
+
+            # Находим операции "Выдано в долг" и "Возврат долга"
+            debt_issued = 0
+            debt_returned = 0
+            
+            for group in employee_data["groups"]:
+                if group["name"] == "Долги":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Выдано в долг" and month in cat["total"]:
+                            debt_issued = cat["total"][month]["amount_month"]
+                        elif cat["name"] == "Возврат долга" and month in cat["total"]:
+                            debt_returned = cat["total"][month]["amount_month"]
+
+            current_balance = prev_balance + debt_issued - debt_returned
+            current_balance = max(0, current_balance)
+            debt_balances[month] = current_balance
+
+            # Обновляем остаток долга
+            for group in employee_data["groups"]:
+                if group["name"] == "Долги":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Остаток долга" and month in cat["total"]:
+                            cat["total"][month]["amount_month"] = current_balance
+
+    # Рассчитываем итоги по месяцам для каждого сотрудника
+    for employee_id, employee_data in arr_salary_employees["employees"].items():
+        for month in months_current_year:
+            idx = months_current_year.index(month)
+            month_total = 0
+            
+            for group in employee_data["groups"]:
+                if group["name"] != "Долги":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Оф ЗП (10 число)":
+                            if idx > 0:
+                                prev_month = months_current_year[idx - 1]
+                                month_total += cat["total"][prev_month]["amount_month"]
+                        else:
+                            month_total += cat["total"][month]["amount_month"]
+            
+            employee_data["total_by_month"][month]["amount_month"] = month_total
+
+    # Рассчитываем общие итоги
+    for month in months_current_year:
+        idx = months_current_year.index(month)
+        
+        for employee_data in arr_salary_employees["employees"].values():
+            # Итоги по ООО зарплатам
+            for group in employee_data["groups"]:
+                if group["name"] == "ООО зарплаты":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Оф ЗП (10 число)":
+                            if idx > 0:
+                                prev_month = months_current_year[idx - 1]
+                                arr_total_salary["category"][0]["total"][month]["amount_month"] += cat["total"][prev_month]["amount_month"]
+                        else:
+                            arr_total_salary["category"][0]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+
+            # Итоги по $ зарплатам
+            for group in employee_data["groups"]:
+                if group["name"] == "$ зарплаты":
+                    for cat in group["categories"]:
+                        arr_total_salary["category"][1]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+
+            # Итоги по КВ и премиям
+            for group in employee_data["groups"]:
+                if group["name"] == "КВ и премии":
+                    for cat in group["categories"]:
+                        if cat["name"] == "КВ $":
+                            arr_total_salary["category"][2]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+                        elif cat["name"] == "КВ ИП":
+                            arr_total_salary["category"][3]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+                        elif cat["name"] == "квартальная премия":
+                            arr_total_salary["category"][4]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+
+            # Итоги по долгам
+            for group in employee_data["groups"]:
+                if group["name"] == "Долги":
+                    for cat in group["categories"]:
+                        if cat["name"] == "Остаток долга":
+                            arr_total_salary["category"][5]["total"][month]["amount_month"] += cat["total"][month]["amount_month"]
+
+    # Обрабатываем старые операции (упрощенная версия)
+    old_oper_arr = {}
+    years_with_operations = set(operation.data.year for operation in operations_old)
+    
+    for year in sorted(years_with_operations, reverse=True):
+        old_oper_arr[year] = {
+            "year": year,
+            "months_current_year": [MONTHS_RU[month - 1] for month in range(1, 13)],
+            "arr_salary_employees": copy.deepcopy(arr_salary_employees_old),
+            "arr_total_salary": copy.deepcopy(arr_total_salary_old),
+        }
+        
+        # Инициализируем данные для сотрудников в старом году
+        for employee in employee_now_year:
+            old_oper_arr[year]["arr_salary_employees"]["employees"][employee.id] = {
+                "employee": employee,
+                "employee_id": employee.id,
+                "groups": [
+                    {
+                        "name": "ООО зарплаты",
+                        "categories": [
+                            {
+                                "name": "Оф ЗП (10 число)",
+                                "total": {},
+                            },
+                            {
+                                "name": "Оф Аванс",
+                                "total": {},
+                            },
+                            {
+                                "name": "Отпуск",
+                                "total": {},
+                            },
+                            {
+                                "name": "Оф Премия",
+                                "total": {},
+                            },
+                            {
+                                "name": "Больничный",
+                                "total": {},
+                            },
+                        ],
+                    },
+                    {
+                        "name": "$ зарплаты",
+                        "categories": [
+                            {
+                                "name": "ЗП $",
+                                "total": {},
+                            },
+                            {
+                                "name": "Премия $",
+                                "total": {},
+                            },
+                            {
+                                "name": "Отпуск $",
+                                "total": {},
+                            },
+                        ],
+                    },
+                    {
+                        "name": "КВ и премии",
+                        "categories": [
+                            {
+                                "name": "КВ $",
+                                "total": {},
+                            },
+                            {
+                                "name": "КВ ИП",
+                                "total": {},
+                            },
+                            {
+                                "name": "квартальная премия",
+                                "total": {},
+                            },
+                        ],
+                    },
+                    {
+                        "name": "Долги",
+                        "categories": [
+                            {
+                                "name": "Выдано в долг",
+                                "total": {},
+                            },
+                            {
+                                "name": "Возврат долга",
+                                "total": {},
+                            },
+                            {
+                                "name": "Остаток долга",
+                                "total": {},
+                            },
+                        ],
+                    },
+                ],
+                "total_by_month": {},
+            }
+            
+            # Инициализируем данные по месяцам для каждого сотрудника в старом году
+            for group in old_oper_arr[year]["arr_salary_employees"]["employees"][employee.id]["groups"]:
+                for category in group["categories"]:
+                    for month in old_oper_arr[year]["months_current_year"]:
+                        month_number = MONTHS_RU.index(month) + 1
+                        date_start = datetime.datetime(year, month_number, 1)
+                        category["total"][month] = {
+                            "amount_month": 0,
+                            "month_number": month_number,
+                            "date_start": date_start,
+                            "is_make_operations": True,
+                            "bank_in": salary_groups_bank.get(category["name"]),
+                            "bank_out": None,
+                            "between_id": None,
+                            "type_operations": "salary",
+                            "id_groupe": cat_name_id.get(category["name"]),
+                        }
+            
+            # Инициализируем итоги по месяцам для сотрудника в старом году
+            for month in old_oper_arr[year]["months_current_year"]:
+                month_number = MONTHS_RU.index(month) + 1
+                date_start = datetime.datetime(year, month_number, 1)
+                old_oper_arr[year]["arr_salary_employees"]["employees"][employee.id]["total_by_month"][month] = {
+                    "amount_month": 0,
+                    "month_number": month_number,
+                    "date_start": date_start,
+                    "is_make_operations": False,
+                }
+
+        # Инициализируем общие итоги для старого года
+        for month in old_oper_arr[year]["months_current_year"]:
+            month_number = MONTHS_RU.index(month) + 1
+            date_start = datetime.datetime(year, month_number, 1)
+            
+            for category in old_oper_arr[year]["arr_total_salary"]["category"]:
+                category["total"][month] = {
+                    "amount_month": 0,
+                    "month_number": month_number,
+                    "date_start": date_start,
+                    "is_make_operations": False,
+                }
+        
+        # Заполняем данные операциями для старого года
+        year_operations = [op for op in operations_old if op.data.year == year]
+        for operation in year_operations:
+            employee_id = operation.employee.id
+            if employee_id not in old_oper_arr[year]["arr_salary_employees"]["employees"]:
+                continue
+                
+            month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
+            if month_name not in old_oper_arr[year]["months_current_year"]:
+                continue
+
+            category = operation.salary.name
+            amount = operation.amount
+
+            # Добавляем операцию в данные сотрудника
+            for group in old_oper_arr[year]["arr_salary_employees"]["employees"][employee_id]["groups"]:
+                for cat in group["categories"]:
+                    if cat["name"] == category:
+                        cat["total"][month_name]["amount_month"] += amount
+                        if not cat["total"][month_name].get("operation_id"):
+                            cat["total"][month_name]["operation_id"] = operation.id
+                        break
+
+    # Получаем операции между банками для КВ
+    operations_all = Operation.objects.filter()
+    
+    total_kv_nal = 0
+    total_kv_ip = 0
+    total_kv_nal_old = 0    
+    total_kv_ip_old = 0
+    
+    names_btw = [
+        "компенсация владельцу с ИП",
+        "КВ с $",
+    ]
+    cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
+        name__in=names_btw
+    ).values("id", "name", "bank_in", "bank_to")
+    cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
+    
+    month_kv_nal = {}
+    month_kv_ip = {}
+    for month in months_current_year:
+        month_kv_nal[month] = {
+            "total_month": 0
+        }
+    
+    for operation_a in operations_all:
+        if operation_a.between_bank and operation_a.between_bank.name == "КВ с $":
+            if operation_a.data.year == year_now:
+                total_kv_nal += operation_a.amount
+                month_name = MONTHS_RU[operation_a.data.month - 1]
+                if month_name in month_kv_nal:
+                    month_kv_nal[month_name]["total_month"] += operation_a.amount
+
+    context = {
+        "title": title,
+        "type_url": type_url,
+        "year_now": year_now,
+        "months_current_year": months_current_year,
+        "arr_salary_employees": arr_salary_employees,
+        "arr_total_salary": arr_total_salary,
+        "old_oper_arr": old_oper_arr,
+        "total_kv_nal": total_kv_nal,
+        "total_kv_ip": total_kv_ip,
+        "total_kv_nal_old": total_kv_nal_old,
+        "total_kv_ip_old": total_kv_ip_old,
+        "month_kv_nal": month_kv_nal,
+        "employees": employee_now_year,
+        "salary_groups": salary_groups,
+        "salary_groups_bank": salary_groups_bank,
+        "cat_name_id": cat_name_id,
+        "categ_percent_kv_nal": categ_percent_kv_nal,
+        "categ_percent_kv_ip": categ_percent_kv_ip,
+        "employee_now_year": employee_now_year,
+        "all_categories_qs": all_categories_qs,
+        "employee_percent_by_month": employee_percent_by_month,
+    }
+
+    return render(request, "bank/inside/inside_one_salary_new.html", context)
+
+
+def salary_new_2(request):
+    title = "Зарплата"
+    type_url = "salary"
+    year_now = datetime.datetime.now().year
+    months_current_year = MONTHS_RU
+    year_now_st = str(year_now)
+    data = datetime.datetime.now()
+    year_now = datetime.datetime.now().year
+    month_now = datetime.datetime.now().month
+    
+    # куки для установки дат сортировки
+    q_object = Q()
+
+    if request.COOKIES.get("sortSalary"):
+        active = request.COOKIES["sortSalary"]
+        if active == "1":
+            q_object &= Q(date_end__isnull=True)
+            q_object |= Q(date_end__year=year_now_st)
+        else:
+            q_object &= Q(date_end__year__lte=year_now_st)
+    else:
+        q_object &= Q(date_end__isnull=True)
+        q_object |= Q(date_end__year=year_now_st)
+    
+    # Получаем активных сотрудников с оптимизацией запросов
+    employee_now_year = Employee.objects.filter(q_object).select_related()    
+    # Получаем операции с оптимизацией запросов
+    operations = (
+        Operation.objects.filter(
+            salary__isnull=False,
+            data__year__gte=year_now,
+        )
+        .select_related("salary", "employee")
+        .prefetch_related()
+        .order_by("-data")
+    )
+
+    operations_old = (
+        Operation.objects.filter(
+            salary__isnull=False,
+            data__year__lt=year_now,
+        )
+        .select_related("salary", "employee")
+        .prefetch_related()
+        .order_by("-data")
+    )
+    
+    # Создаем список месяцев текущего года
+    months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
+    months_current_year.reverse()
+    # Создаем словарь для сопоставления названий месяцев с их номерами
+    month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
+    
+    all_categories_qs = (
+        GroupeSalary.objects.all()
+        .select_related("bank")
+        .prefetch_related(Prefetch("bank"))
+    )
+    all_categories_bank = all_categories_qs.values_list("bank", "name", "id")
+    
+    cat_name_id = {}
+    for cat in all_categories_qs:
+        cat_name_id[cat.name] = cat.id
+        
+    # стартовые массивы в каждом сотруднике 
+    # ооо
+    arr_ooo = {
+        "name": "ООО",
+        "category": [
+            {
+                "name": "Оф ЗП (10 число)",
+                "category_id": cat_name_id.get("Оф ЗП (10 число)", None),
+                "total": {},
+            },
+            {
+                "name": "Оф Аванс",
+                "category_id": cat_name_id.get("Оф Аванс", None),
+                "total": {},
+            },
+            {
+                "name": "Отпуск",
+                "category_id": cat_name_id.get("Отпуск", None),
+                "total": {},
+            },
+            {
+                "name": "Оф Премия",
+                "category_id": cat_name_id.get("Оф Премия", None),
+                "total": {},
+            },
+            {
+                "name": "Больничный",
+                "category_id": cat_name_id.get("Больничный", None),
+                "total": {},
+            },
+            
+        ],
+        "total_category": {
+            "name": "Итого ООО",
+            "total": {},
+        },
+    }
+    # ип
+    arr_nal = {
+        "name": "$",
+        "category": [
+            {
+                "name": "ЗП $",
+                "category_id": cat_name_id.get("ЗП $", None),
+                "total": {},
+            },
+            {
+                "name": "Премия $", "category_id": cat_name_id.get("Премия $", None),
+                "total": {},
+            },
+            {
+                "name": "Отпуск $",
+                "category_id": cat_name_id.get("Отпуск $", None),
+                "total": {},
+            },
+           
+            
+        ],
+        "total_category": {
+            "name": "Итого $",
+            "total": {},
+        },
+    }
+    arr_bonus = {
+        "name": "Премии",
+        "category": [
+            {
+                "name": "КВ $",
+                "total": {},
+                "category_id": cat_name_id.get("КВ $", None),
+            },
+            {
+                "name": "КВ ИП",
+                "total": {},
+                "category_id": cat_name_id.get("КВ ИП", None),
+            },
+            {
+                "name": "квартальная премия",
+                "total": {},
+                "category_id": cat_name_id.get("квартальная премия", None),
+            },
+           
+            
+        ],
+        "total_category": {
+            "name": "Итого Премии",
+            "total": {},
+        },
+    }
+    arr_lend = {
+        "name": "Долги",
+        "category": [
+            {
+                "name": "Выдано в долг",
+                "total": {},
+                "category_id": cat_name_id.get("Выдано в долг", None),
+            },
+            {
+                "name": "Возврат долга",
+                "total": {},
+                 "category_id": cat_name_id.get("Возврат долга", None),
+            },
+           
+            
+        ],
+        "total_category": {
+            "name": "Остаток долга",
+            "total": {},
+        },
+    }
+    arr_total_employee = {
+            "name": "Итого",
+            "category": [
+            {
+                "name": "КВ $ 1",
+                "category_id": cat_name_id.get("КВ $", None),
+                "total": {},
+            },
+            {
+                "name": "КВ ИП 1",
+                "category_id": cat_name_id.get("КВ ИП", None),
+                "total": {},
+            },
+            {
+                "name": "квартальная премия 1",
+                "category_id": cat_name_id.get("КВ $", None),
+                "total": {},
+            },],
+            "total": {},
+    }
+    arr_total_bonus = {
+        "name": "ВСЕ Премии",
+         "category": [
+            {
+                "name": "КВ $ всего",
+                "category_id": cat_name_id.get("КВ $", None),
+                "total": {},
+                "total_month": {},
+            },
+            {
+                "name": "КВ ИП всего",   
+                "category_id": cat_name_id.get("КВ ИП", None),   
+                "total": {},
+                "total_month": {},
+            },
+            {
+                "name": "квартальная премия всего",
+                "category_id": cat_name_id.get("квартальная премия", None),
+                "total": {},
+            },],
+        "total": {},
+        
+        }
+        
+        
+        
+    arr_total_salary = {
+        "name": "ИТОГО ВСЕ",
+        "category":  [
+                 {
+                "name": "ИТОГО ЗП с ООО",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО ЗП с $",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО КВ $",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО КВ ИП",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО кварт. премия",
+                "total": {},
+            },
+            {
+                "name": "Итого общий долг",
+                "total": {},
+            },
+           ],
+        "total": {},
+    }
+    
+    names = [
+        "КВ $",
+        "КВ ИП",
+    ]
+    categ_percents = CategForPercentGroupBank.objects.filter(
+         name__in=names
+    ).values("id", "name", "bank", "category_between", "category_between__bank_to")
+    categ_percent_by_name = {item["name"]: item for item in categ_percents}
+
+    # Получаем данные о процентах по категориям
+    categ_percent_value = (
+        CategPercentGroupBank.objects.select_related(
+            "category", "bank", "bank_categpercentgroupbank_name"
+        )
+        .annotate(month=ExtractMonth("data"))
+        .values("id", "category", "data", "percent", "category_id")
+    )
+    categ_percent_list = list(categ_percent_value)
+    
+    # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
+    percent_employee_data = (
+        PercentEmployee.objects.filter(
+            category__name__in=["КВ $", "КВ ИП"],
+            data__year=year_now
+        )
+        .select_related("category", "employee")
+        .annotate(month=ExtractMonth("data"))
+        .values("id", "category", "data", "percent", "category_id","employee_id")
+        # .values("id", "category__name", "employee_id", "data", "percent", "month")
+    )
+    categ_emploue_percent_list = list(percent_employee_data)
+    categ_percent_kv_nal = categ_percent_by_name.get(
+        "КВ $"
+    )
+    categ_percent_kv_ip = categ_percent_by_name.get(
+        "КВ ИП"
+    )
+    
+   
+    names_btw = [
+        "компенсация владельцу с ИП",
+        "КВ с $",
+    ]
+    cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
+        name__in=names_btw
+    ).values("id", "name", "bank_in", "bank_to")
+    cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
+    print(cate_oper_beetwen_by_name, "cate_oper_beetwen_by_name")
+    
+    operations_bonus = Operation.objects.filter(
+        between_bank__name__in=names_btw,
+        data__year__gte=year_now,
+    )
+    print(operations_bonus, "operations_bonus")
+    
+    arr_salary_employees,arr_total_salary, arr_total_bonus= fill_operations_arrays_salary(
+        employee_now_year,
+        operations,
+        operations_old,
+        months_current_year,
+        month_numbers,
+        year_now,
+        arr_ooo,
+        arr_nal,
+        arr_bonus,
+        arr_lend,
+        all_categories_qs,
+        all_categories_bank,
+        arr_total_employee,
+        categ_percent_kv_nal,
+        categ_percent_kv_ip,
+        categ_percent_list,
+        arr_total_salary,
+        cate_oper_beetwen_by_name,
+        operations_bonus,
+        arr_total_bonus,
+        percent_employee_data,
+        categ_emploue_percent_list,
+        
+    )
+    
+    
+    context = {
+         "title": title,
+        "year_now": year_now,
+        "type_url": type_url,
+        "months_current_year": months_current_year,
+        "arr_salary_employees": arr_salary_employees,
+        "arr_total_salary": arr_total_salary,
+        "arr_total_bonus": arr_total_bonus,
+    }
+
+    return render(request, "bank/inside/inside_one_salary_new_2.html", context)
+
+    # arr_salary_employees = {}
+    # arr_total_salary = {}
+    # for employee in employee_now_year:
+    #     arr_salary_employees[employee.id] = {
+    #         "employee": employee,
+    #         "employee_id": employee.id,
+    #         "months": {},
+    #     }

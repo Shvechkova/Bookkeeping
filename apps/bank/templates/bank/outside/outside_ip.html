@@ -9,6 +9,19 @@
     <script src="{% static 'bank/js/oper_account_cell_width.js' %}"></script>
     <input type="hidden" id="page_name" value="{{ title }}" />
     {% include "bank/outside/includes/header_outside.html" %}
+
+
+    {{arr_in}}
+    {% comment %} {{arr_out}}
+    {{arr_real_diff}}
+    {{arr_in_out_all}}
+    {{arr_inside_all}}
+    {{arr_in_out_after_all}}
+    {{arr_summ_to_persent}}
+    {{arr_keep}}
+    {{arr_end_month}}
+    {{arr_start_month}} {% endcomment %}
+
     <div class="inside_wr">
         <div class="section_oper_wr outside_wr">
             <!-- Р/С на начало месяца -->
@@ -933,6 +946,7 @@
                 </div>
             </section>
         </div>
+        
         <div class="section_oper_wr outside_wr section_oper_wr_old">
             {% if old_oper_arr %}
                 {% for year, year_data in old_oper_arr.items %}

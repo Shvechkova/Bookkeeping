@@ -456,6 +456,9 @@ function getCurrentPrice(p) {
 }
 function getCurrentPriceJS(p) {
   console.log("getCurrentPriceJS(p)", p);
+  if (p === undefined || p === null || p === "") {
+    return 0;
+  }
   let price = p.replace(",", ".").replace(/(\d)\++/g, "$1").replace(/\s/g, '');
   price = Number(price);
   return price;
@@ -589,14 +592,15 @@ function ShrinkVert() {
           );
           console.log("dataShrinkDate", dataShrinkDate);
           const shrinkElem = document.querySelectorAll(`.${dataShrinkDate}`);
+          console.log("shrinkElem", shrinkElem);
           if (localStorage.getItem(dataShrinkDate)) {
             console.log(99999);
             console.log(shrinkElem);
             const page = document.querySelector("#page_name");
             let display = "block";
-            if (page || page.value == "salary") {
-              display = "flex";
-            }
+            // if (page || page.value == "salary") {
+            //   display = "flex";
+            // }
             console.log(display);
             shrinkElem.forEach((elementSr, i) => {
               elementSr.style.display = display;
@@ -605,6 +609,8 @@ function ShrinkVert() {
             element.style.transform = "rotate(" + 0 + "deg)";
             ShrinkHorizon2()
           } else {
+            console.log(11111)
+            console.log(shrinkElem)
             shrinkElem.forEach((elementSr, i) => {
               elementSr.style.display = "none";
             });

@@ -337,3 +337,18 @@ input[type="checkbox"].checkbox-persent:checked::after {
 .salary-old .percent-date {
   font-size: 0.5rem;
 }
+.dop_info_bonus{
+  display: flex;
+  flex-direction: row;
+  font-size: 0.75rem;
+  
+}
+.cell_bonus{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.persent_bonus_red{
+  color: red;
+}

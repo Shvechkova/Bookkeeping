@@ -118,14 +118,14 @@
                                                         
                                                     
                                                      {% if month_now_name == m and employee.operations_by_month|get_item:category.name|get_item:m|default:"0" == "0" %}
-                                                       333 <p class="salary_employee_item_sums_text oper-account-cell-zero">
+                                                        <p class="salary_employee_item_sums_text oper-account-cell-zero">
                                                             {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
                                                         </p>
                                                         <input type="text"
                                                                class="salary_employee_item_sums_inp"
                                                                value="{{ employee.categories_by_month|get_item:category.name|get_item:'prev_month_values'|get_item:m|default:'0' }}">
                                                     {% else %}
-                                                       5555 <p class="salary_employee_item_sums_text">
+                                                        <p class="salary_employee_item_sums_text">
                                                             {{ employee.categories_by_month|get_item:category.name|get_item:m|default:"0"|format_rub }} ₽
                                                         </p>
                                                         <input type="text"

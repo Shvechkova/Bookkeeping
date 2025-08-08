@@ -69,7 +69,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       form.append("bank_to", 5);
       const accountid = element.getAttribute("data-sub-categ-name");
       form.append("nalog", accountid);
-    } else if (pageName == "salary") {
+    } else if (pageName == "Зарплата") {
       const dataPeople = element.getAttribute("data-id-people");
       form.append("employee", +dataPeople);
       form.append("bank_to", 5);
@@ -260,6 +260,11 @@ if (salaryBtnPercent) {
   console.log("page_name", pageName);
   salaryBtnPercent.forEach((element) => {
     element.addEventListener("click", (event) => {
+      const checkPersentRate = document.querySelectorAll(".check-persent");
+
+      if (checkPersentRate) {
+        checkPersentRate(element)
+      }
       console.log(element);
       const elemValue = element.getAttribute("data-sum");
       const salary_inp = element.querySelector(
@@ -331,8 +336,8 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
     if (dataBetweenId != "") {
       form.append("category", categId);
     }
-    const dataSubcategName= element.getAttribute("data-sub-categ-name");
-    if(dataSubcategName == "employee"){
+    const dataSubcategName = element.getAttribute("data-sub-categ-name");
+    if (dataSubcategName == "employee") {
       const dataEmployee = element.getAttribute("data-id-people");
       form.append("employee", +dataEmployee);
       if (
@@ -349,7 +354,7 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
         method = "POST";
       }
     }
-    else{
+    else {
       if (
         (dataId != "") &
         (dataId != "None") &
@@ -364,8 +369,8 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
         method = "POST";
       }
     }
-    
-    
+
+
 
     let object = {};
     form.forEach((value, key) => (object[key] = value));
@@ -408,9 +413,16 @@ if (chakboxInp) {
       if (dataBank !== "NONE_OPERATION") {
         form.append("bank_in", +dataBank);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
-        form.append("between_bank", betweenId);
+        if (betweenId !== "None" && betweenId !== "" && betweenId !== "{}" && betweenId !== "0") {
+          console.log(element);
+          console.log(betweenId);
+          form.append("between_bank", betweenId);
+        } else {
+          const dataPeople = element.getAttribute("data-id-people");
+          form.append("employee", +dataPeople);
+          const accountid = element.getAttribute("data-sub-categ-name");
+          form.append("salary", accountid);
+        }
         const bank_to = element.getAttribute("data-bank-out");
         form.append("bank_to", bank_to);
 
@@ -475,4 +487,27 @@ if (chakboxInp) {
       }
     });
   });
+}
+
+
+// const checkPersentRate = document.querySelectorAll(".check-persent");
+
+// if(checkPersentRate){
+//   checkPersentRate(element)
+// }
+
+function checkPersentRate(element) {
+  const dataOperationMonth = element.getAttribute("data-operation-data-month");
+  const dataOperationSubcategId = element.getAttribute("data-sub-categ-id");
+  const parentSection = element.closest(".section_oper_wr");
+  const persentSummElem = parentSection
+    ? parentSection.querySelector(
+      `[data-month="${dataOperationMonth}"][data-sub-categ-name="${dataOperationSubcategId}"]`
+    )
+    : null;
+  const persentSumm = persentSummElem.getAttribute("data-persent-use");
+  console.log(persentSumm);
+  element.addEventListener("input", (event) => {
+
+  })
 }

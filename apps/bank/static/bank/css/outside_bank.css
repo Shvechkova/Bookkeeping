@@ -28,6 +28,15 @@
     background-color: rgb(232, 247, 231)!important;
     border-radius: 1.5625rem;
   }
+
+  .background-salary-employee{
+    background-color: rgb(238, 238, 238)!important;
+    border-radius: 1.5625rem;
+  }
+  .background-salary-total{
+    background-color: rgb(233, 210, 210)!important;
+    border-radius: 1.5625rem;
+  }
   
   
   .outside_wr{
@@ -146,4 +155,8 @@
   padding-right: 3rem;
   
   display: none;
+}
+
+.employee_data_wr{
+  gap: 2rem;
 }
