@@ -334,7 +334,7 @@
             <section class="oper_account background-bank-ooo">
                 <div class="">
                     <div class="oper-account-grid">
-                        data-sub-categ-id
+                       
                         <div class="oper-account-row oper-account-total">
                             <div class="oper-account-cell oper-account-num"></div>
                             <div class="oper-account-cell outside_name_title"></div>
@@ -381,6 +381,7 @@
                                                  data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                 <!-- операция с процентами-->
                                                 {% if month_data.percent %}
+                                                {{month_data.expected}}
                                                     {% if month_data.percent > 0 %}
                                                         {% if month_data.chek %}
                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>

@@ -313,10 +313,23 @@ def service_one(request, slug):
         .filter(month_bill__service=category_service.id)
         
     )
-    grouped = defaultdict(list)
-    for suborder in suborders:
-        grouped[suborder.category_employee.name].append(suborder)
-    
+    print(suborders)
+    if title_name == "ADV":
+        grouped = None
+        suborders_name_employee = None
+    else:
+        suborders_name_employee = suborders.values_list('category_employee__name', flat=True).distinct()
+        
+        
+        grouped=None
+        grouped = defaultdict(list)
+        total_suborders = defaultdict(list)
+        for suborder in suborders:
+            grouped[suborder.category_employee].append(suborder)
+            total_suborders[suborder.category_employee].append(suborder)
+        # for suborder in suborders:
+        #     grouped[suborder.category_employee.name].append(suborder)
+  
     print(2222222222222)
     import pymorphy3
 
@@ -461,7 +474,8 @@ def service_one(request, slug):
         platform = AdvPlatform.objects.all()
     else:
         platform = None
-    print(444444444)
+    print(platform)
+    print(suborders)
     context = {
         "title": title,
         "service": service,
@@ -472,7 +486,8 @@ def service_one(request, slug):
         "service_month_invoice": service_month_invoice_new,
         "platform": platform,
         "suborders": suborders,
-        'grouped_suborders' : grouped
+        'grouped_suborders' : grouped,
+        'suborders_name_employee': suborders_name_employee,
     }
     print(6666666666)
     return render(request, "service/service_one.html", context)

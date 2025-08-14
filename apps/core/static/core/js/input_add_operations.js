@@ -1,5 +1,8 @@
 replaceNamDot();
 const salaryBtn = document.querySelectorAll(".inp_operation");
+// Глобальная переменная для отслеживания активного элемента
+let globalActiveElement = null;
+
 if (salaryBtn) {
   console.log(salaryBtn);
   let old_elem;
@@ -21,7 +24,9 @@ if (salaryBtn) {
       salary_text.style.display = "None";
 
       if (old_elem != element || old_elem == undefined) {
+        // Деактивируем предыдущий элемент из этого блока
         if (old_elem != undefined) {
+          console.log("old_elem!!!!!!!!!!!!!!!!!!!!!!!!!");
           old_elem.classList.remove("salary_employee_item_sums_active");
           old_elem.readOnly = true;
           old_elem.value = old_elem.getAttribute("data-sum");
@@ -38,7 +43,14 @@ if (salaryBtn) {
           ).style.display = "none";
         }
 
+        // Деактивируем элемент из другого блока, если он активен
+        if (globalActiveElement && globalActiveElement !== element) {
+          deactivateElement(globalActiveElement);
+        }
+
+        console.log("2222222222!!!!!!!!!!!!!!!!!!!!!!!!!");
         old_elem = element;
+        globalActiveElement = element;
 
         element.classList.add("salary_employee_item_sums_active");
         element.readOnly = false;
@@ -251,6 +263,27 @@ function addSalaryOperation(element, btnAdd, pageName) {
   }
 }
 
+// Функция для деактивации элемента
+function deactivateElement(element) {
+  if (element.classList.contains("salary_employee_item_sums_active")) {
+    element.classList.remove("salary_employee_item_sums_active");
+    element.readOnly = true;
+    element.value = element.getAttribute("data-sum");
+    
+    const elemWrap = element.parentNode;
+    const btnAdd = elemWrap.querySelector(".btn_add_operation_salary");
+    if (btnAdd) {
+      btnAdd.classList.remove("btn_add_operation_salary_active");
+    }
+    
+    const salaryText = element.querySelector(".salary_employee_item_sums_text");
+    const salaryInp = element.querySelector(".salary_employee_item_sums_inp");
+    
+    if (salaryText) salaryText.style.display = "block";
+    if (salaryInp) salaryInp.style.display = "none";
+  }
+}
+
 const salaryBtnPercent = document.querySelectorAll(".inp_operation_percent");
 if (salaryBtnPercent) {
   console.log(salaryBtnPercent);
@@ -261,8 +294,8 @@ if (salaryBtnPercent) {
   salaryBtnPercent.forEach((element) => {
     element.addEventListener("click", (event) => {
       const checkPersentRate = document.querySelectorAll(".check-persent");
-
-      if (checkPersentRate) {
+      console.log("checkPersentRate", checkPersentRate);
+      if (checkPersentRate.length > 0) {
         checkPersentRate(element)
       }
       console.log(element);
@@ -278,6 +311,7 @@ if (salaryBtnPercent) {
       salary_text.style.display = "None";
 
       if (old_elem != element || old_elem == undefined) {
+        // Деактивируем предыдущий элемент из этого блока
         if (old_elem != undefined) {
           old_elem.classList.remove("salary_employee_item_sums_active");
           old_elem.readOnly = true;
@@ -295,7 +329,13 @@ if (salaryBtnPercent) {
           ).style.display = "none";
         }
 
+        // Деактивируем элемент из другого блока, если он активен
+        if (globalActiveElement && globalActiveElement !== element) {
+          deactivateElement(globalActiveElement);
+        }
+
         old_elem = element;
+        globalActiveElement = element;
 
         element.classList.add("salary_employee_item_sums_active");
         element.readOnly = false;

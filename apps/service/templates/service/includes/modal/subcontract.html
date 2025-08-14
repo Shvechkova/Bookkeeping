@@ -1,4 +1,5 @@
 <div id="modal-add-subcontract" class="modal">
+
   <div class="modal-wrapper">
     <div class="modal-items">
       <div class="modal_close modal_close_modal-add-subcontract">+</div>
@@ -21,12 +22,17 @@
         <div class="modal_contract">
           <div id="modal_contract_wrapper" class="modal_add_subcontract_wrapper">
             <div class="modal_add_contract modal_add-subcontract">
+              
               <select required class="modal-subcontract-type choice">
                 <option disabled selected class="modal-select empty" value="0">
                   Тип
                 </option>
-                <option class="modal-select" value="adv">площадка</option>
-                <option class="modal-select" value="other">премия</option>
+                
+                {% if title_name == "ADV" %}
+                  <option class="modal-select" value="adv">площадка</option>
+                {% endif %}
+                  <option class="modal-select" value="other">премия</option>
+                
               </select>
             </div>
           </div>

@@ -1014,7 +1014,14 @@ def fill_operations_arrays_ooo(
 
         # Добавляем месяцы
         for i, month in enumerate(months_current_year):
+            # month_name = MONTHS_RU[operation.data.month - 1]
+            # prev_month = (
+            #     MONTHS_RU[operation.data.month] if operation.data.month < 12 else None
+            # )
+            # is_prev_month = prev_month in months_current_year if prev_month else False
+
             month_number = month_numbers[month]
+           
             arr_out["total_category"]["total"][month] = {
                 "amount_month": 0,
                 "month_number": f"{month_number:02d}",
@@ -1065,6 +1072,7 @@ def fill_operations_arrays_ooo(
                     in_out["total"][month]["operation_percent_id"] = (
                         percent_obj["id"] if percent_obj else 0
                     )
+                    
 
                 elif in_out["name"] == "КВ 20% ЦРП 50%":
                     in_out["total"][month]["is_make_operations"] = True
@@ -1113,6 +1121,7 @@ def fill_operations_arrays_ooo(
                     in_out["total"][month]["between_id"] = (
                         between_id_for_arr_in_out_all["id"]
                     )
+                    in_out["total"][month]["expected"] = 0
 
             # второй блок доход расход
             for after_all in arr_in_out_after_all["category"]:
@@ -1542,6 +1551,8 @@ def fill_operations_arrays_ooo(
                                 "amount_month"
                             ] += operation.amount
                             item["total"][month_name]["operation_id"] = operation.id
+                            if is_prev_month:
+                                item["total"][prev_month]["expected"] += operation.amount
                     elif (
                         operation.between_bank.name
                         == "ВЫВОД ОСТАТКОВ НА ИП + НАЛОГИ ИП"
@@ -1577,6 +1588,9 @@ def fill_operations_arrays_ooo(
                             ] += operation.amount
                             item["total"][month_name]["operation_id"] = operation.id
                             item["total"][month_name]["chek"] = True
+                            if is_prev_month:
+                                item["total"][prev_month]["expected"] = item["total"][month_name]["percent"]
+                                
                     elif operation.between_bank.name == "КВ 20% ЦРП 50%":
                         name_to_find = "КВ 20% ЦРП 50%"
 
@@ -1594,6 +1608,9 @@ def fill_operations_arrays_ooo(
                             ] += operation.amount
                             item["total"][month_name]["operation_id"] = operation.id
                             item["total"][month_name]["chek"] = True
+                            if is_prev_month:
+                                item["total"][prev_month]["expected"] = item["total"][month_name]["percent"]
+                                
                 elif operation.bank_to == bank:
                     arr_in["total_category"]["total"][month_name][
                         "amount_month"

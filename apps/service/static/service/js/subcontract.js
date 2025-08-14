@@ -42,7 +42,7 @@ if (btnSubcontarct) {
         '<div class="modal_add_contract modal_add-subcontract"><select class="modal-subcontract-type choice"><option disabled selected class="modal-select empty" value="0">Тип</option><option class="modal-select" value="adv">площадка</option><option class="modal-select" value="other">премия</option></select></div>';
 
       // основные функции
-      getOldSumcintract(idBill, element, elem);
+      getOldSumcintract(idBill, element, elem,title);
       getInfoBill(element);
       createInputSubcontract(element, elem);
 
@@ -433,7 +433,8 @@ function addSubcontractFetch(idBill, elem) {
   });
 }
 // проверка получение страых субконтрактов- если нет обычное окно  отрисовка на фронте
-function getOldSumcintract(idBill, element, elem) {
+function getOldSumcintract(idBill, element, elem,title) {
+  console.log("title",title)
   preloaderModal((isLoading = true), (isLoaded = false));
 
   const endpoint = "/api/v1/subcontract/" + idBill + "/subcontract_li/";
@@ -475,8 +476,8 @@ function getOldSumcintract(idBill, element, elem) {
               c.append(modal_add_subcontract);
 
               preloaderModal((isLoading = false), (isLoaded = true));
-              
-              if (value.platform != null) {
+              const title = document.querySelector("#page_name").value;
+              if (value.platform != null && title == "1") {
                 modal_add_subcontract.innerHTML =
                   '<input type="text" readonly class="modal-subcontracts input-130" placeholder="adv" value="площадка" data-adv="adv">';
                 dataCategoryAdv.forEach((item) => {
@@ -615,7 +616,7 @@ function getOldSumcintract(idBill, element, elem) {
             modal_add_subcontract_select.className =
               "modal-subcontract-type choice";
             modal_add_subcontract.append(modal_add_subcontract_select);
-
+            
             new selectOption(
               "modal-select empty",
               0,
@@ -624,6 +625,7 @@ function getOldSumcintract(idBill, element, elem) {
               0,
               false
             ).appendTo(modal_add_subcontract_select);
+            if (title == "1") {
             new selectOption(
               "modal-select",
               "adv",
@@ -632,7 +634,7 @@ function getOldSumcintract(idBill, element, elem) {
               "selected",
               false
             ).appendTo(modal_add_subcontract_select);
-
+          }
             new selectOption(
               "modal-select ",
               "other",
