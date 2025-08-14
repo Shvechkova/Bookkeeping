@@ -5828,7 +5828,7 @@ def fill_operations_arrays_salary(
                 }
             elif category["name"] == "КВ $":
                 category["total"][month] = {
-                    "percent": True,
+                    "percent": 0,
                     "id_groupe": categ_percent_kv_nal["id"],
                     "between_id": categ_percent_kv_nal["category_between__bank_to"],
                     "is_make_operations": True,
@@ -5863,7 +5863,7 @@ def fill_operations_arrays_salary(
                 # )
             elif category["name"] == "КВ ИП":
                 category["total"][month] = {
-                    "percent": True,
+                    "percent": 0,
                     "id_groupe": categ_percent_kv_ip["id"],
                     "between_id": categ_percent_kv_ip["category_between__bank_to"],
                     "is_make_operations": True,
@@ -6004,8 +6004,8 @@ def fill_operations_arrays_salary(
                     else:
                         item["total"][month_name]["amount_month"] += operation.amount
                         item["total"][month_name]["operation_id"] = operation.id
-                        if is_prev_month:
-                            item["total"][prev_month]["expected"] += operation.amount
+                        # if is_prev_month:
+                        #     item["total"][prev_month]["expected"] = item["total"][month_name]["persent"]
                         
                         
                 if item and parent_data_salary:

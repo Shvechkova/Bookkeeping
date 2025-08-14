@@ -296,7 +296,7 @@ if (salaryBtnPercent) {
       const checkPersentRate = document.querySelectorAll(".check-persent");
       console.log("checkPersentRate", checkPersentRate);
       if (checkPersentRate.length > 0) {
-        checkPersentRate(element)
+        // checkPersentRate(element)
       }
       console.log(element);
       const elemValue = element.getAttribute("data-sum");

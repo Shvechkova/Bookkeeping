@@ -7,7 +7,7 @@
                   <a class="menu_service" href="{% url 'bank:oper_accaunt' %}">Оперсчет</a>
             {% endif %}
       </li>
-      <li class="header_nav-link">
+      {% comment %} <li class="header_nav-link">
             {% url 'bank:salary' as the_url %}
             {% if request.path == the_url %}
                   <span class="menu-active menu-active_service">ЗП</span>
@@ -22,13 +22,13 @@
             {% else %}
                   <a class="menu_service" href="{% url 'bank:salary_new' %}">ЗП Новый</a>
             {% endif %}
-      </li>
+      </li> {% endcomment %}
       <li class="header_nav-link">
             {% url 'bank:salary_new_2' as the_url %}
             {% if request.path == the_url %}
-                  <span class="menu-active menu-active_service">ЗП Новый 2</span>
+                  <span class="menu-active menu-active_service">ЗП</span>
             {% else %}
-                  <a class="menu_service" href="{% url 'bank:salary_new_2' %}">ЗП Новый 2</a>
+                  <a class="menu_service" href="{% url 'bank:salary_new_2' %}">ЗП</a>
             {% endif %}
       </li>
       <li class="header_nav-link">

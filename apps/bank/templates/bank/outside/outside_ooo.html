@@ -381,7 +381,6 @@
                                                  data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                 <!-- операция с процентами-->
                                                 {% if month_data.percent %}
-                                                {{month_data.expected}}
                                                     {% if month_data.percent > 0 %}
                                                         {% if month_data.chek %}
                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>

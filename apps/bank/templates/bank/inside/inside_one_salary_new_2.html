@@ -340,8 +340,11 @@
                                                                      data-prev-month="{{ month_data.expected|format_rub }}"
                                                                      data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                                     <!-- операция с процентами-->
+                                                                 
                                                                     {% if month_data.percent %}
+                                                                    
                                                                         {% if month_data.percent > 0 %}
+                                                                        
                                                                             <!-- Если фикс суммы был   -->
                                                                             {% if month_data.chek %}
                                                                                 <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>
@@ -352,11 +355,13 @@
                                                                                        value="{{ month_data.percent|format_rub }}">
                                                                             {% endif %}
                                                                         {% else %}
+                                                                        
                                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                             <input type="text"
                                                                                    class="salary_employee_item_sums_inp"
-                                                                                   value="{{ month_data.expected|format_rub }}">
+                                                                                   value="{{ month_data.expected|format_rub }}5555">
                                                                         {% endif %}
+                                                                        
                                                                         <!-- операция с суммами-->
                                                                     {% else %}
                                                                         {% if month_data.amount_month > 0 %}
