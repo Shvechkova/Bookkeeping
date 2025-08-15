@@ -18,9 +18,7 @@ def clear_bank_cache():
             cache_key = f"bank_{bank_id}_context_{year_now}"
             cache.delete(cache_key)
         
-        location = "clear_bank_cache"
-        info = f"Кеш банковских страниц сброшен для года {year_now}"
-        log_alert(location, info)
+        
     except Exception as e:
         location = "clear_bank_cache"
         info = f"Ошибка при сбросе кеша банковских страниц: {e}"

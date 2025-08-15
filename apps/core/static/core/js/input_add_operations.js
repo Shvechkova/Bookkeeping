@@ -245,6 +245,10 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (response.ok === true) {
         location.reload();
       } else {
+        const errorModal = document.getElementById("modal-error");
+        errorModal.classList.add("modal-active");
+        const error_modal_text = errorModal.querySelector(".error_modal_text");
+        error_modal_text.textContent = "Ошибка при сохранении операции - " + response.status + " " + response.detail;
         // location.reload();
       }
     });

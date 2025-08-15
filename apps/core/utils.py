@@ -5982,7 +5982,7 @@ def fill_operations_arrays_salary(
                 item = None
                 parent_data_salary = None
                 for data_salary in employee_data["data_salary"]:
-                    print(data_salary,"data_salary")
+                   
                     for x in data_salary["category"]:
                         if x["name"] == name_to_find:
                             item = x
@@ -5992,20 +5992,20 @@ def fill_operations_arrays_salary(
                         break
 
                 if item:
-                    print(item["name"], "item")
+                   
                     if item["name"]== "КВ $" or item["name"] == "КВ ИП" or item["name"] == "квартальная премия":
-                        print(item,"item[total]")
+                      
                         item["total"][month_name][
                                     "amount_month_chek"
                                 ] += operation.amount
                         item["total"][month_name]["operation_id"] = operation.id
                         item["total"][month_name]["chek"] = True
+                        
             
                     else:
                         item["total"][month_name]["amount_month"] += operation.amount
                         item["total"][month_name]["operation_id"] = operation.id
-                        # if is_prev_month:
-                        #     item["total"][prev_month]["expected"] = item["total"][month_name]["persent"]
+                        
                         
                         
                 if item and parent_data_salary:
@@ -6077,13 +6077,21 @@ def fill_operations_arrays_salary(
             if month_name in months_current_year:
                 months_ordered.append(month_name)
 
-        # Рассчитываем накопительные остатки долга
+        # Рассчитываем 
         for i, month in enumerate(months_ordered):
             # Получаем предыдущий месяц (если это не первый месяц)
             prev_month = None
+            next_month = None
+            is_prev_month = False
+            is_next_month = False
             if i > 0:
                 prev_month = months_ordered[i - 1]
-
+                is_prev_month = True
+            if i < len(months_ordered) - 1:
+                next_month = months_ordered[i + 1]
+                is_next_month = True
+                
+            # Рассчитываем накопительные остатки долга
             # Получаем остаток предыдущего месяца
             prev_balance = debt_balances.get(prev_month, 0) if prev_month else 0
 
@@ -6138,7 +6146,7 @@ def fill_operations_arrays_salary(
             ] += current_balance
           
             # РАСЧЕТ ПРЕМИЙ СОТРУДНИКА
-          
+        #   КВ ИП10
             percent_obj = next(
             (
                 item
@@ -6152,16 +6160,21 @@ def fill_operations_arrays_salary(
             None,
         )
             if percent_obj:
+                print(percent_obj,"percent_obj")
+                print(month,"month")
+                 
                 
                 arr_total_bonus["category"][1]["total"][month]["persent_bonus"] += percent_obj["percent"]
                 
-                employee_data["data_salary"][3]["category"][1]["total"][month]["bank_in"] = categ_percent_kv_nal["bank"]
+                employee_data["data_salary"][3]["category"][1]["total"][month]["bank_in"] = categ_percent_kv_ip["bank"]
                 employee_data["data_salary"][3]["category"][1]["total"][month]["percent"] = (
                     percent_obj["percent"] if percent_obj else 0
                 )
                 employee_data["data_salary"][3]["category"][1]["total"][month]["operation_percent_id"] = (
                             percent_obj["id"] if percent_obj else 0
                         )
+                if is_next_month and next_month:
+                    employee_data["data_salary"][3]["category"][1]["total"][next_month]["expected"] = employee_data["data_salary"][3]["category"][1]["total"][month]["percent"]
                 
                 # sum_kv_ip = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
                 # employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_ip
@@ -6173,8 +6186,174 @@ def fill_operations_arrays_salary(
                     sum_kv_ip_to_front = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
                 employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_ip_to_front
                 
+                # РАСЧЕТ ПРЕМИЙ СОТРУДНИКА
+        #   КВ ИП10
+            percent_obj = next(
+            (
+                item
+                for item in categ_emploue_percent_list
+
+                if item["category_id"] == categ_percent_kv_nal["id"]
+                and item["data"].month == MONTHS_RU.index(month) + 1
+                and item["data"].year == year
+                and item["employee_id"] == employee_id
+            ),
+            None,
+        )
+            if percent_obj:
+                print(percent_obj,"percent_obj")
+                print(month,"month")
+                 
                 
+                arr_total_bonus["category"][1]["total"][month]["persent_bonus"] += percent_obj["percent"]
+                
+                employee_data["data_salary"][3]["category"][0]["total"][month]["bank_in"] = categ_percent_kv_nal["bank"]
+                employee_data["data_salary"][3]["category"][0]["total"][month]["percent"] = (
+                    percent_obj["percent"] if percent_obj else 0
+                )
+                employee_data["data_salary"][3]["category"][0]["total"][month]["operation_percent_id"] = (
+                            percent_obj["id"] if percent_obj else 0
+                        )
+                if is_next_month and next_month:
+                    employee_data["data_salary"][3]["category"][0]["total"][next_month]["expected"] = employee_data["data_salary"][3]["category"][1]["total"][month]["percent"]
+                
+                # sum_kv_ip = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
+                # employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_ip
+                
+                if employee_data["data_salary"][3]["category"][0]["total"][month]["chek"] == True:
+                    sum_kv_nal_to_front = employee_data["data_salary"][3]["category"][0]["total"][month]["amount_month_chek"]
+                    arr_total_bonus["category"][0]["total"][month]["summ_bonus"] += sum_kv_nal_to_front
+                else:
+                    sum_kv_nal_to_front = (arr_total_bonus["category"][1]["total"][month]["amount_month"] / 100 )* percent_obj["percent"]
+                employee_data["data_salary"][3]["category"][1]["total"][month]["amount_month"] = sum_kv_nal_to_front
+                
+                
+
 
     
 
     return (arr_employee, arr_total_salary, arr_total_bonus)
+
+
+def fill_operations_storage_servise( arr_service,
+        year_now,
+        months_current_year,
+        month_numbers,
+        operations,
+    ):
+    # ЗАПОЛНЕНИЕ МАССИВОВ ДАННЫМИ
+
+    
+    for i, month in enumerate(months_current_year):
+        month_number = month_numbers[month]
+
+        arr_service["category"][0]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+            "history_comment": [],
+        }
+
+    # распределение операций
+    for operation in operations:
+        month_name = MONTHS_RU[operation.data.month - 1]
+
+        if operation.monthly_bill and operation.suborder is None:
+            # поступления по договорам услуг
+            arr_service["category"][0]["total"][month_name][
+                "amount_month"
+            ] += operation.amount
+            h_c = f"Клиент {operation.monthly_bill.client.name} дата {operation.data} сумма {operation.amount} ₽"
+            arr_service["category"][0]["total"][month_name]["history_comment"].append(h_c)
+
+    return arr_service
+
+
+def fill_operations_storage_servise_client(
+        client_adv,
+        year_now,
+        months_current_year,
+        month_numbers,
+        operations,
+        adv_service,
+        bank,
+    ):
+    # ЗАПОЛНЕНИЕ МАССИВОВ ДАННЫМИ
+    
+    arr_client = {
+        "client": client_adv,
+        "contract": 0,
+        "total_category_start": {
+            "name": "на начало месяца",
+            "total": {},
+        },
+        "total_category_last": {
+            "name": "на конец месяца",
+            "total": {},
+        },
+        "category": [
+             {
+                "name": "Приход",
+                "total": {},
+            },
+            {
+                "name": "Расход",
+                "total": {},
+            },
+        ]
+       
+    } 
+    
+    arr_clients_all = []
+    
+    for i, month in enumerate(months_current_year):
+        month_number = month_numbers[month]
+
+        arr_client["category"][0]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+            "history_comment": [],
+        }
+        arr_client["category"][1]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+            "history_comment": [],
+            "is_make_operations": True,
+            "bank_out": 4,
+            "date_start": datetime.datetime(
+                    year_now, MONTHS_RU.index(month) + 1, 1
+                ),
+            "operation_id": 0,
+            
+        }
+        arr_client["total_category_last"]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+        }
+        arr_client["total_category_start"]["total"][month] = {
+            "amount_month": 0,
+            "month_number": MONTHS_RU.index(month) + 1,
+             
+        }
+    
+    for client in client_adv:
+        # Копируем существующую структуру arr_client
+        arr_client_copy = copy.deepcopy(arr_client)
+        
+        # Заменяем client на текущего клиента
+        arr_client_copy["client"] = client
+        arr_client_copy["contract"] = arr_client_copy["contract"] = client.contract_set.filter(service=adv_service)
+        # Добавляем копию в общий массив
+        arr_clients_all.append(arr_client_copy)
+
+    print(arr_clients_all,"arr_clients_all")
+    # распределение операций
+    for operation in operations:
+        month_name = MONTHS_RU[operation.data.month - 1]
+        client_id = operation.employee.id
+       
+        if operation.employee.id == client_id and operation.bank == bank:
+            print(operation,"operation")
+        
+            
+            
+    return arr_clients_all

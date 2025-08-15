@@ -2,11 +2,13 @@
 .oper_account,
 .oper_account_old {
   margin-top: 1.875rem;
+  overflow: visible;
 }
 
 .category-block,
 .year-block {
   margin-bottom: 2rem;
+  overflow: visible;
 }
 .category-block:last-child,
 .year-block:last-child {
@@ -24,6 +26,7 @@
   flex-direction: column;
   gap: 0;
   width: 100%;
+  overflow: visible;
 }
 
 .oper-account-row {
@@ -31,6 +34,7 @@
   align-items: center;
   min-height: 2.5rem;
   width: 100%;
+  overflow: visible;
 }
 
 .oper-account-header {
@@ -75,6 +79,85 @@
   flex-shrink: 0;
   text-align: left;
   font-weight: 400;
+  position: relative;
+  overflow: visible;
+}
+
+/* Стили для комментариев в storage */
+.comment_storage {
+  position: relative;
+  z-index: 1000;
+}
+
+.comment_storage .comment_operation {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #fff;
+  border-radius: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  cursor: pointer;
+  left: 110%;
+  top: -30px;
+  z-index: 2000;
+}
+
+.comment_storage .comment_operation_hidden_wrap {
+  background: #f1f1f1;
+  border-radius: 1.5625rem;
+  padding: 1.25rem 1.25rem 0.625rem 1.25rem;
+  z-index: 2001;
+  position: absolute;
+  left: 110%;
+  top: 100%;
+  display: none;
+  width: max-content;
+  height: max-content;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.comment_storage .comment_operation:hover {
+  background: #169e00;
+}
+
+.comment_storage .comment_operation:hover + .comment_operation_hidden_wrap {
+  display: block;
+}
+
+.comment_storage .comment_operation_hidden {
+  margin-bottom: 0.625rem;
+}
+
+.comment_storage .comment_operation_hidden:last-child {
+  margin-bottom: 0;
+}
+
+.comment_storage .previous_operation_comment {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Дополнительные стили для корректного отображения комментариев */
+section.oper_account {
+  overflow: visible !important;
+}
+
+.oper-account-cell {
+  overflow: visible !important;
+}
+
+/* Принудительное отображение комментариев при hover */
+.comment_storage:hover .comment_operation_hidden_wrap {
+  display: block !important;
 }
 
 .oper-account-total {
@@ -230,4 +313,8 @@
 .nalog_wr_old_year_line{
   gap: 3.125rem;
   display: flex;
+}
+
+.client_storage_wr{
+  margin-bottom: 1.25rem;
 }

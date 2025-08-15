@@ -8,6 +8,24 @@
     <script src="{% static 'bank/js/oper_account_cell_width.js' %}"></script>
     <input type="hidden" id="page_name" value="{{ title }}" />
     {% include "bank/storage/includes/header_storage.html" %}
+    <ul class="header_nav">
+        <li class="header_nav-link">
+            {% url 'bank:storage_servise' as the_url %}
+            {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">По месяцам</span>
+            {% else %}
+                <a class="menu_service" href="{% url 'bank:storage_servise' %}">По месяцам</a>
+            {% endif %}
+        </li>
+        <li class="header_nav-link">
+            {% url 'bank:storage_servise_client' as the_url %}
+            {% if request.path == the_url %}
+                <span class="menu-active menu-active_service">По клиентам</span>
+            {% else %}
+                <a class="menu_service" href="{% url 'bank:storage_servise_client' %}">По клиентам</a>
+            {% endif %}
+        </li>
+    </ul>
     <section class="oper_account">
         <div class="category-block">
             <div class="oper-account-grid">
@@ -79,6 +97,19 @@
                                             <p>{{ month_data.amount_month|format_rub }} ₽</p>
                                         {% else %}
                                             <p>{{ month_data.amount_month|format_rub }} ₽</p>
+                                        {% endif %}
+                                        {% if month_data.history_comment %}
+                                            <div class="comment_storage">
+                                                <div class="comment_operation">?</div>
+                                                <div class="comment_operation_hidden_wrap">
+                                                    {% for comm in month_data.history_comment %}
+                                                        <div class="comment_operation_hidden">
+                                                            {% comment %} <div class="previous_operation_title">{{ operation.created_timestamp|date:'j E Y' }} - {{ operation.amount }} ₽</div> {% endcomment %}
+                                                            <div class="previous_operation_comment">{{ comm }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
                                         {% endif %}
                                     </div>
                                 </div>

@@ -18,7 +18,7 @@ urlpatterns = [
     path("inside/", views.inside, name="inside"),
     path("inside/oper_accaunt/", views.oper_accaunt, name="oper_accaunt"),
     path("inside/salary/", views.salary, name="salary"),
-    path("inside/salary_new/", views.salary_new, name="salary_new"),
+    
     path("inside/nalog/", views.nalog, name="nalog"),
     path("inside/salary_new_2/", views.salary_new_2, name="salary_new_2"),
     
@@ -32,6 +32,7 @@ urlpatterns = [
     path("storage/banking", views.storage_banking, name="storage_banking"),
     path("storage/bonus", views.storage_bonus, name="storage_bonus"),
     path("storage/servise", views.storage_servise, name="storage_servise"),
+    path("storage/servise_client", views.storage_servise_client, name="storage_servise_client"),
     
     # path("<slug:slug>/", views.service_one, name="service_one"),
 ]   

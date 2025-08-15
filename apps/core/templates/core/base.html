@@ -28,9 +28,11 @@
       </svg>
     </div>
     <div class="wrapper">
+      {% include "core/includes/error_modal.html" %}
       {% include "core/includes/header_menu.html" %}
       <main class="main">
         {% block content %}
+        
         {% endblock content %}
       </main>
       <footer class="footer">

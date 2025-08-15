@@ -17,7 +17,8 @@
     </li> {% endcomment %}
     <li class="header_nav-link">
           {% url 'bank:storage_servise' as the_url %}
-          {% if request.path == the_url %}
+          {% url 'bank:storage_servise_client' as the_url_client %}
+          {% if request.path == the_url or request.path == the_url_client %}
                 <span class="menu-active menu-active_service">Остатки рекламных бюджетов</span>
           {% else %}
                 <a class="menu_service" href="{% url 'bank:storage_servise' %}">Остатки рекламных бюджетов</a>

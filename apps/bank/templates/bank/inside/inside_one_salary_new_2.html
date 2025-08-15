@@ -340,7 +340,8 @@
                                                                      data-prev-month="{{ month_data.expected|format_rub }}"
                                                                      data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                                     <!-- операция с процентами-->
-                                                                 
+                                                                
+                                                                    {{ month_data.expected }}
                                                                     {% if month_data.percent %}
                                                                     
                                                                         {% if month_data.percent > 0 %}
