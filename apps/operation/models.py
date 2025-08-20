@@ -9,6 +9,7 @@ from apps.service.models import ServicesClientMonthlyInvoice, SubcontractMonth, 
 
 # Create your models here.
 class Operation(models.Model):
+   
     created_timestamp = models.DateTimeField(
         default=timezone.now, verbose_name="Дата добавления"
     )

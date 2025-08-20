@@ -215,16 +215,18 @@
 .oper_account_nalog{
   display: flex;
   flex-direction: column;
-  gap: 50px;
   
+}
+.oper_account_nalog_total_year > :first-child {
+  margin-right: 3.125rem;
 }
 
 .category-block {
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
 }
 
 .category-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
  
 }
@@ -241,7 +243,7 @@
 .oper-account-row {
   display: flex;
   align-items: stretch;
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 .oper-account-header {
@@ -256,8 +258,8 @@
   align-items: center;
   /* padding: 0 12px; */
   /* border-right: 1px solid #eaeaea; */
-  font-size: 15px;
-  min-width: 110px;
+  font-size: 0.9375rem;
+  min-width: 6.875rem;
   justify-content: flex-start;
 }
 
@@ -266,13 +268,13 @@
 }
 
 .oper-account-num {
-  min-width: 40px;
+  min-width: 2.5rem;
   justify-content: flex-start;
   /* color: #888; */
 }
 
 .oper-account-service {
-  min-width: 180px;
+  min-width: 11.25rem;
   justify-content: flex-start;
   font-weight: 500;
 }
@@ -400,7 +402,7 @@
 }
 
 .stiky-position2 {
-  top: 43px;
+  top: 2.6875rem;
   position: sticky;
   z-index: 100;
   /* background-color: white; */
@@ -408,9 +410,9 @@
 .salary-header-old-year{
   /* margin-left: -10px;
   padding-left: 10px; */
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  border-radius: 25px;
+  border-top-left-radius: 1.5625rem;
+  border-top-right-radius: 1.5625rem;
+  border-radius: 1.5625rem;
 }
 .bg-need-spase{
    margin-top: -3.75rem!important;
@@ -427,7 +429,7 @@
 }
 
 .employee-total-year, .category-total-year {
-  font-size: 0.9em;
+  font-size: 0.9rem;
   color: #666;
   margin-left: 0.5rem;
 }
@@ -445,10 +447,17 @@ cursor: pointer;
   display: flex;
 }
 .section_oper_wr_year_title{
-  top: -10px;
+  top: -0.625rem;
   position: absolute;
 }
 
 .fw-700{
   font-weight: 700!important;
+}
+
+.mb_20px{
+  margin-bottom: 2.5rem;
+}
+.mb_10px{
+  margin-bottom: 1.25rem;
 }

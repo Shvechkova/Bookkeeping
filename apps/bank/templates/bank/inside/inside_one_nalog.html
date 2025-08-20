@@ -4,6 +4,11 @@
 {% block content %}
     <link rel="stylesheet"
           href="{% static 'bank/css/inside_one_oper_accaunt.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'bank/css/inside_one_nalog.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'bank/css/outside_bank.css' %}">
+          
     <input type="hidden" id="page_name" value="{{ title }}" />
     {% include "bank/inside/includes/header_inside.html" %}
     {% comment %} <div class="oper_account_sort_wrap">
@@ -15,7 +20,7 @@
         <section class="section_oper_wr section_oper_wr_culumn nalog_wr">
             <section class="oper_account oper_account_nalog">
                 {% for bank_type, bank_data in operations_by_category.items %}
-                    <section class="">
+                    <section {% if bank_type == "OOO" %}class="background-bank-ooo mb_20px" {% elif bank_type == "ИП" %}class="background-bank-ip mb_10px" {% endif %}>
                         {% if bank_type == "OOO" %}
                             <div class="">
                                 <div class="oper-account-grid">
@@ -43,7 +48,7 @@
                                     </div>
                                 </div>
                                 {% for category in section_data.category %}
-                                    <div class="category-block">
+                                    <div class="category-block category-block_non_mg category-block category-block_non_mg_non_mg">
                                         <div class="oper-account-grid">
                                             <div class="oper-account-row">
                                                 <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
@@ -78,7 +83,7 @@
                                     </div>
                                 {% endfor %}
                                 <!-- Итого по секции -->
-                                <div class="category-block">
+                                <div class="category-block c">
                                     <div class="oper-account-grid">
                                         <div class="oper-account-row oper-account-total">
                                             <div class="oper-account-cell oper-account-num"></div>
@@ -93,7 +98,7 @@
                                 </div>
                             {% endfor %}
                             <!-- Общий итог по ООО -->
-                            <div class="category-block">
+                            <div class="category-block category-block_non_mg">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-num"></div>
@@ -119,7 +124,7 @@
                                 </div>
                             </div>
                             {% for category in bank_data.category %}
-                                <div class="category-block">
+                                <div class="category-block category-block_non_mg">
                                     <div class="oper-account-grid">
                                         <div class="oper-account-row">
                                             <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
@@ -154,7 +159,7 @@
                                 </div>
                             {% endfor %}
                             <!-- Итого по ИП -->
-                            <div class="category-block">
+                            <div class="category-block category-block_non_mg">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-num"></div>
@@ -186,7 +191,7 @@
                 </div>
             </section>
         </section>
-        <!-- Старые операции -->
+        {% comment %} <!-- Старые операции -->
         <section class="nalog_wr_old ">
             <!-- Сначала отображаем все данные по ООО -->
             <div class="nalog_wr_old_year_line">
@@ -226,13 +231,12 @@
                             {% for section_name, section_data in year_data.sections.items %}
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-header">
-                                        <div class="oper-account-cell oper-account-service oper-account-service-min-nalog">
-                                            {% comment %} <h3>{{ section_data.name }}</h3> {% endcomment %}
+                                        <div class="oper-account-cell oper-account-service oper-account-service-min-nalog"> 
                                         </div>
                                     </div>
                                 </div>
                                 {% for category in section_data.category %}
-                                    <div class="category-block">
+                                    <div class="category-block category-block_non_mg">
                                         <div class="oper-account-grid">
                                             <div class="oper-account-row">
                                                 <div class="oper-account-cell oper-account-service oper-account-service-min-nalog font-bold">
@@ -267,7 +271,7 @@
                                     </div>
                                 {% endfor %}
                                 <!-- Итого по секции -->
-                                <div class="category-block">
+                                <div class="category-block category-block_non_mg">
                                     <div class="oper-account-grid">
                                         <div class="oper-account-row oper-account-total">
                                             <div class="oper-account-cell oper-account-service oper-account-service-min-nalog">
@@ -285,7 +289,7 @@
                                 </div>
                             {% endfor %}
                             <!-- Итого по ООО за год -->
-                            <div class="category-block">
+                            <div class="category-block category-block_non_mg">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-service oper-account-service-min-nalog">
@@ -342,7 +346,7 @@
                                 </div>
                             </div>
                             {% for category in year_data.category %}
-                                <div class="category-block">
+                                <div class="category-block category-block_non_mg">
                                     <div class="oper-account-grid">
                                         <div class="oper-account-row">
                                             <div class="oper-account-cell oper-account-service oper-account-service-min-nalog font-bold">
@@ -377,7 +381,7 @@
                                 </div>
                             {% endfor %}
                             <!-- Итого по ИП за год -->
-                            <div class="category-block">
+                            <div class="category-block category-block_non_mg">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-service oper-account-service-min-nalog">
@@ -402,7 +406,7 @@
                 {% for year, year_data in nalog_wr_old.items %}
                     <div class="oper-account-grid">
                         <div class="oper-account-row oper-account-total">
-                            {% comment %} <div class="oper-account-cell oper-account-service">{{ year_data.full_year_total|format_rub }} ₽</div> {% endcomment %}
+                            
                             <div class="oper-account-cell oper-account-service oper-account-service-min-nalog">
                                 <span style="white-space: nowrap;">{{ year_data.full_year_total|format_rub }} ₽</span>
                                 <span style=" opacity: 0">Итого ИП</span>
@@ -417,6 +421,6 @@
                     </div>
                 {% endfor %}
             </section>
-        </section>
+        </section> {% endcomment %}
     </div>
 {% endblock %}

@@ -367,6 +367,7 @@
                                                        data-operation-old-id="{{ month_data.operation_id }}"
                                                        data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                             {% endif %}
+                                            
                                             <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}"
                                                  data-bank-in="{{ bank }}"
                                                  data-bank-out="{{ month_data.bank_out }}"
@@ -376,11 +377,12 @@
                                                  data-sub-categ-id="{{ month_data.id_groupe }}"
                                                  data-operation-data-month="{{ month_data.date_start|date:'m' }}"
                                                  data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
-                                                 data-operation-old-id="{{ month_data.operation_percent_id|default:'0' }}"
+                                                 data-operation-old-id="{% if month_data.type_operations == "percent" %} {{ month_data.operation_percent_id|default:'0' }}  {% else %} {{ month_data.operation_id|default:'0' }}  {% endif %}"
                                                  data-prev-month="{{ month_data.expected|format_rub }}"
                                                  data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                 <!-- операция с процентами-->
                                                 {% if month_data.percent %}
+                                                
                                                     {% if month_data.percent > 0 %}
                                                         {% if month_data.chek %}
                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>
@@ -399,6 +401,7 @@
                                                     <!-- операция с суммами-->
                                                 {% else %}
                                                     {% if month_data.amount_month > 0 %}
+                                                    
                                                         <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                         <input type="text"
                                                                class="salary_employee_item_sums_inp"

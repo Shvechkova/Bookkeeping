@@ -37,6 +37,10 @@
     background-color: rgb(233, 210, 210)!important;
     border-radius: 1.5625rem;
   }
+  .background-bank-storage-bonus{
+    background-color: rgb(194, 224, 248)!important;
+    border-radius: 1.5625rem;
+  }
   
   
   .outside_wr{
@@ -159,4 +163,12 @@
 
 .employee_data_wr{
   gap: 2rem;
+}
+
+.fw700{
+  font-weight: 700 !important;
+}
+
+.fw700 * {
+  font-weight: 700 !important;
 }

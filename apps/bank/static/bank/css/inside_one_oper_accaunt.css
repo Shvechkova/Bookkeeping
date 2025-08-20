@@ -212,7 +212,7 @@ section.oper_account {
 .oper_account_old {
   /* background: #f5f5f7; */
 }
-.oper_account_nalog_total_year{
+.oper_account_nalog_total_year {
   display: flex;
   gap: 3.125rem;
 }

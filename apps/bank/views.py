@@ -1,6 +1,8 @@
 import datetime
+from django.contrib.auth.models import AnonymousUser
 import logging
 from django.db.models.functions import ExtractMonth
+from django.test import RequestFactory
 from apps.client.models import Client
 from apps.core.utils import (
     create_month_categ_persent,
@@ -373,13 +375,13 @@ def oper_accaunt(request):
 def salary(request):
     """
     Функция для отображения страницы зарплат сотрудников.
-    
+
     Обрабатывает данные о зарплатах за текущий и предыдущие годы,
     группирует операции по категориям и месяцам, рассчитывает итоги.
-    
+
     Args:
         request: HTTP запрос
-        
+
     Returns:
         HttpResponse: Рендеринг шаблона с данными о зарплатах
     """
@@ -410,11 +412,7 @@ def salary(request):
     else:
         q_object &= Q(date_end__isnull=True)
         q_object |= Q(date_end__year=year_now_st)
-        
-        
-    
-            
-    
+
     # Получаем активных сотрудников с оптимизацией запросов
     employee_now_year = Employee.objects.filter(q_object).select_related()
 
@@ -452,9 +450,9 @@ def salary(request):
         "КВ $",
         "КВ ИП",
     ]
-    categ_percents = CategForPercentGroupBank.objects.filter(
-         name__in=names
-    ).values("id", "name", "bank", "category_between", "category_between__bank_to")
+    categ_percents = CategForPercentGroupBank.objects.filter(name__in=names).values(
+        "id", "name", "bank", "category_between", "category_between__bank_to"
+    )
     categ_percent_by_name = {item["name"]: item for item in categ_percents}
 
     # Получаем данные о процентах по категориям
@@ -466,47 +464,38 @@ def salary(request):
         .values("id", "category", "data", "percent", "category_id")
     )
     categ_percent_list = list(categ_percent_value)
-    
+
     # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
     percent_employee_data = (
         PercentEmployee.objects.filter(
-            category__name__in=["КВ $", "КВ ИП"],
-            data__year=year_now
+            category__name__in=["КВ $", "КВ ИП"], data__year=year_now
         )
         .select_related("category", "employee")
         .annotate(month=ExtractMonth("data"))
         .values("id", "category__name", "employee_id", "data", "percent", "month")
     )
-    
+
     # Группируем данные по сотрудникам и месяцам
     employee_percent_by_month = {}
     for item in percent_employee_data:
         employee_id = item["employee_id"]
         month = item["month"]
         category_name = item["category__name"]
-        
+
         if employee_id not in employee_percent_by_month:
             employee_percent_by_month[employee_id] = {}
-        
+
         if month not in employee_percent_by_month[employee_id]:
             employee_percent_by_month[employee_id][month] = {}
-        
+
         employee_percent_by_month[employee_id][month][category_name] = {
             "percent": item["percent"],
-            "data": item["data"]
+            "data": item["data"],
         }
-    
-    categ_percent_kv_nal = categ_percent_by_name.get(
-        "КВ $"
-    )
-    categ_percent_kv_ip = categ_percent_by_name.get(
-        "КВ ИП"
-    )
 
-   
+    categ_percent_kv_nal = categ_percent_by_name.get("КВ $")
+    categ_percent_kv_ip = categ_percent_by_name.get("КВ ИП")
 
-    
-    
     # Получаем операции с оптимизацией запросов
     operations = (
         Operation.objects.filter(
@@ -751,7 +740,7 @@ def salary(request):
                     bank_in = salary_groups_bank.get(category)
                     cat_in = cat_name_id.get(category)
 
-                                    # Добавляем параметр persent для категорий КВ $ и КВ ИП
+                    # Добавляем параметр persent для категорий КВ $ и КВ ИП
                 category_data = {
                     "name": category,
                     "name_id": cat_in,
@@ -759,39 +748,56 @@ def salary(request):
                     "bank_in": bank_in,
                     "total_year": cat_total,
                 }
-                
+
                 # Добавляем persent = True для категорий КВ $ и КВ ИП
                 if category in ["КВ $", "КВ ИП"]:
-                        category_data["persent"] = True
-                        category_data["is_make_operations"] = True
-                      
-                        if category == "КВ $":
-                            category_data["id_groupe"] = categ_percent_kv_nal["id"]
-                            category_data["between_id"] = categ_percent_kv_nal["category_between__bank_to"]
-                        elif category == "КВ ИП":
-                            category_data["id_groupe"] = categ_percent_kv_ip["id"]
-                            category_data["between_id"] = categ_percent_kv_ip["category_between__bank_to"]
-                        
-                        # Добавляем ежемесячные данные о процентах для сотрудника
-                        category_data["monthly_percents"] = {}
-                        for month_idx, month in enumerate(MONTHS_RU):
-                            month_number = month_idx + 1
-                            if employee_data["employee_id"] in employee_percent_by_month and month_number in employee_percent_by_month[employee_data["employee_id"]]:
-                                if category in employee_percent_by_month[employee_data["employee_id"]][month_number]:
-                                    category_data["monthly_percents"][month] = {
-                                        "percent": employee_percent_by_month[employee_data["employee_id"]][month_number][category]["percent"],
-                                        "data": employee_percent_by_month[employee_data["employee_id"]][month_number][category]["data"]
-                                    }
-                                else:
-                                    category_data["monthly_percents"][month] = None
+                    category_data["persent"] = True
+                    category_data["is_make_operations"] = True
+
+                    if category == "КВ $":
+                        category_data["id_groupe"] = categ_percent_kv_nal["id"]
+                        category_data["between_id"] = categ_percent_kv_nal[
+                            "category_between__bank_to"
+                        ]
+                    elif category == "КВ ИП":
+                        category_data["id_groupe"] = categ_percent_kv_ip["id"]
+                        category_data["between_id"] = categ_percent_kv_ip[
+                            "category_between__bank_to"
+                        ]
+
+                    # Добавляем ежемесячные данные о процентах для сотрудника
+                    category_data["monthly_percents"] = {}
+                    for month_idx, month in enumerate(MONTHS_RU):
+                        month_number = month_idx + 1
+                        if (
+                            employee_data["employee_id"] in employee_percent_by_month
+                            and month_number
+                            in employee_percent_by_month[employee_data["employee_id"]]
+                        ):
+                            if (
+                                category
+                                in employee_percent_by_month[
+                                    employee_data["employee_id"]
+                                ][month_number]
+                            ):
+                                category_data["monthly_percents"][month] = {
+                                    "percent": employee_percent_by_month[
+                                        employee_data["employee_id"]
+                                    ][month_number][category]["percent"],
+                                    "data": employee_percent_by_month[
+                                        employee_data["employee_id"]
+                                    ][month_number][category]["data"],
+                                }
                             else:
                                 category_data["monthly_percents"][month] = None
+                        else:
+                            category_data["monthly_percents"][month] = None
                 else:
                     category_data["persent"] = False
                     category_data["is_make_operations"] = False
                     category_data["between_id"] = None
                     category_data["id_groupe"] = None
-                    
+
                     group_info["categories"].append(category_data)
 
                     # Обновляем totals_by_month для группы
@@ -1131,39 +1137,56 @@ def salary(request):
                     "amount": cat_total,
                     "bank_in": bank_in,
                 }
-                
+
                 # Добавляем persent = True для категорий КВ $ и КВ ИП
                 if category in ["КВ $", "КВ ИП"]:
-                        category_data["persent"] = True
-                        category_data["is_make_operations"] = True
-                     
-                        if category == "КВ $":
-                            category_data["id_groupe"] = categ_percent_kv_nal["id"]
-                            category_data["between_id"] = categ_percent_kv_nal["category_between__bank_to"]
-                        elif category == "КВ ИП":
-                            category_data["id_groupe"] = categ_percent_kv_ip["id"]
-                            category_data["between_id"] = categ_percent_kv_ip["category_between__bank_to"]
-                        
-                        # Добавляем ежемесячные данные о процентах для сотрудника
-                        category_data["monthly_percents"] = {}
-                        for month_idx, month in enumerate(MONTHS_RU):
-                            month_number = month_idx + 1
-                            if employee_info["employee_id"] in employee_percent_by_month and month_number in employee_percent_by_month[employee_info["employee_id"]]:
-                                if category in employee_percent_by_month[employee_info["employee_id"]][month_number]:
-                                    category_data["monthly_percents"][month] = {
-                                        "percent": employee_percent_by_month[employee_info["employee_id"]][month_number][category]["percent"],
-                                        "data": employee_percent_by_month[employee_info["employee_id"]][month_number][category]["data"]
-                                    }
-                                else:
-                                    category_data["monthly_percents"][month] = None
+                    category_data["persent"] = True
+                    category_data["is_make_operations"] = True
+
+                    if category == "КВ $":
+                        category_data["id_groupe"] = categ_percent_kv_nal["id"]
+                        category_data["between_id"] = categ_percent_kv_nal[
+                            "category_between__bank_to"
+                        ]
+                    elif category == "КВ ИП":
+                        category_data["id_groupe"] = categ_percent_kv_ip["id"]
+                        category_data["between_id"] = categ_percent_kv_ip[
+                            "category_between__bank_to"
+                        ]
+
+                    # Добавляем ежемесячные данные о процентах для сотрудника
+                    category_data["monthly_percents"] = {}
+                    for month_idx, month in enumerate(MONTHS_RU):
+                        month_number = month_idx + 1
+                        if (
+                            employee_info["employee_id"] in employee_percent_by_month
+                            and month_number
+                            in employee_percent_by_month[employee_info["employee_id"]]
+                        ):
+                            if (
+                                category
+                                in employee_percent_by_month[
+                                    employee_info["employee_id"]
+                                ][month_number]
+                            ):
+                                category_data["monthly_percents"][month] = {
+                                    "percent": employee_percent_by_month[
+                                        employee_info["employee_id"]
+                                    ][month_number][category]["percent"],
+                                    "data": employee_percent_by_month[
+                                        employee_info["employee_id"]
+                                    ][month_number][category]["data"],
+                                }
                             else:
                                 category_data["monthly_percents"][month] = None
+                        else:
+                            category_data["monthly_percents"][month] = None
                 else:
                     category_data["persent"] = False
                     category_data["is_make_operations"] = False
                     category_data["between_id"] = None
                     category_data["id_groupe"] = None
-                
+
                 group_info["categories"].append(category_data)
                 group_info["total"] += cat_total
             groups_full.append(group_info)
@@ -1410,14 +1433,12 @@ def salary(request):
                                 .get(month, 0)
                             )
                 group_totals[group_name].append({"name": category, "total": total})
-    
-    
-    
+
     operations_all = Operation.objects.filter()
-    
+
     total_kv_nal = 0
     total_kv_ip = 0
-    total_kv_nal_old = 0    
+    total_kv_nal_old = 0
     total_kv_ip_old = 0
     names_btw = [
         "компенсация владельцу с ИП",
@@ -1427,23 +1448,19 @@ def salary(request):
         name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    
+
     month_kv_nal = {}
     month_kv_ip = {}
     for month in months_current_year:
-            month_kv_nal[month] = {
-                "total_month": 0
-            }
-  
+        month_kv_nal[month] = {"total_month": 0}
+
     for operation_a in operations_all:
-        if operation_a.between_bank and operation_a.between_bank.name == "КВ с $" :
+        if operation_a.between_bank and operation_a.between_bank.name == "КВ с $":
             if operation_a.data.year == year_now:
                 total_kv_nal += operation_a.amount
                 month_name = MONTHS_RU[operation_a.data.month - 1]
                 month_kv_nal[month_name]["total_month"] += operation_a.amount
-                
-                
-                
+
     context = {
         "title": title,
         "type_url": type_url,
@@ -2449,7 +2466,10 @@ def outside_ooo(request):
             # "old_oper_arr": old_oper_arr,
         }
         print(f"Сохраняем в кеш: {context_cash}")
-        cache.set(cache_key, context_cash, 60 * 60)
+        cache.set(
+            cache_key,
+            context_cash,
+        )
     else:
         print(f"Кеш найден для ключа {cache_key}")
 
@@ -2549,6 +2569,7 @@ def outside_ip(request):
         "вывод остатков ООО в Хранилище",
         "остаток ПРИБЫЛЬ 1% ЦРП 5%",
         "остаток КВ 0,5 % ЦРП 50%",
+        "ПРЕМИИ",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         bank_in=bank, name__in=names_btw
@@ -2765,10 +2786,17 @@ def outside_ip(request):
     arr_end_month_ip_old = copy.deepcopy(arr_end_month_ip)
 
     old_oper_arr = {}
-
+    # rf = RequestFactory()
+    # request = rf.get("/bank/outside/ooo/cache-warm")
+    # request.user = AnonymousUser()
+    # Внутри `outside_ooo` формируется и сохраняется кеш с ключом
+    # вида "bank_{bank.id}_context_{year_now}"
+    outside_ooo(request)
     cache_key = f"bank_{1}_context_{year_now}"
+    print("cache_key", cache_key)
+    print("cache.get(cache_key)", cache.get(cache_key))
     context_ooo = cache.get(cache_key)
-    context_ooo = cache.get(cache_key)
+    print("context_ooo", context_ooo)
 
     # cache_key = f"bank_{1}_context_{year_now}"
     # context_ooo = cache.get(cache_key)
@@ -2935,7 +2963,7 @@ def outside_nal(request):
         )
         .order_by("data")
     )
-   
+
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
@@ -3454,10 +3482,6 @@ def storage_banking(request):
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
 
-    
-    
-    
-    
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
     arr_start_month = {
@@ -3524,9 +3548,48 @@ def storage_banking(request):
             "total": {},
         },
     }
-    
+
+    arr_bonus_all = {
+        "name": "ПРЕМИИ",
+        "category": [
+            {
+                "name": "на квартальные премии 1:",
+                "group": {
+                    "на начало месяца": {},
+                    "с $": {},
+                    "с ООО -> ИП": {},
+                    "на выплату премий (раз в квартал)": {},
+                    "на конец месяца": {},
+                },
+            },
+            {
+                "name": "на квартальные премии 2:",
+                "group": {
+                    "на начало месяца": {},
+                    "с $": {},
+                    "с ООО -> ИП": {},
+                    "на выплату премий": {},
+                    "на конец месяца": {},
+                },
+            },
+        ],
+        "total_category": {
+            "name": "ИТОГО Премии",
+            "total": {},
+        },
+    }
+
     arr_bonus_1 = {
         "name": "на квартальные премии 1:",
+        "category": [
+            {
+                "name": "с $",
+                "total": {},
+            },
+        ],
+    }
+    arr_bonus_2 = {
+        "name": "на квартальные премии 2:",
         "category": [
             {
                 "name": "с $",
@@ -3568,11 +3631,12 @@ def storage_banking(request):
     #     },
     # }
 
-    arr_start_month, arr_in, arr_out = fill_operations_arrays_keep_banking(
+    arr_start_month, arr_in, arr_out, arr_bonus_all = fill_operations_arrays_keep_banking(
         arr_start_month,
         arr_in,
         arr_out,
         arr_stop_month_bank,
+        arr_bonus_all,
         CATEGORY_OPERACCOUNT,
         months_current_year,
         month_numbers,
@@ -3594,6 +3658,7 @@ def storage_banking(request):
         "arr_in": arr_in,
         "arr_out": arr_out,
         "arr_stop_month_bank": arr_stop_month_bank,
+        "arr_bonus_all": arr_bonus_all,
     }
 
     return render(request, "bank/storage/storage_banking.html", context)
@@ -3662,14 +3727,14 @@ def storage_servise(request):
             },
         ],
     }
-    arr_service= fill_operations_storage_servise(
+    arr_service = fill_operations_storage_servise(
         arr_service,
         year_now,
         months_current_year,
         month_numbers,
         operations,
     )
-    
+
     context = {
         "title": title,
         "type_url": type_url,
@@ -3682,6 +3747,7 @@ def storage_servise(request):
     }
 
     return render(request, "bank/storage/storage_servise.html", context)
+
 
 def storage_servise_client(request):
     title = "Остатки рекламных бюджетов"
@@ -3727,17 +3793,15 @@ def storage_servise_client(request):
     adv_service = Service.objects.get(name="ADV")
     try:
         # Получаем сервис ADV
-        
-        
+
         # Получаем клиентов, у которых есть контракты с сервисом ADV
         client_adv = Client.objects.filter(contract__service=adv_service).distinct()
-        
+
     except Service.DoesNotExist:
         # Если сервис ADV не найден, возвращаем пустой QuerySet
         client_adv = Client.objects.none()
-        
-        
-    arr_clients_all= fill_operations_storage_servise_client(
+
+    arr_clients_all = fill_operations_storage_servise_client(
         client_adv,
         year_now,
         months_current_year,
@@ -3746,7 +3810,7 @@ def storage_servise_client(request):
         adv_service,
         bank,
     )
-    
+
     context = {
         "title": title,
         "type_url": type_url,
@@ -3761,8 +3825,6 @@ def storage_servise_client(request):
     return render(request, "bank/storage/storage_servise_client.html", context)
 
 
-
-
 def salary_new_2(request):
     title = "Зарплата"
     type_url = "salary"
@@ -3772,7 +3834,7 @@ def salary_new_2(request):
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
-    
+
     # куки для установки дат сортировки
     q_object = Q()
 
@@ -3786,9 +3848,9 @@ def salary_new_2(request):
     else:
         q_object &= Q(date_end__isnull=True)
         q_object |= Q(date_end__year=year_now_st)
-    
+
     # Получаем активных сотрудников с оптимизацией запросов
-    employee_now_year = Employee.objects.filter(q_object).select_related()    
+    employee_now_year = Employee.objects.filter(q_object).select_related()
     # Получаем операции с оптимизацией запросов
     operations = (
         Operation.objects.filter(
@@ -3809,25 +3871,25 @@ def salary_new_2(request):
         .prefetch_related()
         .order_by("-data")
     )
-    
+
     # Создаем список месяцев текущего года
     months_current_year = [MONTHS_RU[month - 1] for month in range(1, month_now + 1)]
     months_current_year.reverse()
     # Создаем словарь для сопоставления названий месяцев с их номерами
     month_numbers = {month: i + 1 for i, month in enumerate(months_current_year)}
-    
+
     all_categories_qs = (
         GroupeSalary.objects.all()
         .select_related("bank")
         .prefetch_related(Prefetch("bank"))
     )
     all_categories_bank = all_categories_qs.values_list("bank", "name", "id")
-    
+
     cat_name_id = {}
     for cat in all_categories_qs:
         cat_name_id[cat.name] = cat.id
-        
-    # стартовые массивы в каждом сотруднике 
+
+    # стартовые массивы в каждом сотруднике
     # ооо
     arr_ooo = {
         "name": "ООО",
@@ -3857,7 +3919,6 @@ def salary_new_2(request):
                 "category_id": cat_name_id.get("Больничный", None),
                 "total": {},
             },
-            
         ],
         "total_category": {
             "name": "Итого ООО",
@@ -3874,7 +3935,8 @@ def salary_new_2(request):
                 "total": {},
             },
             {
-                "name": "Премия $", "category_id": cat_name_id.get("Премия $", None),
+                "name": "Премия $",
+                "category_id": cat_name_id.get("Премия $", None),
                 "total": {},
             },
             {
@@ -3882,8 +3944,6 @@ def salary_new_2(request):
                 "category_id": cat_name_id.get("Отпуск $", None),
                 "total": {},
             },
-           
-            
         ],
         "total_category": {
             "name": "Итого $",
@@ -3908,8 +3968,6 @@ def salary_new_2(request):
                 "total": {},
                 "category_id": cat_name_id.get("квартальная премия", None),
             },
-           
-            
         ],
         "total_category": {
             "name": "Итого Премии",
@@ -3927,10 +3985,8 @@ def salary_new_2(request):
             {
                 "name": "Возврат долга",
                 "total": {},
-                 "category_id": cat_name_id.get("Возврат долга", None),
+                "category_id": cat_name_id.get("Возврат долга", None),
             },
-           
-            
         ],
         "total_category": {
             "name": "Остаток долга",
@@ -3938,8 +3994,8 @@ def salary_new_2(request):
         },
     }
     arr_total_employee = {
-            "name": "Итого",
-            "category": [
+        "name": "Итого",
+        "category": [
             {
                 "name": "КВ $ 1",
                 "category_id": cat_name_id.get("КВ $", None),
@@ -3954,12 +4010,13 @@ def salary_new_2(request):
                 "name": "квартальная премия 1",
                 "category_id": cat_name_id.get("КВ $", None),
                 "total": {},
-            },],
-            "total": {},
+            },
+        ],
+        "total": {},
     }
     arr_total_bonus = {
         "name": "ВСЕ Премии",
-         "category": [
+        "category": [
             {
                 "name": "КВ $ всего",
                 "category_id": cat_name_id.get("КВ $", None),
@@ -3967,8 +4024,8 @@ def salary_new_2(request):
                 "total_month": {},
             },
             {
-                "name": "КВ ИП всего",   
-                "category_id": cat_name_id.get("КВ ИП", None),   
+                "name": "КВ ИП всего",
+                "category_id": cat_name_id.get("КВ ИП", None),
                 "total": {},
                 "total_month": {},
             },
@@ -3976,15 +4033,15 @@ def salary_new_2(request):
                 "name": "квартальная премия всего",
                 "category_id": cat_name_id.get("квартальная премия", None),
                 "total": {},
-            },],
+            },
+        ],
         "total": {},
-        
-        }
-  
+    }
+
     arr_total_salary = {
         "name": "ИТОГО ВСЕ",
-        "category":  [
-                 {
+        "category": [
+            {
                 "name": "ИТОГО ЗП с ООО",
                 "total": {},
             },
@@ -4008,17 +4065,17 @@ def salary_new_2(request):
                 "name": "Итого общий долг",
                 "total": {},
             },
-           ],
+        ],
         "total": {},
     }
-    
+
     names = [
         "КВ $",
         "КВ ИП",
     ]
-    categ_percents = CategForPercentGroupBank.objects.filter(
-         name__in=names
-    ).values("id", "name", "bank", "category_between", "category_between__bank_to")
+    categ_percents = CategForPercentGroupBank.objects.filter(name__in=names).values(
+        "id", "name", "bank", "category_between", "category_between__bank_to"
+    )
     categ_percent_by_name = {item["name"]: item for item in categ_percents}
 
     # Получаем данные о процентах по категориям
@@ -4030,27 +4087,21 @@ def salary_new_2(request):
         .values("id", "category", "data", "percent", "category_id")
     )
     categ_percent_list = list(categ_percent_value)
-    
+
     # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
     percent_employee_data = (
         PercentEmployee.objects.filter(
-            category__name__in=["КВ $", "КВ ИП"],
-            data__year=year_now
+            category__name__in=["КВ $", "КВ ИП"], data__year=year_now
         )
         .select_related("category", "employee")
         .annotate(month=ExtractMonth("data"))
-        .values("id", "category", "data", "percent", "category_id","employee_id")
+        .values("id", "category", "data", "percent", "category_id", "employee_id")
         # .values("id", "category__name", "employee_id", "data", "percent", "month")
     )
     categ_emploue_percent_list = list(percent_employee_data)
-    categ_percent_kv_nal = categ_percent_by_name.get(
-        "КВ $"
-    )
-    categ_percent_kv_ip = categ_percent_by_name.get(
-        "КВ ИП"
-    )
-    
-   
+    categ_percent_kv_nal = categ_percent_by_name.get("КВ $")
+    categ_percent_kv_ip = categ_percent_by_name.get("КВ ИП")
+
     names_btw = [
         "компенсация владельцу с ИП",
         "КВ с $",
@@ -4059,41 +4110,41 @@ def salary_new_2(request):
         name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    
+
     operations_bonus = Operation.objects.filter(
         between_bank__name__in=names_btw,
         data__year__gte=year_now,
     )
-    
-    arr_salary_employees,arr_total_salary, arr_total_bonus= fill_operations_arrays_salary(
-        employee_now_year,
-        operations,
-        operations_old,
-        months_current_year,
-        month_numbers,
-        year_now,
-        arr_ooo,
-        arr_nal,
-        arr_bonus,
-        arr_lend,
-        all_categories_qs,
-        all_categories_bank,
-        arr_total_employee,
-        categ_percent_kv_nal,
-        categ_percent_kv_ip,
-        categ_percent_list,
-        arr_total_salary,
-        cate_oper_beetwen_by_name,
-        operations_bonus,
-        arr_total_bonus,
-        percent_employee_data,
-        categ_emploue_percent_list,
-        
+
+    arr_salary_employees, arr_total_salary, arr_total_bonus = (
+        fill_operations_arrays_salary(
+            employee_now_year,
+            operations,
+            operations_old,
+            months_current_year,
+            month_numbers,
+            year_now,
+            arr_ooo,
+            arr_nal,
+            arr_bonus,
+            arr_lend,
+            all_categories_qs,
+            all_categories_bank,
+            arr_total_employee,
+            categ_percent_kv_nal,
+            categ_percent_kv_ip,
+            categ_percent_list,
+            arr_total_salary,
+            cate_oper_beetwen_by_name,
+            operations_bonus,
+            arr_total_bonus,
+            percent_employee_data,
+            categ_emploue_percent_list,
+        )
     )
-    
-    
+
     context = {
-         "title": title,
+        "title": title,
         "year_now": year_now,
         "type_url": type_url,
         "months_current_year": months_current_year,

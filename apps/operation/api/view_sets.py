@@ -23,6 +23,9 @@ from apps.service.api.serializers import (
     ServicesClientMonthlyInvoiceSerializer,
 )
 from apps.service.models import Service, ServicesClientMonthlyInvoice
+from django.test.client import RequestFactory
+from django.contrib.auth.models import AnonymousUser
+from apps.bank.views import outside_ooo
 
 
 def clear_bank_cache():
@@ -33,15 +36,37 @@ def clear_bank_cache():
         year_now = datetime.datetime.now().year
         # Сбрасываем кеш для всех банков (1, 2, 3)
         for bank_id in [1, 2, 3]:
+            
             cache_key = f"bank_{bank_id}_context_{year_now}"
             cache.delete(cache_key)
+            
+            rf = RequestFactory()
+            request = rf.get("/bank/outside/ooo/cache-warm")
+            request.user = AnonymousUser()
+            
         
-        location = "clear_bank_cache"
-        info = f"Кеш банковских страниц сброшен для года {year_now}"
-        log_alert(location, info)
+        
     except Exception as e:
         location = "clear_bank_cache"
         info = f"Ошибка при сбросе кеша банковских страниц: {e}"
+        error_alert(e, location, info)
+
+
+def warm_bank_cache():
+    """
+    Прогревает кеш банковских страниц после очистки, вызывая расчёт страницы ООО.
+    Делается через прямой вызов view `outside_ooo`, где выполняется cache.set(...).
+    """
+    try:
+        rf = RequestFactory()
+        request = rf.get("/bank/outside/ooo/cache-warm")
+        request.user = AnonymousUser()
+        # Внутри `outside_ooo` формируется и сохраняется кеш с ключом
+        # вида "bank_{bank.id}_context_{year_now}"
+        outside_ooo(request)
+    except Exception as e:
+        location = "warm_bank_cache"
+        info = f"Ошибка при прогреве кеша банковских страниц: {e}"
         error_alert(e, location, info)
 
 
@@ -60,6 +85,8 @@ class ОperationViewSet(viewsets.ModelViewSet):
             response = super().create(request, *args, **kwargs)
             # Сбрасываем кеш после создания операции
             clear_bank_cache()
+            # Прогреваем новый кеш
+            warm_bank_cache()
             return response
         except Exception as e:
             tr = traceback.format_exc()
@@ -77,6 +104,8 @@ class ОperationViewSet(viewsets.ModelViewSet):
             response = super().update(request, *args, **kwargs)
             # Сбрасываем кеш после обновления операции
             clear_bank_cache()
+            # Прогреваем новый кеш
+            warm_bank_cache()
             return response
         except Exception as e:
             tr = traceback.format_exc()
@@ -94,6 +123,8 @@ class ОperationViewSet(viewsets.ModelViewSet):
             response = super().destroy(request, *args, **kwargs)
             # Сбрасываем кеш после удаления операции
             clear_bank_cache()
+            # Прогреваем новый кеш
+            warm_bank_cache()
             return response
         except Exception as e:
             tr = traceback.format_exc()
@@ -135,6 +166,8 @@ class ОperationViewSet(viewsets.ModelViewSet):
                     
                 # Сбрасываем кеш после сохранения операции
                 clear_bank_cache()
+                # Прогреваем новый кеш
+                warm_bank_cache()
                 
                 location = "операции operation_save"
                 info = f"Сохранение операции operation_save   {request.data}"

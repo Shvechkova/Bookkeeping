@@ -8,7 +8,7 @@ class LoginRequiredMiddleware:
     def __call__(self, request):
         # Список URL, доступных без входа
         allowed_paths = [
-            reverse('login'),  # например, /login/
+            # reverse('login'),  # например, /login/
             reverse('admin:login'),
             # можно добавить logout, reset password и т.д.
         ]
@@ -23,7 +23,7 @@ class LoginRequiredMiddleware:
 
         # Основная проверка: пользователь залогинен?
         if not request.user.is_authenticated:
-            return redirect('login')  # или reverse('login')
+            return redirect('admin:login')  # или reverse('login')
 
         # Если пользователь залогинен — доступ разрешён
         return self.get_response(request)

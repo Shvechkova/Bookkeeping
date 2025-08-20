@@ -2313,3 +2313,11 @@ input[type="radio"]:checked {
   gap: 6.25rem!important;
 } 
 
+.inp_operation_percent p{
+color: #204596!important;
+
+}
+
+.category-block_non_mg{
+  margin-bottom: 0.5rem!important;
+}

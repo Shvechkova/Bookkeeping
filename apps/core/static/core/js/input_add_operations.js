@@ -555,3 +555,55 @@ function checkPersentRate(element) {
 
   })
 }
+
+const currentUrl = window.location.href;
+const pathParts = window.location.pathname.split('/').filter(part => part !== '');
+const firstSegment = pathParts[0] || null; // если путь пустой, вернёт null
+
+if (firstSegment == "bank") {
+  const salary_employee_item_sums_text = document.querySelectorAll(".salary_employee_item_sums_text");
+  salary_employee_item_sums_text.forEach((element) => {
+    const text = element.textContent.trim();
+    const cleaned = text.replace(/[^\d\.\,\-]/g, '').replace(',', '.');
+    const number = parseFloat(cleaned);
+
+    if (isNaN(number)) {
+        console.log('Не удалось распознать число');
+    } else if (number < 0) {
+      element.style.setProperty('color', '#ff0000', 'important');
+      element.style.fontWeight= 700;
+    } else {
+        console.log('Число не отрицательное:', number);
+    }
+  });
+
+  const invoice_month_item_text = document.querySelectorAll(".invoice_month_item_text");
+  invoice_month_item_text.forEach((element) => {
+    const pElement = element.querySelector('p');
+    
+    // Определяем, к какому элементу применять стили
+    const targetElement = pElement || element;
+
+    // Берём текст из <p>, если есть, иначе из родителя
+    const text = targetElement.textContent.trim();
+
+    // Очистка текста и парсинг числа
+    const cleaned = text.replace(/[^\d\.\,\-]/g, '').replace(',', '.');
+    const number = parseFloat(cleaned);
+
+    if (isNaN(number)) {
+        console.log('Не удалось распознать число:', text);
+        return;
+    }
+
+    if (number < 0) {
+        // Применяем стили к целевому элементу (p или div)
+        targetElement.style.setProperty('color', '#ff0000', 'important');
+        targetElement.style.fontWeight = '700';
+    } else {
+        console.log('Число не отрицательное:', number);
+    }
+});
+
+ 
+}

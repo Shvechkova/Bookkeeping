@@ -310,7 +310,7 @@ def service_one(request, slug):
             "month_bill", "month_bill__service", "platform", "category_employee"
         )
         .prefetch_related()
-        .filter(month_bill__service=category_service.id)
+        .filter(month_bill__service=category_service.id,month_bill__month__year__gte=year, month_bill__month__month__gte=old_month)
         
     )
     print(suborders)

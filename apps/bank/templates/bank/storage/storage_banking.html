@@ -220,10 +220,115 @@
         </section>
       </div>
       <div class="">
+        <br>
         <div class="oper-account-cell  oper-account-service-min-nalog ">
           <h2 class="">ПРЕМИИ</h2>
         </div>
-        <br>
+        <section class="oper_account background-bank-storage-bonus">
+          <div class="">
+            <div class="oper-account-grid">
+              <div class="oper-account-row oper-account-total">
+                <div class="oper-account-cell oper-account-num"></div>
+                <div class="oper-account-cell outside_name_title"></div>
+                {% for month in months_current_year %}
+                  <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+     
+          {% for category in arr_bonus_all.category %}
+            <!-- Заголовки -->
+            <div class="oper-account-row oper-account-header">
+              <div class="oper-account-cell oper-account-num"></div>
+              <div class="oper-account-cell outside_name_title">
+                  <div class="category-title">{{ category.name }}</div>
+              </div>
+          </div>
+            {% for group_name, group_data in category.group.items %}
+           
+              <div class="" data-attr-shrink-item-vert="">
+                <div class="oper-account-grid">
+                  <!-- Заголовки -->
+                  <div class="oper-account-row {% if forloop.counter > 3 %} fw700 {% endif %}" >
+                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                    <div class="oper-account-cell outside_name_title">{{ group_name }}</div>
+                    {% for month, month_data in group_data.items %}
+                  
+                      {% if  month_data.is_make_operations %}
+                        <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
+                          <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
+                              data-bank-in="{{ bank }}"
+                              data-bank-out="{{ month_data.bank_out }}"
+                              data-between-id="{{ month_data.between_id }}"
+                              tupe-operations="{{ month_data.type_operations }}"
+                              data-sub-categ-name="{{ service_name }}"
+                              data-sub-categ-id="{{ month_data.id_groupe }}"
+                              data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                              data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                              data-operation-old-id="{{ month_data.operation_id|default:'0' }}"
+                              data-prev-month="{{ month_data.expected|format_rub }}"
+                              data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
+                            <!-- операция с процентами-->
+                            {% if month_data.percent %}
+                              {% if month_data.percent > 0 %}
+                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
+                                <input type="text"
+                                      class="salary_employee_item_sums_inp"
+                                      value="{{ month_data.percent|format_rub }}">
+                              {% else %}
+                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
+                                <input type="text"
+                                      class="salary_employee_item_sums_inp"
+                                      value="{{ month_data.expected|format_rub }}">
+                              {% endif %}
+                              <!-- операция с суммами-->
+                            {% else %}
+                              {% if month_data.amount_month > 0 %}
+                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
+                                <input type="text"
+                                      class="salary_employee_item_sums_inp"
+                                      value="{{ month_data.amount_month|format_rub }}">
+                              {% else %}
+                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
+                                <input type="text"
+                                      class="salary_employee_item_sums_inp"
+                                      value="{{ month_data.expected|format_rub }}">
+                              {% endif %}
+                            {% endif %}
+                          </div>
+                          <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
+                        </div>
+                      {% else %}
+                        <div class="oper-account-cell oper-account-value"
+                            data-month-number="{{ month_data.month_number }}">
+                          <div class="invoice_month_item_text">
+                            <p>{{ month_data.amount_month|format_rub }} ₽</p>
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endfor %}
+          <!-- Общий итог -->
+          <div class="">
+            <div class="oper-account-grid">
+              <div class="oper-account-row oper-account-total">
+                <div class="oper-account-cell oper-account-num"></div>
+                <div class="oper-account-cell outside_name_title">{{ arr_bonus_all.total_category.name }}</div>
+                {% for month, month_data in arr_bonus_all.total_category.total.items %}
+                  <div class="oper-account-cell oper-account-value"
+                       data-month-number="{{ month_data.month_number }}">
+                    <b>{{ month_data.amount_month|format_rub }} ₽</b>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
