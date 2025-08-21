@@ -139,6 +139,7 @@ button {
   margin-left: -1.125rem;
   margin-right: -1.125rem;
   margin-top: -0.5rem;
+  font-size: 1.25rem;
 }
 
 .menu-active_service {
@@ -429,6 +430,7 @@ input[type="date"]:before {
   display: flex;
   align-items: flex-start;
   margin-top: 2.0625rem;
+  
 }
 
 .client_client_meneger_client-name {
@@ -487,6 +489,8 @@ input[type="date"]:before {
   overflow: hidden;
   margin-right: 2.625rem;
   white-space: nowrap;
+  display: flex;
+  gap: 0.625rem;
 }
 
 .client_contract_sum {
@@ -504,6 +508,7 @@ input[type="date"]:before {
 
 .clients {
   margin-top: 7.8125rem;
+  font-size: 1.25rem;
 }
 
 .clients_wrapper {
@@ -2317,7 +2322,24 @@ input[type="radio"]:checked {
 color: #204596!important;
 
 }
+.inp_operation_percent p{
+  color: #204596!important;
+  
+  }
 
 .category-block_non_mg{
   margin-bottom: 0.5rem!important;
+}
+.sort_btn.rotated { transform: rotate(180deg); }
+.sort_btn{
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.4rem;
+  
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
 }

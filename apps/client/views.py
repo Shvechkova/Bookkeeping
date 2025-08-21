@@ -5,6 +5,7 @@ from apps.client.models import Contract
 from apps.service.models import Service
 # Create your views here.
 def clients(request):
+    page_name = "clients"
     # куки для сортировки
     if request.COOKIES.get('sortClient') and request.COOKIES.get('sortClient') != "client":
         sort_сlient = request.COOKIES["sortClient"]
@@ -24,6 +25,7 @@ def clients(request):
         "contracts": contracts,
         "title": title,
         "servise": servise,
+        "page_name": page_name,
     }
     return render(request, "client/clients.html", context)
 

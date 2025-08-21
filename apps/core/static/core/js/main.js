@@ -158,7 +158,7 @@ function validate(elem, btn) {
         inputYes = true;
       } else {
         add_contract.disabled = true;
-        throw false;
+        // throw false;
       }
     } else {
       console.log(elInput.value);
@@ -172,7 +172,7 @@ function validate(elem, btn) {
 
     if (elSelectChecked == 0 || elSelectChecked == "") {
       add_contract.disabled = true;
-      throw false;
+      // throw false;
     } else {
       add_contract.disabled = false;
       selectYes = true;
@@ -207,7 +207,7 @@ function validateOtherInput(elem, btn) {
       } else {
         add_contract.disabled = true;
 
-        throw false;
+        // throw false;
       }
     } else {
       add_contract.disabled = false;
@@ -250,7 +250,7 @@ function validateBtn(elem, btn) {
       } else {
         add_contract.disabled = true;
 
-        throw false;
+        // throw false;
       }
     } else {
       add_contract.disabled = false;
@@ -263,7 +263,7 @@ function validateBtn(elem, btn) {
 
     if (elSelectChecked == 0 || elSelectChecked == "") {
       add_contract.disabled = true;
-      throw false;
+      // throw false;
     } else {
       add_contract.disabled = false;
       selectYes = true;
@@ -792,3 +792,57 @@ function ShrinkMoreElem(elementItem,is_none){
   }
 }
   
+// sortBTN = document.querySelectorAll(".sort_btn")
+// if (sortBTN && sortBTN.length) {
+//   sortBTN.forEach(elem => {
+//     elem.addEventListener("click", () => {
+//       const sortBtn = elem.parentElement.querySelector(".sort_btn");
+//       if (!sortBtn) return;
+//       sortBtn.style.transform = (sortBtn.style.transform === "rotate(0deg)")
+//         ? "rotate(180deg)"
+//         : "rotate(0deg)";
+        
+//     });
+//   });
+// }
+// helpers для куки
+function setCookie(name, value, days = 30) {
+  const d = new Date();
+  d.setTime(d.getTime() + days*24*60*60*1000);
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${d.toUTCString()}; path=/`;
+}
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+// клики по заголовкам с data-name-sort
+const sortBTN = document.querySelectorAll('[data-name-sort]');
+if (sortBTN && sortBTN.length) {
+  sortBTN.forEach(elem => {
+    elem.addEventListener('click', () => {
+      const col = elem.getAttribute('data-name-sort');
+      const icon = elem.querySelector('.sort_btn');
+      if (!icon) return;
+      const dir = icon.classList.toggle('rotated') ? 'desc' : 'asc';
+      setCookie('sort_col', col);
+      setCookie('sort_dir', dir);
+      // тут вызов вашей сортировки:
+      // sortTable(col, dir);
+    });
+  });
+}
+
+// восстановление при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+  const col = getCookie('sort_col');
+  const dir = getCookie('sort_dir');
+  if (col && dir) {
+    const elem = document.querySelector(`[data-name-sort="${col}"]`);
+    if (!elem) return;
+    const icon = elem.querySelector('.sort_btn');
+    if (icon && dir === 'desc') icon.classList.add('rotated');
+    // и сразу применить сортировку:
+    // sortTable(col, dir);
+  }
+});

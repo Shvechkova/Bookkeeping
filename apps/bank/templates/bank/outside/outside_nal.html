@@ -217,6 +217,7 @@
                                 <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                                 <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                 {% for month, month_data  in category.total.items %}
+                                  
                                     {% if  month_data.is_make_operations %}
                                         <div class="salary_employee_item_wrapper  nal_item_wrapper oper-account-cell oper-account-value oper-account-cell-2 ">
                                             {% if month_data.percent %}
@@ -491,6 +492,7 @@
                                 <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                                 <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                 {% for month, month_data  in category.total.items %}
+                    
                                     {% if  month_data.is_make_operations %}
                                         <div class="salary_employee_item_wrapper  nal_item_wrapper oper-account-cell oper-account-value oper-account-cell-2">
                                             {% if month_data.percent %}

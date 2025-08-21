@@ -207,7 +207,7 @@
                                             <div class="oper-account-grid">
                                                 <div class="oper-account-row">
                                                     <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                                                    <div class="oper-account-cell outside_name_title">{{ category.name }}{{ category.category_id }}</div>
+                                                    <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                                     {% for month, month_data  in category.total.items %}
                                                         {% if  month_data.is_make_operations %}
                                                             <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
@@ -298,14 +298,18 @@
                                          data-attr-shrink-item-vert="salary_{{ employee_data.employee_id }}">
                                     {% for category in salary_block.category %}
                                         <div class="">
+                                           
                                             <div class="oper-account-grid">
                                                 <div class="oper-account-row">
                                                     <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                                                    <div class="oper-account-cell outside_name_title">{{ category.name }}{{ category.category_id }}</div>
+                                                    <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                                     {% for month, month_data  in category.total.items %}
+                                               
                                                         {% if  month_data.is_make_operations %}
+                                                        
                                                             <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value oper-account-cell-2">
-                                                                {% if month_data.percent %}
+                                                                {% if month_data.percent  %}
+                                                                3333
                                                                     <input data-summ="{{ month_data.amount_month|format_rub }}"
                                                                            class='checkbox-persent'
                                                                            type="checkbox"
@@ -332,7 +336,7 @@
                                                                      data-bank-out="{{ month_data.bank_out }}"
                                                                      data-between-id="{{ month_data.between_id }}"
                                                                      tupe-operations="{{ month_data.type_operations }}"
-                                                                     data-sub-categ-name="employee"
+                                                                      data-sub-categ-name="{{ category.category_id }}"
                                                                      data-sub-categ-id="{{ month_data.id_groupe }}"
                                                                      data-operation-data-month="{{ month_data.date_start|date:'m' }}"
                                                                      data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
@@ -424,13 +428,14 @@
                                                 <div class="oper-account-grid">
                                                     <div class="oper-account-row">
                                                         <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                                                        <div class="oper-account-cell outside_name_title">{{ category.name }}{{ category.category_id }}</div>
+                                                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                                         {% for month, month_data  in category.total.items %}
                                                             {% if  month_data.is_make_operations %}
+                                                            
                                                                 <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
                                                                     <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
                                                                          data-id-people="{{ employee_data.employee_id }}"
-                                                                         data-bank-in="3"
+                                                                         data-bank-in="4"
                                                                          data-bank-out="{{ month_data.bank_out }}"
                                                                          data-between-id="{{ month_data.between_id }}"
                                                                          tupe-operations="{{ month_data.type_operations }}"

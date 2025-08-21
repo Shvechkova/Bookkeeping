@@ -33,7 +33,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     ):
         # добавить месяца и уюрать клиентов у которых есть сервисы
         category = request.query_params.get("service")
-        queryset = Client.objects.filter(contract__service=category)
+        queryset = Client.objects.filter(contract__service=category).distinct()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
