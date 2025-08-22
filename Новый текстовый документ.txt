@@ -1,0 +1,129 @@
+cd /d C:\project\Bookkeeping
+pyinstaller run_app.spec
+
+
+
+
+
+
+cd C:\project\Bookkeeping
+
+rem создать окружение (если ещё не создано)
+py -m venv .venv
+
+rem активировать окружение
+".venv\Scripts\activate.bat"
+
+rem обновить pip (необязательно)
+python -m pip install --upgrade pip
+
+rem поставить зависимости проекта
+pip install -r docker\python\requirements.txt
+
+rem доп. зависимости для exe
+pip install waitress pyinstaller django-environ pymysql
+
+rem проверить подключение к БД и применить миграции
+python manage.py migrate
+
+rem собрать статику (если нужно)
+python manage.py collectstatic --noinput
+
+rem собрать exe через spec
+pyinstaller run_app.spec
+
+rem запустить собранный exe
+dist\run_app.exe
+
+
+
+
+
+pyinstaller --clean --onefile run_app.py ^
+  --paths . ^
+  --runtime-hook runtime_django_settings.py ^
+  --additional-hooks-dir pyi_hooks ^
+  --collect-all django ^
+  --collect-all rest_framework ^
+  --collect-submodules apps ^
+  --collect-data apps ^
+  --add-data "project\settings.py;project" ^
+  --add-data "project\urls.py;project" ^
+  --add-data "project\wsgi.py;project" ^
+  --add-data "apps\bank\templates;apps\bank\templates" ^
+  --add-data "apps\client\templates;apps\client\templates" ^
+  --add-data "apps\core\templates;apps\core\templates" ^
+  --add-data "apps\service\templates;apps\service\templates" ^
+  --add-data "apps\bank\static;apps\bank\static" ^
+  --add-data "apps\client\static;apps\client\static" ^
+  --add-data "apps\core\static;apps\core\static" ^
+  --add-data "apps\service\static;apps\service\static" ^
+  --add-data ".env;." ^
+  --exclude-module debug_toolbar ^
+  --exclude-module celery ^
+  --exclude-module redis ^
+  --hidden-import environ ^
+  --hidden-import pymysql ^
+  --hidden-import MySQLdb ^
+  --hidden-import project.urls ^
+  --hidden-import project.wsgi ^
+  --hidden-import apps.bank ^
+  --hidden-import apps.bank.admin ^
+  --hidden-import apps.bank.apps ^
+  --hidden-import apps.bank.models ^
+  --hidden-import apps.bank.urls ^
+  --hidden-import apps.bank.views ^
+  --hidden-import apps.bank.api ^
+  --hidden-import apps.bank.api.serializers ^
+  --hidden-import apps.bank.api.view_sets ^
+  --hidden-import apps.bank.templatetags ^
+  --hidden-import apps.bank.templatetags.dict_filters ^
+  --hidden-import apps.client ^
+  --hidden-import apps.client.admin ^
+  --hidden-import apps.client.apps ^
+  --hidden-import apps.client.models ^
+  --hidden-import apps.client.urls ^
+  --hidden-import apps.client.views ^
+  --hidden-import apps.client.api ^
+  --hidden-import apps.client.api.serializers ^
+  --hidden-import apps.client.api.view_sets ^
+  --hidden-import apps.core ^
+  --hidden-import apps.core.admin ^
+  --hidden-import apps.core.apps ^
+  --hidden-import apps.core.models ^
+  --hidden-import apps.core.urls ^
+  --hidden-import apps.core.views ^
+  --hidden-import apps.core.middleware ^
+  --hidden-import apps.core.templatetags ^
+  --hidden-import apps.core.templatetags.category_service ^
+  --hidden-import apps.core.templatetags.convert_list_to_string ^
+  --hidden-import apps.core.templatetags.dict_extras ^
+  --hidden-import apps.core.templatetags.format_filters ^
+  --hidden-import apps.core.templatetags.suborders_extras ^
+  --hidden-import apps.employee ^
+  --hidden-import apps.employee.admin ^
+  --hidden-import apps.employee.apps ^
+  --hidden-import apps.employee.models ^
+  --hidden-import apps.employee.urls ^
+  --hidden-import apps.employee.views ^
+  --hidden-import apps.employee.api ^
+  --hidden-import apps.employee.api.serializers ^
+  --hidden-import apps.employee.api.view_sets ^
+  --hidden-import apps.operation ^
+  --hidden-import apps.operation.admin ^
+  --hidden-import apps.operation.apps ^
+  --hidden-import apps.operation.models ^
+  --hidden-import apps.operation.urls ^
+  --hidden-import apps.operation.views ^
+  --hidden-import apps.operation.api ^
+  --hidden-import apps.operation.api.serializers ^
+  --hidden-import apps.operation.api.view_sets ^
+  --hidden-import apps.service ^
+  --hidden-import apps.service.admin ^
+  --hidden-import apps.service.apps ^
+  --hidden-import apps.service.models ^
+  --hidden-import apps.service.urls ^
+  --hidden-import apps.service.views ^
+  --hidden-import apps.service.api ^
+  --hidden-import apps.service.api.serializers ^
+  --hidden-import apps.service.api.view_sets

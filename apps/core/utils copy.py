@@ -933,7 +933,7 @@ def fill_operations_arrays_ooo(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                                print("Ошибка при доступе к остатку прошлого года:", e)
+                       
                                 last_balance = 0
                         arr_start_month_y["total"][month]["amount_month"] = last_balance
                     else:
@@ -1741,10 +1741,7 @@ def fill_operations_arrays_ooo(
                                     last_month
                                 ]["amount_month"]
                             except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
+                                
                                 prev_all_sum_month = 0
 
                 all_sum_month = (
@@ -1783,10 +1780,7 @@ def fill_operations_arrays_ooo(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
+                             
                                 last_balance = 0
                     arr_start_month["total"][month]["amount_month"] = last_balance
                 else:
@@ -2773,10 +2767,7 @@ def fill_operations_arrays_ip(
                                         last_month
                                     ]["amount_month"]
                                 except Exception as e:
-                                    print(
-                                        "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                        e,
-                                    )
+                           
                                     prev_all_sum_month = 0
 
                     nalog_real = arr_in_out_after_all_y["category"][2]["total"][month][
@@ -2807,10 +2798,7 @@ def fill_operations_arrays_ip(
                                         last_month
                                     ]["amount_month"]
                                 except Exception as e:
-                                    print(
-                                        "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                        e,
-                                    )
+                                
                                     last_balance = 0
                         arr_start_month_y["total"][month]["amount_month"] = last_balance
                     else:
@@ -3701,10 +3689,7 @@ def fill_operations_arrays_ip(
                                 ][last_month]["amount_month"]
 
                             except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
+                             
                                 prev_all_sum_month = 0
 
                 nalog_real = arr_in_out_after_all["category"][2]["total"][month][
@@ -3736,10 +3721,7 @@ def fill_operations_arrays_ip(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                                print(
-                                    "Ошибка при доступе к остатку прошлого года (old_oper_arr):",
-                                    e,
-                                )
+                             
                                 last_balance = 0
                     arr_start_month["total"][month]["amount_month"] = last_balance
                 else:
@@ -3830,7 +3812,7 @@ def fill_operations_arrays_nal(
         # Получаем уникальные года из операций
         years = set()
         for operation in operations:
-            print(operation)
+           
             years.add(operation.data.year)
 
         for year in sorted(years):
@@ -5351,7 +5333,7 @@ def fill_operations_arrays_keep_banking(
             # поступления по договорам услуг
             pass
         elif operation.bank_in.id == 3:
-            print(operation)
+           
             if operation.between_bank.name in [
                 "остаток $",
                 "остаток ПРИБЫЛЬ 1% ЦРП 5%",

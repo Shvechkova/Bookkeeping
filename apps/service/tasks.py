@@ -29,7 +29,7 @@ def creat_new_bill_month():
         # new_bill.chekin_sum_entrees = False
         # new_bill.chekin_sum_adv = False
         # # name_bill = old_bill_name.split('/')
-        # # print(name_bill[0])
+
         # new_name_bill = old_bill.service.name + \
         #     "/" + str(now.year)+"-" + str(now.month)
         # new_bill.contract_number = new_name_bill

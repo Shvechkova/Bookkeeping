@@ -2446,11 +2446,11 @@ def outside_ooo(request):
     cache_key = f"bank_{bank.id}_context_{year_now}"
 
     context_cash = cache.get(cache_key)
-    print(f"Пробуем получить из кеша: {cache_key}")
+ 
     context_cash = cache.get(cache_key)
-    print(f"Из кеша получено: {context_cash}")
+    
     if not context_cash:
-        print(f"Кеш пустой, формируем новый context_cash для ключа {cache_key}")
+       
         context_cash = {
             "title": title,
             "year_now": year_now,
@@ -2465,13 +2465,12 @@ def outside_ooo(request):
             # "arr_start_month": arr_start_month,
             # "old_oper_arr": old_oper_arr,
         }
-        print(f"Сохраняем в кеш: {context_cash}")
+       
         cache.set(
             cache_key,
             context_cash,
         )
-    else:
-        print(f"Кеш найден для ключа {cache_key}")
+    
 
     context = {
         "title": title,
@@ -2793,10 +2792,9 @@ def outside_ip(request):
     # вида "bank_{bank.id}_context_{year_now}"
     outside_ooo(request)
     cache_key = f"bank_{1}_context_{year_now}"
-    print("cache_key", cache_key)
-    print("cache.get(cache_key)", cache.get(cache_key))
+ 
     context_ooo = cache.get(cache_key)
-    print("context_ooo", context_ooo)
+ 
 
     # cache_key = f"bank_{1}_context_{year_now}"
     # context_ooo = cache.get(cache_key)
@@ -3484,9 +3482,9 @@ def storage_banking(request):
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
-    print(cate_oper_beetwen, "cate_oper_beetwen")
+
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    print(cate_oper_beetwen_by_name, "cate_oper_beetwen_by_name")
+    
     by_name_and_bank_in = {}
     for item in cate_oper_beetwen:
         by_name_and_bank_in.setdefault(item["name"], {})[item["bank_in"]] = item
@@ -3712,7 +3710,7 @@ def storage_servise(request):
          name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    print(cate_oper_beetwen_by_name, "cate_oper_beetwen_by_name")
+
 
     # ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ
     arr_service = {

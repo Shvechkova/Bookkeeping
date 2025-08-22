@@ -1,0 +1,38 @@
+name: Build macOS M2 Executable
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    
+    - name: Build executable
+      run: |
+        pyinstaller run_app.spec --distpath dist/macos-m2
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: macos-m2-executable
+        path: dist/macos-m2/
+        retention-days: 30
+

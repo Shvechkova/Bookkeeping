@@ -1,6 +1,11 @@
 import pymysql
-from .celery import app as celery_app
-
 
 pymysql.install_as_MySQLdb()
-__all__ = ['celery_app']
+
+# Условный импорт Celery для совместимости с exe
+try:
+    from .celery import app as celery_app
+    __all__ = ['celery_app']
+except (ImportError, ModuleNotFoundError):
+    celery_app = None
+    __all__ = []

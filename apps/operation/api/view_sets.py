@@ -196,7 +196,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
             monthly_bill=data["monthly_bill"],
             bank_in=data["bank_in"],
         )
-        print(queryset)
+ 
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -204,13 +204,13 @@ class ОperationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r"operation_out_filter")
     def operation_out_filter(self, request, *args, **kwargs):
         data = request.data
-        print(data)
+ 
         if "platform" in data:
-            print(data)
+        
             queryset = Operation.objects.filter(
             suborder = data['id']
             )
-            print(queryset)
+         
         elif "category_employee" in data:
             if "id" in data and data['id'] != 0:
                 queryset = Operation.objects.filter(
@@ -229,7 +229,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
                 date_str = data["start_date"]
                 date_obj = datetime.datetime.strptime(date_str, "%d-%m-%Y")
                 prev_month = date_obj - relativedelta(months=1)
-                print(prev_month)
+    
                 queryset = Operation.objects.filter(
                     operaccount=data["categ_id"],
                     data__year=prev_month.year,
@@ -243,7 +243,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
                 )
         else:
             pass
-        print(queryset)
+  
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -253,23 +253,23 @@ class ОperationViewSet(viewsets.ModelViewSet):
         try:
             data = request.data
             operation = Operation.objects.get(id=data["id"])
-            print(operation)
-            print(operation.monthly_bill)
+
+ 
             # операциоо по услагам счетов
             if operation.monthly_bill:
-                print(0000)
+
                 servise_month = ServicesClientMonthlyInvoice.objects.get(
                     id=operation.monthly_bill.id
                 )
-                print(1111)
+  
                 # входящая операция
                 if operation.bank_in == 4:
-                    print("operation.bank_in == 4")
+             
                     servise_month.operations_add_all = (
                         servise_month.operations_add_all - operation.amount
                     )
                     if operation.bank_to == 1:
-                        print("operation.bank_to == 1")
+                       
                         if servise_month.operations_add_ip != operation.amount:
                             servise_month.operations_add_ip = (
                                 servise_month.operations_add_ip - operation.amount
@@ -278,7 +278,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
                             servise_month.operations_add_ip = None
 
                     elif operation.bank_to == 2:
-                        print("operation.bank_to == 2")
+                       
                         if servise_month.operations_add_ооо != operation.amount:
                             servise_month.operations_add_ооо = (
                                 servise_month.operations_add_ооо - operation.amount
@@ -286,7 +286,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
                         else:
                             servise_month.operations_add_ооо = None
                     elif operation.bank_to == 3:
-                        print("operation.bank_to == 3")
+           
                         if servise_month.operations_add_nal != operation.amount:
                             servise_month.operations_add_nal = (
                                 servise_month.operations_add_nal - operation.amount
@@ -300,7 +300,7 @@ class ОperationViewSet(viewsets.ModelViewSet):
             # Сбрасываем кеш после удаления операции
             clear_bank_cache()
             
-            print(999999)
+            
             context = {
                 "result": "ok"
             }

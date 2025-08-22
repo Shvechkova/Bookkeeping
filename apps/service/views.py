@@ -68,7 +68,7 @@ def service_one(request, slug):
     else:
         sort_operation_op = "0"
         
-    print(111111111111)
+ 
     now = datetime.datetime.now()
     year = now.year
 
@@ -96,7 +96,7 @@ def service_one(request, slug):
     elif month == "999":
         old_month = 1
         year = 1990
-    print(year,old_month)
+  
     service_month_invoice = (
         ServicesClientMonthlyInvoice.objects.select_related(
             "client", "service", "contract"
@@ -313,7 +313,7 @@ def service_one(request, slug):
         .filter(month_bill__service=category_service.id,month_bill__month__year__gte=year, month_bill__month__month__gte=old_month)
         
     )
-    print(suborders)
+
     if title_name == "ADV":
         grouped = None
         suborders_name_employee = None
@@ -330,7 +330,7 @@ def service_one(request, slug):
         # for suborder in suborders:
         #     grouped[suborder.category_employee.name].append(suborder)
   
-    print(2222222222222)
+
     import pymorphy3
 
     morph = pymorphy3.MorphAnalyzer(lang="ru")
@@ -468,14 +468,14 @@ def service_one(request, slug):
 
         item = [grouper, val, total]
         service_month_invoice_new.append(item)
-    print(33333333333)
+
     # все счета
     if title_name == "ADV":
         platform = AdvPlatform.objects.all()
     else:
         platform = None
-    print(platform)
-    print(suborders)
+
+
     context = {
         "title": title,
         "service": service,
@@ -489,5 +489,5 @@ def service_one(request, slug):
         'grouped_suborders' : grouped,
         'suborders_name_employee': suborders_name_employee,
     }
-    print(6666666666)
+
     return render(request, "service/service_one.html", context)

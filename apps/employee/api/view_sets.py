@@ -35,7 +35,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         self,
         request,
     ):
-        print("manager_list")
+
         category_employee_manager = CategoryEmployee.objects.get(name="Менеджмент")
         manager = Employee.objects.filter(employeeincategory__category=category_employee_manager.id)
 
@@ -47,7 +47,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         self,
         request,
     ):
-        print("responsible_list")
+
         category_employee_manager = CategoryEmployee.objects.get(name="Ответственные контрактов")
         manager = Employee.objects.filter(employeeincategory__category=category_employee_manager.id)
 
