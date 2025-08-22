@@ -41,6 +41,7 @@ static/
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
 *~
@@ -82,4 +83,3 @@ documentation/
 
 # Other
 checking_convertation.txt
-/.cursor/
