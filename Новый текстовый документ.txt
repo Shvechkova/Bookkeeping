@@ -41,14 +41,8 @@ dist\run_app.exe
 
 pyinstaller --clean --onefile run_app.py ^
   --paths . ^
-  --runtime-hook runtime_django_settings.py ^
-  --additional-hooks-dir pyi_hooks ^
-  --collect-all django ^
-  --collect-all rest_framework ^
-  --collect-submodules apps ^
-  --collect-data apps ^
-  --add-data "project\settings.py;project" ^
-  --add-data "project\urls.py;project" ^
+
+
   --add-data "project\wsgi.py;project" ^
   --add-data "apps\bank\templates;apps\bank\templates" ^
   --add-data "apps\client\templates;apps\client\templates" ^

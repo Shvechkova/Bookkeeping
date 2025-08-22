@@ -1,11 +1,11 @@
 name: Build macOS M2 Executable
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   branches: [ main ]
+  workflow_dispatch:  # Только ручной запуск
 
 jobs:
   build-macos:
