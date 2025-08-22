@@ -38,6 +38,12 @@ db.sqlite3-journal
 media/
 static/
 
+# Celery
+celerybeat-schedule*
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+
 # IDE
 .idea/
 .vscode/
