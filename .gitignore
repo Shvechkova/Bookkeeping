@@ -1,30 +1,84 @@
-.devcontainer
-.idea/
-.vscode/* 
-**/.vscode/
-/.vscode/settings.json
-vscode/settings.json
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+motrumvenv/
 
-/media/
-/static/
-/tmp/
-/dist/
-/.venv/
-/venv/
-/documentation/
-/motrumvenv/
-/apps/core/static/core/images/about_company.mp4
-/coolsite_cache/
-/.vscode/
-
-
-
+# Python
 __pycache__/
-*.pyc
-*.env
-*.env1
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-.DS_Store
+# Django
+*.log
+local_settings.py
 db.sqlite3
+db.sqlite3-journal
+media/
+static/
 
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.coolsite_cache/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Documentation
+documentation/
+
+# Large media files
+/apps/core/static/core/images/about_company.mp4
+
+# Other
 checking_convertation.txt
