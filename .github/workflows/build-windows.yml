@@ -1,4 +1,4 @@
-name: Build macOS M2 Executable
+name: Build Windows Executable
 
 on:
   push:
@@ -8,10 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-macos:
-    # macOS 15 будет доступен с 4 августа 2025
-    # Сейчас используем macos-latest (macOS 14)
-    runs-on: macos-latest
+  build-windows:
+    runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v4
@@ -29,25 +27,23 @@ jobs:
     
     - name: Build executable
       run: |
-        pyinstaller run_app_macos.spec --distpath dist/macos-m2
+        pyinstaller run_app.spec
     
     - name: Verify build output
       run: |
         echo "Checking build output..."
-        ls -la dist/macos-m2/
-        if [ -d "dist/macos-m2/run_app.app" ]; then
-          echo "✅ macOS app bundle created successfully"
-        else
-          echo "❌ macOS app bundle not found"
+        dir dist
+        if (Test-Path "dist\run_app.exe") {
+          echo "✅ Windows executable created successfully"
+        } else {
+          echo "❌ Windows executable not found"
           exit 1
-        fi
+        }
     
     - name: Upload artifacts
-      # Обновлено с v3 на v4 (последняя версия)
       uses: actions/upload-artifact@v4
       with:
-        name: macos-m2-executable
-        path: dist/macos-m2/
+        name: windows-executable
+        path: dist/run_app.exe
         retention-days: 30
         if-no-files-found: error
-
