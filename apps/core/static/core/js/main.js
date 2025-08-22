@@ -342,7 +342,7 @@ class Input {
 }
 // класс конструктор оптион в селектах
 class selectOption {
-  constructor(className, value, id, text, selected, disabled) {
+  constructor(className, value, id, text, selected, disabled, dataAttributes = {}) {
     this.elem = document.createElement("option");
     if (className) this.elem.className = className;
     if (value) this.elem.value = value;
@@ -350,6 +350,13 @@ class selectOption {
     if (text) this.elem.innerHTML = text;
     if (selected == id) this.elem.selected = true;
     if (disabled == true) this.elem.disabled = true;
+    
+    // Добавляем дополнительные data-атрибуты
+    Object.keys(dataAttributes).forEach(key => {
+      if (dataAttributes[key] !== undefined && dataAttributes[key] !== null) {
+        this.elem.setAttribute(`data-${key}`, dataAttributes[key]);
+      }
+    });
   }
 
   appendTo(parent) {

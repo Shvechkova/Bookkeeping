@@ -4053,21 +4053,21 @@ def salary_new_2(request):
     arr_total_employee = {
         "name": "Итого",
         "category": [
-            {
-                "name": "КВ $ 1",
-                "category_id": cat_name_id.get("КВ $", None),
-                "total": {},
-            },
-            {
-                "name": "КВ ИП 1",
-                "category_id": cat_name_id.get("КВ ИП", None),
-                "total": {},
-            },
-            {
-                "name": "квартальная премия 1",
-                "category_id": cat_name_id.get("КВ $", None),
-                "total": {},
-            },
+            # {
+            #     "name": "КВ $ 1",
+            #     "category_id": cat_name_id.get("КВ $", None),
+            #     "total": {},
+            # },
+            # {
+            #     "name": "КВ ИП 1",
+            #     "category_id": cat_name_id.get("КВ ИП", None),
+            #     "total": {},
+            # },
+            # {
+            #     "name": "квартальная премия 1",
+            #     "category_id": cat_name_id.get("КВ $", None),
+            #     "total": {},
+            # },
         ],
         "total": {},
     }
@@ -4129,6 +4129,7 @@ def salary_new_2(request):
     names = [
         "КВ $",
         "КВ ИП",
+        "квартальная премия",
     ]
     categ_percents = CategForPercentGroupBank.objects.filter(name__in=names).values(
         "id", "name", "bank", "category_between", "category_between__bank_to"
@@ -4148,7 +4149,7 @@ def salary_new_2(request):
     # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
     percent_employee_data = (
         PercentEmployee.objects.filter(
-            category__name__in=["КВ $", "КВ ИП"], data__year=year_now
+            category__name__in=["КВ $", "КВ ИП", "квартальная премия"], data__year=year_now
         )
         .select_related("category", "employee")
         .annotate(month=ExtractMonth("data"))
@@ -4158,7 +4159,7 @@ def salary_new_2(request):
     categ_emploue_percent_list = list(percent_employee_data)
     categ_percent_kv_nal = categ_percent_by_name.get("КВ $")
     categ_percent_kv_ip = categ_percent_by_name.get("КВ ИП")
-
+    categ_percent_kv_storage = categ_percent_by_name.get("квартальная премия")
     names_btw = [
         "компенсация владельцу с ИП",
         "КВ с $",
@@ -4193,6 +4194,7 @@ def salary_new_2(request):
             arr_total_employee,
             categ_percent_kv_nal,
             categ_percent_kv_ip,
+            categ_percent_kv_storage,
             categ_percent_list,
             arr_total_salary,
             cate_oper_beetwen_by_name,

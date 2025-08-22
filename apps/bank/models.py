@@ -126,7 +126,7 @@ class CategPercentGroupBank(models.Model):
         verbose_name_plural = "Проценты для сумм по категориям"
 
     def __str__(self):
-        return (self.category, self.percent)
+        return f"{self.category} - {self.percent}%"
 
 class PercentEmployee(models.Model):
     created_timestamp = models.DateTimeField(
@@ -153,7 +153,7 @@ class PercentEmployee(models.Model):
         verbose_name_plural = "Проценты для сумм по сотрудникам"
 
     def __str__(self):
-        return (self.category, self.percent)
+        return f"{self.employee} - {self.percent}%"
 
 class CategOperationsBetweenBank(models.Model):
     name = models.CharField("Имя", max_length=200)

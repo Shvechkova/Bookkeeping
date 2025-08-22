@@ -95,7 +95,8 @@ function getClientFilterCategory(pageName, dataBill, elem) {
               0,
               "Контракт",
               0,
-              true
+              true,
+              { contract_sum: "" }
             ).appendTo(selectContract);
 
             data.forEach(function (value, key) {
@@ -104,12 +105,22 @@ function getClientFilterCategory(pageName, dataBill, elem) {
                 value.id,
                 value.id,
                 value.contract_number,
-                value.id
+                value.id,
+                false,
+                { contract_sum: value.contract_sum }
               ).appendTo(selectContract);
               choiceColor();
               const contractSum = document.querySelector(".modal-contract_sum");
               contractSum.value = value.contract_sum;
-              // replaceNam()
+            });
+            
+            // Добавляем обработчик события change для обновления contract_sum
+            selectContract.addEventListener("change", function() {
+              const selectedOption = this.options[this.selectedIndex];
+              if (selectedOption && selectedOption.hasAttribute('data-contract_sum')) {
+                const contractSum = document.querySelector(".modal-contract_sum");
+                contractSum.value = selectedOption.getAttribute('data-contract_sum');
+              }
             });
             modalWindows.click();
             // иммитация лика для валидации не адв

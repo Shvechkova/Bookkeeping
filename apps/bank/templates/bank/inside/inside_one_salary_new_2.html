@@ -47,14 +47,16 @@
                                         data-sub-categ-id="{{ category.category_id }}"
                                         data-persent-use="{{ category.category_id }}"
                                     >{{ month_data.amount_month|format_rub }} ₽
-
+                          
                                         <div class="dop_info_bonus">
                                             <div class="">{{ month_data.summ_bonus|format_rub }} ₽</div>
+                                            {% if category.name  != "квартальная премия всего" %}
                                             <div class="
                                             {% if month_data.persent_bonus > 100 %}
                                                 persent_bonus_red
                                             {% endif %}
                                                 ">| {{ month_data.persent_bonus }} %</div>
+                                            {% endif %}
                                         </div>
 
 
@@ -70,7 +72,8 @@
                 {% with data_salary=employee_data.data_salary %}
                     <div class=" background-salary-employee">
                         {% for salary_block in employee_data.data_salary %}
-                            <!-- ШАпка с фамилией и тоталами по месяцам -->
+                     
+                        <!-- ШАпка с фамилией и тоталами по месяцам -->
                             {% if salary_block.name == "Итого" %}
                                 <section class="oper_account ">
                                     <div class="">
@@ -303,82 +306,81 @@
                                                 <div class="oper-account-row">
                                                     <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
                                                     <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
+              
                                                     {% for month, month_data  in category.total.items %}
-                                               
+
                                                         {% if  month_data.is_make_operations %}
-                                                        
-                                                            <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value oper-account-cell-2">
-                                                                {% if month_data.percent  %}
-                                                                3333
+                                                            <div class="salary_employee_item_wrapper  nal_item_wrapper oper-account-cell oper-account-value oper-account-cell-2">
+                                                                {% if month_data.percent %}
                                                                     <input data-summ="{{ month_data.amount_month|format_rub }}"
-                                                                           class='checkbox-persent'
-                                                                           type="checkbox"
-                                                                           value="1"
-                                                                           data-id-people="{{ employee_data.employee_id }}"
-                                                                           data-sub-categ-name="{{ category.category_id }}"
-                                                                           {% if month_data.chek %}checked{% endif %}
-                                                                           data-between-id="{{ month_data.between_id }}"
-                                                                           data-bank-in="{{ month_data.bank_in }}"
-                                                                           data-bank-out="{{ month_data.bank_out }}"
-                                                                           data-operation-data-month="{{ month_data.date_start|date:'m' }}"
-                                                                           data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
-                                                                           data-operation-old-id="{{ month_data.operation_id }}"
-                                                                           data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
+                                                                        data-id-people="{{ employee_data.employee_id }}"
+                                                                        data-sub-categ-name="{{ category.category_id }}"
+                                                                        class='checkbox-persent'
+                                                                        type="checkbox"
+                                                                        value="1"
+                                                                        {% if month_data.chek %}checked{% endif %}
+                                                                        data-between-id="{{ month_data.between_id }}"
+                                                                        data-bank-in="{{ month_data.bank_in }}"
+                                                                        data-bank-out="{{ month_data.bank_out }}"
+                                                                        data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                                                                        data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                                                                        data-operation-old-id="{{ month_data.operation_id }}"
+                                                                        data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                                 {% endif %}
-                                                                {% comment %} {{ month_data.percent }} {% endcomment %}
-                                                                <div class="{% if month_data.percent %}check-persent  inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
-                                                                     data-id-people="{{ employee_data.employee_id }}"
-                                                                     {% comment %}
-                                                                     data-sub-categ-id="{{ category.id_groupe }}"
-                                                                     data-sub-categ-name="employee"
-                                                                     {% endcomment %}
-                                                                     data-bank-in="3"
-                                                                     data-bank-out="{{ month_data.bank_out }}"
-                                                                     data-between-id="{{ month_data.between_id }}"
-                                                                     tupe-operations="{{ month_data.type_operations }}"
-                                                                      data-sub-categ-name="{{ category.category_id }}"
-                                                                     data-sub-categ-id="{{ month_data.id_groupe }}"
-                                                                     data-operation-data-month="{{ month_data.date_start|date:'m' }}"
-                                                                     data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
-                                                                     data-operation-old-id="{{ month_data.operation_percent_id|default:'0' }}"
-                                                                     data-prev-month="{{ month_data.expected|format_rub }}"
-                                                                     data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
-                                                                    <!-- операция с процентами-->
-                                                                
-                                                                    {{ month_data.expected }}
-                                                                    {% if month_data.percent %}
+                                                                <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
+                                                                    data-id-people="{{ employee_data.employee_id }}"
+                                                                    data-bank-in="{{ month_data.bank_in }}"
+                                                                    data-bank-out="{{ month_data.bank_out }}"
+                                                                    data-between-id="{{ month_data.between_id }}"
+                                                                    tupe-operations="{{ month_data.type_operations }}"
+                                                                    {% if month_data.type_operations == "percent" %}
+                                                                        data-sub-categ-name="employee"
+                                                                    {% else %}
+                                                                        data-sub-categ-name="{{ category.category_id }}"
+                                                                    {% endif %}
+                                                                    data-sub-categ-id="{{ month_data.id_groupe }}"
+                                                                    data-operation-data-month="{{ month_data.date_start|date:'m' }}"
+                                                                    data-operation-data-year="{{ month_data.date_start|date:'Y' }}"
+                                                                    {% if month_data.type_operations == "percent" %}
+                                                                        data-operation-old-id="{{ month_data.operation_percent_id|default:'0' }}"
+                                                                    {% else %}
+                                                                        data-operation-old-id="{{ month_data.operation_id|default:'0' }}"
+                                                                    {% endif %}
+                                                                    data-prev-month="{{ month_data.expected|format_rub }}"
+                                                                    data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}"
                                                                     
+                                                                    
+                                                                    >
+                                                                    <!-- операция с процентами-->
+                                                                    {% if month_data.percent %}
                                                                         {% if month_data.percent > 0 %}
-                                                                        
                                                                             <!-- Если фикс суммы был   -->
                                                                             {% if month_data.chek %}
                                                                                 <p class="salary_employee_item_sums_text">{{ month_data.amount_month_chek|format_rub }} ₽</p>
                                                                             {% else %}
                                                                                 <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                                 <input type="text"
-                                                                                       class="salary_employee_item_sums_inp"
-                                                                                       value="{{ month_data.percent|format_rub }}">
+                                                                                    class="salary_employee_item_sums_inp"
+                                                                                    value="{{ month_data.percent|format_rub }}">
                                                                             {% endif %}
                                                                         {% else %}
-                                                                        
                                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                             <input type="text"
-                                                                                   class="salary_employee_item_sums_inp"
-                                                                                   value="{{ month_data.expected|format_rub }}5555">
+                                                                                class="salary_employee_item_sums_inp"
+                                                                                value="{{ month_data.expected|format_rub }}">
                                                                         {% endif %}
-                                                                        
                                                                         <!-- операция с суммами-->
                                                                     {% else %}
                                                                         {% if month_data.amount_month > 0 %}
                                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                             <input type="text"
-                                                                                   class="salary_employee_item_sums_inp"
-                                                                                   value="{{ month_data.amount_month|format_rub }}">
+                                                                                class="salary_employee_item_sums_inp"
+                                                                                value="{{ month_data.amount_month|format_rub }}">
                                                                         {% else %}
                                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                             <input type="text"
-                                                                                   class="salary_employee_item_sums_inp"
-                                                                                   value="{{ month_data.expected|format_rub }}">
+                                                                                class="salary_employee_item_sums_inp"
+                                                                                value="{{ month_data.expected|format_rub }}">
                                                                         {% endif %}
                                                                     {% endif %}
                                                                 </div>
@@ -386,7 +388,7 @@
                                                             </div>
                                                         {% else %}
                                                             <div class="oper-account-cell oper-account-value"
-                                                                 data-month-number="{{ month_data.month_number }}">
+                                                                data-month-number="{{ month_data.month_number }}">
                                                                 <div class="invoice_month_item_text">
                                                                     {% if month_data.amount_month > 0 %}
                                                                         <p>{{ month_data.amount_month|format_rub }} ₽</p>
@@ -400,7 +402,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    {% endfor %}
+                                    {% endfor %} 
                                     <!-- Общий итог -->
                                     <div class="">
                                         <div class="oper-account-grid">
