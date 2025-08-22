@@ -21,6 +21,20 @@ jobs:
       with:
         python-version: '3.12'
     
+    - name: Create .env file
+      run: |
+        cat > .env << EOF
+        PROJECT='Bookkeeping'
+        DEBUG="FALSE"
+        SECRET_KEY="django-insecure-placeholder-for-build"
+        DB_NAME="test_db"
+        DB_USER="test_user"
+        DB_PASSWORD="test_password"
+        DB_HOST="127.0.0.1"
+        DB_PORT="3306"
+        EOF
+        echo "Created .env file for build"
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

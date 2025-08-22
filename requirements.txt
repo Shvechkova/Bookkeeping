@@ -1,5 +1,14 @@
+# Основные зависимости Django
 django==5.2
 django-environ
 pymysql
+
+# Django REST Framework
 djangorestframework==3.16.0
+
+# WSGI сервер для production
 waitress
+
+# Дополнительные зависимости для сборки
+setuptools
+wheel
