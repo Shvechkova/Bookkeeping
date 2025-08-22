@@ -11,7 +11,7 @@
 
 ### 1. Код уже загружен в GitHub ✅
 - Репозиторий: `https://github.com/Shvechkova/Bookkeeping.git`
-- Последний коммит: `Add macOS M2 build support with GitHub Actions workflow`
+- Последний коммит: `Fix GitHub Actions: update upload-artifact to v4, add Windows build workflow, improve build verification`
 
 ### 2. GitHub Actions автоматически запустится
 - Перейдите в ваш репозиторий на GitHub
@@ -51,3 +51,10 @@ dist/macos-m2/
         │   └── run_app (исполняемый файл)
         └── Resources/ (все данные Django)
 ```
+
+## Преимущества macOS сборки
+
+- ✅ **Нативная производительность** на Apple Silicon (M2)
+- ✅ **Красивый .app bundle** - как обычное macOS приложение
+- ✅ **Автоматическая подпись** (если настроена)
+- ✅ **Простая установка** - перетащить в Applications
