@@ -27,7 +27,7 @@ jobs:
     
     - name: Build executable
       run: |
-        pyinstaller run_app.spec --distpath dist/macos-m2
+        pyinstaller run_app_macos.spec --distpath dist/macos-m2
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
