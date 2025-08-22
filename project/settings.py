@@ -99,36 +99,41 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "dyugaev_anast",
-#         "USER": "dyugaev_anast",
-#         "PASSWORD": "PRgD0%1V",
-#         "HOST": "dyugaev.beget.tech",
-#         # 'CONN_MAX_AGE': 60,
-
-#     }
-# }
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST", default="127.0.0.1"),
-        "PORT": env("DB_PORT", default="3306"),
-        # "CONN_MAX_AGE": 60,
-        # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+# Автоматически выбираем базу данных в зависимости от окружения
+if env("USE_SQLITE", default="False").lower() == "true":
+    # Используем SQLite для локальной разработки и передачи приложения
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+    print("Using SQLite database for local development")
+else:
+    # Используем MySQL для production
+    try:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": env("DB_NAME"),
+                "USER": env("DB_USER"),
+                "PASSWORD": env("DB_PASSWORD"),
+                "HOST": env("DB_HOST", default="127.0.0.1"),
+                "PORT": env("DB_PORT", default="3306"),
+                # "CONN_MAX_AGE": 60,
+                # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+            }
+        }
+        print("Using MySQL database for production")
+    except Exception as e:
+        print(f"MySQL connection failed: {e}")
+        print("Falling back to SQLite database")
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation
