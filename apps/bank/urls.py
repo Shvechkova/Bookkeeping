@@ -30,7 +30,7 @@ urlpatterns = [
     
     path("storage/", views.storage_all, name="storage"),
     path("storage/banking", views.storage_banking, name="storage_banking"),
-    path("storage/bonus", views.storage_bonus, name="storage_bonus"),
+
     path("storage/servise", views.storage_servise, name="storage_servise"),
     path("storage/servise_client", views.storage_servise_client, name="storage_servise_client"),
     

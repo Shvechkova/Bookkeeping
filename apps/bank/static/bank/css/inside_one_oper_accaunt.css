@@ -19,7 +19,10 @@
  
 }
 
-
+.background-bank-oper-account{
+  background-color: rgb(241, 243, 237);
+  border-radius: 1.5625rem;
+}
 
 .oper-account-grid {
   display: flex;

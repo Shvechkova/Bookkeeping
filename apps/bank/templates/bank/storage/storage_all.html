@@ -2,10 +2,11 @@
 {% load static %}
 {% load format_filters %}
 {% block content %}
-  <link rel="stylesheet"
-        href="{% static 'bank/css/inside_one_oper_accaunt.css' %}">
-  <link rel="stylesheet" href="{% static 'bank/css/outside_bank.css' %}">
-  <script src="{% static 'bank/js/oper_account_cell_width.js' %}"></script>
+<link rel="stylesheet"
+href="{% static 'bank/css/inside_one_oper_accaunt.css' %}" />
+<link rel="stylesheet" href="{% static 'bank/css/outside_bank.css' %}" />
+<script src="{% static 'bank/js/oper_account_cell_width.js' %}"></script>
+<input type="hidden" id="page_name" value="{{ title }}" />
   {% include "bank/storage/includes/header_storage.html" %}
   <div class="inside_wr">
     <div class="section_oper_wr outside_wr">
@@ -329,13 +330,12 @@
       </div>
 
       <!-- ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ -->
-
       <div class="">
         <br>
         <div class="oper-account-cell  oper-account-service-min-nalog ">
-          {% comment %} <h2 class="">ПРЕМИИ</h2> {% endcomment %}
+        <h2 class="">ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ </h2> 
         </div>
-        <section class="oper_account background-bank-storage-bonus">
+        <section class="oper_account background-bank-storage-buget">
           <div class="">
             <div class="oper-account-grid">
               <div class="oper-account-row oper-account-total">
@@ -491,6 +491,46 @@
           </div>
         </section>
       </div>
+
+      <!-- ИТОГО Накопительные счета + премии + остатки рекламных бюджетов --><div class="">
+        <div class="">
+            <br>
+        <div class="oper-account-cell  oper-account-service-min-nalog ">
+           
+            <h2 class="">ИТОГО Накопительные счета + премии + остатки рекламных бюджетов</h2>
+          </div>
+          
+          <!-- ИТОГО Накопительные счета БЕЗ ПРЕМИЙ-->
+          <section class="oper_account background-bank-storage-nal">
+            <div class="">
+              <div class="oper-account-grid">
+                <div class="oper-account-row oper-account-total">
+                  <div class="oper-account-cell oper-account-num"></div>
+                  <div class="oper-account-cell outside_name_title"></div>
+                  {% for month in months_current_year %}
+                    <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <div class="oper-account-grid">
+                <div class="oper-account-row">
+                  <div class="oper-account-cell oper-account-num"></div>
+                  <div class="oper-account-cell outside_name_title">{{ arr_total_bonus_and_bank_and_servise.name }}</div>
+                  {% for month, month_data  in arr_total_bonus_and_bank_and_servise.total.items %}
+                    <div class="oper-account-cell oper-account-value"
+                         data-month-number="{{ month_data.month_number }}">
+                      <div class="invoice_month_item_text">
+                        <p>{{ month_data.amount_month|format_rub }} ₽</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div> </div>
     </div>
   </div>
 {% endblock content %}

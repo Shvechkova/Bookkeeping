@@ -2448,11 +2448,11 @@ def outside_ooo(request):
     cache_key = f"bank_{bank.id}_context_{year_now}"
 
     context_cash = cache.get(cache_key)
- 
+
     context_cash = cache.get(cache_key)
-    
+
     if not context_cash:
-       
+
         context_cash = {
             "title": title,
             "year_now": year_now,
@@ -2467,12 +2467,11 @@ def outside_ooo(request):
             # "arr_start_month": arr_start_month,
             # "old_oper_arr": old_oper_arr,
         }
-       
+
         cache.set(
             cache_key,
             context_cash,
         )
-    
 
     context = {
         "title": title,
@@ -2794,9 +2793,8 @@ def outside_ip(request):
     # вида "bank_{bank.id}_context_{year_now}"
     outside_ooo(request)
     cache_key = f"bank_{1}_context_{year_now}"
- 
+
     context_ooo = cache.get(cache_key)
- 
 
     # cache_key = f"bank_{1}_context_{year_now}"
     # context_ooo = cache.get(cache_key)
@@ -3234,6 +3232,23 @@ def storage(request):
     data = datetime.datetime.now()
     year_now = datetime.datetime.now().year
     month_now = datetime.datetime.now().month
+
+    context = {
+        "title": title,
+        "year_now": year_now,
+        "type_url": type_url,
+    }
+
+    return render(request, "bank/outside/storage.html", context)
+
+
+def storage_all(request):
+    title = "Накопительные счета"
+    type_url = "storage_banking"
+
+    data = datetime.datetime.now()
+    year_now = datetime.datetime.now().year
+    month_now = datetime.datetime.now().month
     # Получаем только нужный банк
     bank = Bank.objects.get(id=4)
 
@@ -3297,23 +3312,36 @@ def storage(request):
         "зачисление на ООО",
         "зачисление на ИП",
         "ПРЕМИИ",
-        "на квартальную премию",  
+        "на квартальную премию",
         "на выплату премий (раз в квартал)",
-        "на выплату премий",  
+        "на выплату премий",
+        "Забираем в наше хранилище",
+        "откладываем в хранилище на будущие расходы",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
 
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    
+
     by_name_and_bank_in = {}
     for item in cate_oper_beetwen:
         by_name_and_bank_in.setdefault(item["name"], {})[item["bank_in"]] = item
 
     # пример доступа
     premii_bank2 = by_name_and_bank_in["ПРЕМИИ"][2]
-
+    arr_total_bonus_and_bank_and_servise = {
+        "name": "ИТОГО Накопительные счета + премии + остатки рекламных бюджетов",
+        "total": {},
+    }
+    for i, month in enumerate(months_current_year):
+        month_number = month_numbers[month]
+        arr_total_bonus_and_bank_and_servise["total"][month] = {
+            "amount_month": 0,
+            "month_number": month_number,
+        }
+        
+        
     # СТАРТОВЫЕ МАССИВЫ
     # Р/С на начало месяца
     arr_start_month = {
@@ -3411,33 +3439,84 @@ def storage(request):
         },
     }
 
-    
     arr_stop_month_bank = {
         "name": "ИТОГО Накопительные счета БЕЗ ПРЕМИЙ",
         "total": {},
     }
 
+    arr_start_month, arr_in, arr_out, arr_bonus_all = (
+        fill_operations_arrays_keep_banking(
+            arr_start_month,
+            arr_in,
+            arr_out,
+            arr_stop_month_bank,
+            arr_bonus_all,
+            CATEGORY_OPERACCOUNT,
+            months_current_year,
+            month_numbers,
+            year_now,
+            operations,
+            bank,
+            cate_oper_beetwen_by_name,
+            by_name_and_bank_in,
+            is_old_oper=False,
+            old_oper_arr=None,
+            arr_total_bonus_and_bank_and_servise=arr_total_bonus_and_bank_and_servise,
+        )
+    )
+    # ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ
+    arr_service = {
+        "name": "Поступления:",
+        "category": [
+            {
+                "name": "Поступления",
+                "total": {},
+            },
+        ],
+    }
 
-    arr_start_month, arr_in, arr_out, arr_bonus_all = fill_operations_arrays_keep_banking(
-        arr_start_month,
-        arr_in,
-        arr_out,
-        arr_stop_month_bank,
-        arr_bonus_all,
-        CATEGORY_OPERACCOUNT,
+
+    arr_buget = {
+        "name": "ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ",
+        "category": [
+            {
+                "name": "на начало месяца",
+                "total": {},
+            },
+            {
+                "name": "Поступления:",
+                "group": {
+                    "$": {},
+                    "ИП": {},
+                    "ООО": {},
+                    "Расход:": {},
+                    "Забираем в наше хранилище": {},
+                },
+            },
+        ],
+        "total_category": {
+            "name": "ИТОГО Остатки",
+            "total": {},
+        },
+    }
+    
+    
+    arr_service, arr_buget = fill_operations_storage_servise(
+        arr_service,
+        arr_buget,
+        year_now,
         months_current_year,
         month_numbers,
-        year_now,
         operations,
-        bank,
         cate_oper_beetwen_by_name,
-        by_name_and_bank_in,
-        is_old_oper=False,
         old_oper_arr=None,
+        arr_total_bonus_and_bank_and_servise=arr_total_bonus_and_bank_and_servise,
     )
-
+    
+    
+    
     context = {
-       "title": title,
+        "title": title,
         "year_now": year_now,
         "bank": bank.id,
         "months_current_year": months_current_year,
@@ -3447,18 +3526,9 @@ def storage(request):
         "arr_out": arr_out,
         "arr_stop_month_bank": arr_stop_month_bank,
         "arr_bonus_all": arr_bonus_all,
-        
-    }
-
-    return render(request, "bank/outside/storage.html", context)
-
-
-def storage_all(request):
-    title = "Хранилище"
-    type_url = "storage"
-    context = {
-        "title": title,
-        "type_url": type_url,
+        "arr_service": arr_service,
+        "arr_buget": arr_buget,
+        "arr_total_bonus_and_bank_and_servise": arr_total_bonus_and_bank_and_servise,
     }
 
     return render(request, "bank/storage/storage_all.html", context)
@@ -3534,16 +3604,16 @@ def storage_banking(request):
         "зачисление на ООО",
         "зачисление на ИП",
         "ПРЕМИИ",
-        "на квартальную премию",  
+        "на квартальную премию",
         "на выплату премий (раз в квартал)",
-        "на выплату премий",  
+        "на выплату премий",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
 
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-    
+
     by_name_and_bank_in = {}
     for item in cate_oper_beetwen:
         by_name_and_bank_in.setdefault(item["name"], {})[item["bank_in"]] = item
@@ -3648,29 +3718,30 @@ def storage_banking(request):
         },
     }
 
-    
     arr_stop_month_bank = {
         "name": "ИТОГО Накопительные счета БЕЗ ПРЕМИЙ",
         "total": {},
     }
 
-
-    arr_start_month, arr_in, arr_out, arr_bonus_all = fill_operations_arrays_keep_banking(
-        arr_start_month,
-        arr_in,
-        arr_out,
-        arr_stop_month_bank,
-        arr_bonus_all,
-        CATEGORY_OPERACCOUNT,
-        months_current_year,
-        month_numbers,
-        year_now,
-        operations,
-        bank,
-        cate_oper_beetwen_by_name,
-        by_name_and_bank_in,
-        is_old_oper=False,
-        old_oper_arr=None,
+    arr_start_month, arr_in, arr_out, arr_bonus_all = (
+        fill_operations_arrays_keep_banking(
+            arr_start_month,
+            arr_in,
+            arr_out,
+            arr_stop_month_bank,
+            arr_bonus_all,
+            CATEGORY_OPERACCOUNT,
+            months_current_year,
+            month_numbers,
+            year_now,
+            operations,
+            bank,
+            cate_oper_beetwen_by_name,
+            by_name_and_bank_in,
+            is_old_oper=False,
+            old_oper_arr=None,
+            arr_total_bonus_and_bank_and_servise=None
+        )
     )
 
     context = {
@@ -3687,17 +3758,6 @@ def storage_banking(request):
     }
 
     return render(request, "bank/storage/storage_banking.html", context)
-
-
-def storage_bonus(request):
-    title = "Премии"
-    type_url = "storage_bonus"
-    context = {
-        "title": title,
-        "type_url": type_url,
-    }
-
-    return render(request, "bank/storage/storage_bonus.html", context)
 
 
 def storage_servise(request):
@@ -3744,14 +3804,11 @@ def storage_servise(request):
     names_btw = [
         "Забираем в наше хранилище",
         "откладываем в хранилище на будущие расходы",
-        
-        
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
-         name__in=names_btw
+        name__in=names_btw
     ).values("id", "name", "bank_in", "bank_to")
     cate_oper_beetwen_by_name = {item["name"]: item for item in cate_oper_beetwen}
-
 
     # ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ
     arr_service = {
@@ -3763,37 +3820,6 @@ def storage_servise(request):
             },
         ],
     }
-    
-    arr_bonus_all = {
-        "name": "ПРЕМИИ",
-        "category": [
-            {
-                "name": "на квартальные премии 1:",
-                "group": {
-                    "на начало месяца": {},
-                    "с $": {},
-                    "с ООО -> ИП": {},
-                    "на выплату премий (раз в квартал)": {},
-                    "на конец месяца": {},
-                },
-            },
-            {
-                "name": "на квартальные премии 2:",
-                "group": {
-                    "на начало месяца": {},
-                    "с $": {},
-                    "с ООО -> ИП": {},
-                    "на выплату премий": {},
-                    "на конец месяца": {},
-                },
-            },
-        ],
-        "total_category": {
-            "name": "ИТОГО Премии",
-            "total": {},
-        },
-    }
-
 
 
     arr_buget = {
@@ -3819,7 +3845,9 @@ def storage_servise(request):
             "total": {},
         },
     }
-    arr_service,arr_buget = fill_operations_storage_servise(
+    
+    
+    arr_service, arr_buget = fill_operations_storage_servise(
         arr_service,
         arr_buget,
         year_now,
@@ -3827,7 +3855,8 @@ def storage_servise(request):
         month_numbers,
         operations,
         cate_oper_beetwen_by_name,
-        old_oper_arr=None
+        old_oper_arr=None,
+        arr_total_bonus_and_bank_and_servise=None
     )
 
     context = {
@@ -4188,7 +4217,8 @@ def salary_new_2(request):
     # Получаем данные о процентах по сотрудникам для категорий КВ $ и КВ ИП
     percent_employee_data = (
         PercentEmployee.objects.filter(
-            category__name__in=["КВ $", "КВ ИП", "квартальная премия"], data__year=year_now
+            category__name__in=["КВ $", "КВ ИП", "квартальная премия"],
+            data__year=year_now,
         )
         .select_related("category", "employee")
         .annotate(month=ExtractMonth("data"))
@@ -4203,8 +4233,7 @@ def salary_new_2(request):
         "компенсация владельцу с ИП",
         "КВ с $",
         "на выплату премий (раз в квартал)",
-        "на выплату премий"
-        
+        "на выплату премий",
     ]
     cate_oper_beetwen = CategOperationsBetweenBank.objects.filter(
         name__in=names_btw

@@ -5548,6 +5548,7 @@ def fill_operations_arrays_keep_banking(
     by_name_and_bank_in,
     is_old_oper,
     old_oper_arr,
+    arr_total_bonus_and_bank_and_servise
 ):
     between_id_to_ooo = cate_oper_beetwen_by_name.get("зачисление на ООО")
     between_id_to_ip = cate_oper_beetwen_by_name.get("зачисление на ИП")
@@ -6140,12 +6141,24 @@ def fill_operations_arrays_keep_banking(
 
        # ИТОГО по премиям (сумма категорий 1 и 2) за месяц
         print("arr_bonus_all[total_category][total][month][amount_month]",arr_bonus_all["total_category"]["total"][month]["amount_month"]    )
+        
+        print("arr_bonus_all[category][0][group][на конец месяца][month][amount_month]",arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"])
+        print("arr_bonus_all[category][1][group][на конец месяца][month][amount_month]",arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"])
         total_bonus = arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"]
         print("total_bonus",total_bonus)
         
-        arr_bonus_all["total_category"]["total"][month]["amount_month"] = total_bonus
+        # arr_bonus_all["total_category"]["total"][month]["amount_month"] = total_bonus
 
         print("arr_bonus_all[total_category][total][month][amount_month]2",arr_bonus_all["total_category"]["total"][month]["amount_month"]    )
+      
+    for i, month in enumerate(months_current_year):
+        
+        total_bonus = arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] 
+        
+        arr_bonus_all["total_category"]["total"][month]["amount_month"] = total_bonus
+        if arr_total_bonus_and_bank_and_servise:
+            arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] = arr_stop_month_bank["total"][month]["amount_month"] + total_bonus
+    
     return arr_start_month, arr_in, arr_out, arr_bonus_all
 
 
@@ -6786,6 +6799,7 @@ def fill_operations_storage_servise(
     operations,
     cate_oper_beetwen_by_name,
     old_oper_arr,
+    arr_total_bonus_and_bank_and_servise,
 ):
     between_kepp_budet_to_nal = cate_oper_beetwen_by_name.get(
         "Забираем в наше хранилище"
@@ -6987,7 +7001,11 @@ def fill_operations_storage_servise(
                 arr_buget["category"][0]["total"][month]["amount_month"] = arr_buget[
                     "total_category"
                 ]["total"][next_month]["amount_month"]
-
+    
+        # arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] += arr_buget["total_category"]["total"][month]["amount_month"] 
+    for i, month in enumerate(months_current_year):
+        if arr_total_bonus_and_bank_and_servise:
+            arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] += arr_buget["total_category"]["total"][month]["amount_month"] 
     return arr_service, arr_buget
 
 

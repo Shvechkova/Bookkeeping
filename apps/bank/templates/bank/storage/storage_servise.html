@@ -17,14 +17,14 @@
         <a class="menu_service" href="{% url 'bank:storage_servise' %}">По месяцам</a>
       {% endif %}
     </li>
-    <li class="header_nav-link">
+    {% comment %} <li class="header_nav-link">
       {% url 'bank:storage_servise_client' as the_url %}
       {% if request.path == the_url %}
         <span class="menu-active menu-active_service">По клиентам</span>
       {% else %}
         <a class="menu_service" href="{% url 'bank:storage_servise_client' %}">По клиентам</a>
       {% endif %}
-    </li>
+    </li> {% endcomment %}
   </ul>
   {% comment %} <section class="oper_account">
         <div class="category-block">
@@ -105,9 +105,9 @@
       <div class="">
         <br>
         <div class="oper-account-cell  oper-account-service-min-nalog ">
-          {% comment %} <h2 class="">ПРЕМИИ</h2> {% endcomment %}
+         <h2 class="">ОСТАТКИ БЮДЖЕТОВ НА БУДУЩИЕ РАСХОДЫ</h2>
         </div>
-        <section class="oper_account background-bank-storage-bonus">
+        <section class="oper_account background-bank-storage-buget">
           <div class="">
             <div class="oper-account-grid">
               <div class="oper-account-row oper-account-total">
