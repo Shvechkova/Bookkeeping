@@ -95,30 +95,29 @@
                 </div>
             {% endfor %}
         </section>
-        <!-- Старые операции -->
-        <section class="oper_account_old">
-            {% for year_data in operations_old %}
-                <div class="year-block">
-                    {% comment %} <h3>{{ year_data.year }} год (Итого: {{ year_data.total_year|floatformat:0 }} ₽)</h3> {% endcomment %}
-                    {% for category in year_data.categories %}
-                        <div class="category-block">
-                            <div class="oper-account-grid">
-                                <!-- Заголовки -->
-                                <div class="oper-account-cell_wr font-bold">
-                                    <div class="oper-account-cell oper-account-service br-r-top font-bold oper-account-service-min">
-                                        {{ year_data.year|cut:" " }}
-                                        <div class="btn_month_invoce-shrink shrink-item"
-                                             data-attr-shrink='oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}'
-                                             data-attr-shrink-name='oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}'>
-                                            <svg width="16"
-                                                 height="16"
-                                                 viewBox="0 0 16 16"
-                                                 fill="none"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
-                                                <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
-                                                <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
-                                            </svg>
+        {% comment %} <!-- Старые операции -->
+                <section class="oper_account_old">
+                    {% for year_data in operations_old %}
+                        <div class="year-block">
+                            {% for category in year_data.categories %}
+                                <div class="category-block">
+                                    <div class="oper-account-grid">
+                                        <!-- Заголовки -->
+                                        <div class="oper-account-cell_wr font-bold">
+                                            <div class="oper-account-cell oper-account-service br-r-top font-bold oper-account-service-min">
+                                                {{ year_data.year|cut:" " }}
+                                                <div class="btn_month_invoce-shrink shrink-item"
+                                                     data-attr-shrink='oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}'
+                                                     data-attr-shrink-name='oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}'>
+                                                    <svg width="16"
+                                                         height="16"
+                                                         viewBox="0 0 16 16"
+                                                         fill="none"
+                                                         xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="16.0002" y="16" width="16" height="16" rx="8" transform="rotate(-180 16.0002 16)" fill="black" />
+                                                        <rect x="13.0002" y="9" width="10" height="2" transform="rotate(-180 13.0002 9)" fill="white" />
+                                                        <path d="M7.00024 3L7.00024 5.5L4.50024 8L7.00024 10.5V13L2.00024 8L7.00024 3Z" fill="white" />
+                                                </svg>
                                         </div>
                                     </div>
                                     <div class="oper-account-row oper-account-header">
@@ -183,9 +182,6 @@
                                         {{ category.total_category|format_rub }} ₽
                                     </div>
                                     <div class="oper-account-row oper-account-total no-bg">
-                                        {% comment %} <div class="oper-account-cell oper-account-service">
-                                           <div class="oper-account-cell oper-account-service">{{ category.total_category }} ₽</div>
-                                        </div> {% endcomment %}
                                         {% for total in category.totals_by_month %}
                                             <div class="oper-account-cell oper-account-value oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}"
                                                  data-attr-shrink-item='oper-account_additional_{{ category.category_id }}_{{ year_data.year|cut:" " }}'>
@@ -197,22 +193,22 @@
                             </div>
                         </div>
                     {% endfor %}
-                    {% comment %} <!-- Итого по месяцам за год -->
-                                                                                                                                                                                                    <div class="category-block">
-                                                                                                                                                                                                        <div class="oper-account-grid">
-                                                                                                                                                                                                            <div class="oper-account-row oper-account-total">
-                                                                                                                                                                            <div class="oper-account-cell oper-account-num"></div>
-                                                                                                                                        <div class="oper-account-cell oper-account-service">Итого за {{ year_data.year }} год</div>
-                                                                                                                                        {% for total in year_data.totals_by_month %}
-                                                                                                                                            <div class="oper-account-cell oper-account-value">
-                                                                                                                                                <b>{{ total|floatformat:0 }} ₽</b>
-                                                                                                        </div>
-                                                                                                    {% endfor %}
-                                                            </div>
+                    <!-- Итого по месяцам за год -->
+                    <div class="category-block">
+                        <div class="oper-account-grid">
+                            <div class="oper-account-row oper-account-total">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell oper-account-service">Итого за {{ year_data.year }} год</div>
+                                {% for total in year_data.totals_by_month %}
+                                    <div class="oper-account-cell oper-account-value">
+                                        <b>{{ total|floatformat:0 }} ₽</b>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-</div> {% endcomment %}
-</div>
-{% endfor %}
-</section>
+                </div>
+            {% endfor %}
+</section> {% endcomment %}
 </div>
 {% endblock content %}

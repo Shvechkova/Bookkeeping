@@ -39,7 +39,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="salary_employees_" data-attr-shrink-item-vert="salary_employees_">
+                <div class="salary_employees_"
+                     data-attr-shrink-item-vert="salary_employees_">
                     {% for employee_id, employee_data in arr_salary_employees.employees.items %}
                         <div class="oper-account-grid">
                             <!-- Заголовок сотрудника -->
@@ -49,7 +50,6 @@
                                     <div class="category-title">{{ employee_data.employee.first_name }} {{ employee_data.employee.last_name }}</div>
                                 </div>
                             </div>
-                            
                             <!-- Группы зарплат сотрудника -->
                             {% for group in employee_data.groups %}
                                 <div class="oper-account-row">
@@ -63,7 +63,6 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-                                
                                 <!-- Категории в группе -->
                                 {% for category in group.categories %}
                                     <div class="oper-account-row">
@@ -89,9 +88,7 @@
                                                                    value="{{ month_data.amount_month|format_rub }}">
                                                         {% else %}
                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
-                                                            <input type="text"
-                                                                   class="salary_employee_item_sums_inp"
-                                                                   value="0">
+                                                            <input type="text" class="salary_employee_item_sums_inp" value="0">
                                                         {% endif %}
                                                     </div>
                                                     <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog">ОК</div>
@@ -108,7 +105,6 @@
                                     </div>
                                 {% endfor %}
                             {% endfor %}
-                            
                             <!-- Итого по сотруднику -->
                             <div class="oper-account-row oper-account-total">
                                 <div class="oper-account-cell oper-account-num"></div>
@@ -123,7 +119,6 @@
                     {% endfor %}
                 </div>
             </section>
-
             <!-- Общие итоги -->
             <section class="oper_account background-bank-ip">
                 <div class="">
@@ -171,7 +166,6 @@
                 </div>
             </section>
         </div>
-
         <!-- Старые операции -->
         <div class="section_oper_wr outside_wr section_oper_wr_old">
             {% if old_oper_arr %}
@@ -196,23 +190,21 @@
                                 </svg>
                             </div>
                         </div>
-
                         <!-- Зарплаты по сотрудникам для старого года -->
                         <section class="oper_account background-bank-ip salary_additional_{{ year_data.year|cut:' ' }}">
                             <div class="">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-num"></div>
-                                        <div class="oper-account-cell outside_name_title">
-                                            {{ year_data.arr_salary_employees.name }} {{ year }}
-                                        </div>
+                                        <div class="oper-account-cell outside_name_title">{{ year_data.arr_salary_employees.name }} {{ year }}</div>
                                         {% for month in year_data.months_current_year %}
                                             <div class="oper-account-cell oper-account-month">{{ month }} {{ year }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
-                            <div class="salary_employees_{{ year }}_" data-attr-shrink-item-vert="salary_employees_{{ year }}_">
+                            <div class="salary_employees_{{ year }}_"
+                                 data-attr-shrink-item-vert="salary_employees_{{ year }}_">
                                 {% for employee_id, employee_data in year_data.arr_salary_employees.employees.items %}
                                     <div class="oper-account-grid">
                                         <!-- Заголовок сотрудника -->
@@ -222,7 +214,6 @@
                                                 <div class="category-title">{{ employee_data.employee.first_name }} {{ employee_data.employee.last_name }}</div>
                                             </div>
                                         </div>
-                                        
                                         <!-- Группы зарплат сотрудника -->
                                         {% for group in employee_data.groups %}
                                             <div class="oper-account-row">
@@ -236,7 +227,6 @@
                                                     </div>
                                                 {% endfor %}
                                             </div>
-                                            
                                             <!-- Категории в группе -->
                                             {% for category in group.categories %}
                                                 <div class="oper-account-row">
@@ -262,9 +252,7 @@
                                                                                value="{{ month_data.amount_month|format_rub }}">
                                                                     {% else %}
                                                                         <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
-                                                                        <input type="text"
-                                                                               class="salary_employee_item_sums_inp"
-                                                                               value="0">
+                                                                        <input type="text" class="salary_employee_item_sums_inp" value="0">
                                                                     {% endif %}
                                                                 </div>
                                                                 <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog">ОК</div>
@@ -281,7 +269,6 @@
                                                 </div>
                                             {% endfor %}
                                         {% endfor %}
-                                        
                                         <!-- Итого по сотруднику -->
                                         <div class="oper-account-row oper-account-total">
                                             <div class="oper-account-cell oper-account-num"></div>
@@ -296,23 +283,21 @@
                                 {% endfor %}
                             </div>
                         </section>
-
                         <!-- Общие итоги для старого года -->
                         <section class="oper_account background-bank-ip salary_additional_{{ year_data.year|cut:' ' }}">
                             <div class="">
                                 <div class="oper-account-grid">
                                     <div class="oper-account-row oper-account-total">
                                         <div class="oper-account-cell oper-account-num"></div>
-                                        <div class="oper-account-cell outside_name_title">
-                                            {{ year_data.arr_total_salary.name }} {{ year }}
-                                        </div>
+                                        <div class="oper-account-cell outside_name_title">{{ year_data.arr_total_salary.name }} {{ year }}</div>
                                         {% for month in year_data.months_current_year %}
                                             <div class="oper-account-cell oper-account-month">{{ month }} {{ year }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
-                            <div class="total_salary_{{ year }}_" data-attr-shrink-item-vert="total_salary_{{ year }}_">
+                            <div class="total_salary_{{ year }}_"
+                                 data-attr-shrink-item-vert="total_salary_{{ year }}_">
                                 {% for category in year_data.arr_total_salary.category %}
                                     <div class="oper-account-grid">
                                         <div class="oper-account-row">

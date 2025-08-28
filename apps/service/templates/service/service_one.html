@@ -1122,8 +1122,8 @@
                                             {% else %}
                                                 <div class="result_not-wrap">
                                                     <p class="result_not font-bold">
-                                                        {{ total.total_operation_amount_to_all }} ₽
-                                                        <p class="result_not_after">/долг {{ total.total_operation_amount_to_all_diff }} ₽</p>
+                                                        {{ total.total_operation_amount_to_all|format_rub  }} ₽
+                                                        <p class="result_not_after">/долг {{ total.total_operation_amount_to_all_diff|format_rub  }} ₽</p>
                                                     </p>
                                                 </div>
                                             {% endif %}
