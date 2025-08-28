@@ -39,7 +39,7 @@ from apps.bank.models import (
 from apps.employee.models import Employee
 from apps.operation.models import Operation
 from apps.service.models import Service, SubcontractOtherCategory
-from project.settings import MONTHS_RU
+from project.settings import MONTHS_RU, DEBUG
 import locale
 import copy
 from django.core.cache import cache
@@ -47,6 +47,8 @@ from django.core.cache import cache
 
 # Внутренние счета
 def inside(request):
+    debag = DEBUG
+    print("debag", debag)
     title = "Внутренние счета"
     type_url = "inside"
     context = {

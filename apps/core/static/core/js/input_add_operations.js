@@ -4,14 +4,14 @@ const salaryBtn = document.querySelectorAll(".inp_operation");
 let globalActiveElement = null;
 
 if (salaryBtn) {
-  console.log(salaryBtn);
+ 
   let old_elem;
   let valueOld;
   const pageName = document.getElementById("page_name").value;
-  console.log("page_name", pageName);
+
   salaryBtn.forEach((element) => {
     element.addEventListener("click", (event) => {
-      console.log(element);
+
       const elemValue = element.getAttribute("data-sum");
       const salary_inp = element.querySelector(
         ".salary_employee_item_sums_inp"
@@ -26,7 +26,6 @@ if (salaryBtn) {
       if (old_elem != element || old_elem == undefined) {
         // Деактивируем предыдущий элемент из этого блока
         if (old_elem != undefined) {
-          console.log("old_elem!!!!!!!!!!!!!!!!!!!!!!!!!");
           old_elem.classList.remove("salary_employee_item_sums_active");
           old_elem.readOnly = true;
           old_elem.value = old_elem.getAttribute("data-sum");
@@ -48,7 +47,6 @@ if (salaryBtn) {
           deactivateElement(globalActiveElement);
         }
 
-        console.log("2222222222!!!!!!!!!!!!!!!!!!!!!!!!!");
         old_elem = element;
         globalActiveElement = element;
 
@@ -67,7 +65,7 @@ if (salaryBtn) {
 }
 
 function addSalaryOperation(element, btnAdd, pageName) {
-  console.log(element);
+
   document.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       // Проверяем, была ли нажата клавиша Enter
@@ -76,7 +74,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
   });
   btnAdd.addEventListener("click", () => {
     const form = new FormData();
-    console.log(element);
+
     if (pageName == "Налоги") {
       form.append("bank_to", 5);
       const accountid = element.getAttribute("data-sub-categ-name");
@@ -94,8 +92,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (type == "between") {
         form.append("bank_in", 1);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
+ 
         form.append("between_bank", betweenId);
       } else if (type == "percent") {
       } else if (type == "SubcontractOtherCategory") {
@@ -115,8 +112,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (type == "between") {
         form.append("bank_in", 1);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
+
         form.append("between_bank", betweenId);
       } else if (type == "percent") {
       } else if (type == "SubcontractOtherCategory") {
@@ -136,8 +132,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (type == "between") {
         form.append("bank_in", 1);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
+
         form.append("between_bank", betweenId);
       } else if (type == "percent") {
       } else if (type == "SubcontractOtherCategory") {
@@ -158,8 +153,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (type == "between") {
         form.append("bank_in", 1);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
+       
         form.append("between_bank", betweenId);
       } else if (type == "percent") {
       } else if (type == "SubcontractOtherCategory") {
@@ -182,8 +176,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
       if (type == "between") {
         form.append("bank_in", 1);
         betweenId = element.getAttribute("data-between-id");
-        console.log(element);
-        console.log(betweenId);
+       
         form.append("between_bank", betweenId);
       } else if (type == "percent") {
       } else if (type == "SubcontractOtherCategory") {
@@ -202,10 +195,10 @@ function addSalaryOperation(element, btnAdd, pageName) {
     const nowMonth = now.getMonth() + 1;
     const nowDay = now.getDate();
     const actyalDateStr = nowYear + "-" + nowMonth + "-" + nowDay;
-    console.log(now.toLocaleDateString());
+  
     let amount = element.querySelector(".salary_employee_item_sums_inp").value;
     const dataAmount = getCurrentPrice(amount);
-    console.log(dataAmount);
+
     const dataId = element.getAttribute("data-operation-old-id");
     const dataBank = element.getAttribute("data-bank-in");
     const dataCAteg = element.getAttribute("data-categ-id");
@@ -253,7 +246,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
     let object = {};
     form.forEach((value, key) => (object[key] = value));
     const dataJson = JSON.stringify(object);
-    console.log(dataJson);
+
     let csrfToken = getCookie("csrftoken");
 
     fetch(endpoint, {
@@ -283,7 +276,7 @@ function addSalaryOperation(element, btnAdd, pageName) {
     const windowDate = new Date(operationYear, operationMonth, 1, 0, 0, 0, 0);
     const jsonDate = windowDate.toJSON();
 
-    console.log(jsonDate);
+
 
     return jsonDate;
   }
@@ -312,19 +305,19 @@ function deactivateElement(element) {
 
 const salaryBtnPercent = document.querySelectorAll(".inp_operation_percent");
 if (salaryBtnPercent) {
-  console.log(salaryBtnPercent);
+ 
   let old_elem;
   let valueOld;
   const pageName = document.getElementById("page_name").value;
-  console.log("page_name", pageName);
+
   salaryBtnPercent.forEach((element) => {
     element.addEventListener("click", (event) => {
       const checkPersentRate = document.querySelectorAll(".check-persent");
-      console.log("checkPersentRate", checkPersentRate);
+     
       if (checkPersentRate.length > 0) {
         // checkPersentRate(element)
       }
-      console.log(element);
+    
       const elemValue = element.getAttribute("data-sum");
       const salary_inp = element.querySelector(
         ".salary_employee_item_sums_inp"
@@ -371,6 +364,7 @@ if (salaryBtnPercent) {
         replaceNamDot();
 
         btnAdd.classList.add("btn_add_operation_salary_active");
+
         addSalaryOperationPercent(element, btnAdd, pageName);
       }
     });
@@ -378,8 +372,13 @@ if (salaryBtnPercent) {
 }
 
 function addSalaryOperationPercent(element, btnAdd, pageName) {
-  console.log(element);
+  console.log("!!!!!!!!!!!!!!!!!",element, btnAdd, pageName);
+  document.addEventListener("input", function (event) {
+    checkPersentElement(element,element.querySelector(".salary_employee_item_sums_inp"),btnAdd)
+    
+  });
   document.addEventListener("keydown", function (event) {
+    
     if (event.key === "Enter") {
       // Проверяем, была ли нажата клавиша Enter
       btnAdd.click(); // Имитируем нажатие на кнопку
@@ -441,7 +440,7 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
     let object = {};
     form.forEach((value, key) => (object[key] = value));
     const dataJson = JSON.stringify(object);
-    console.log(dataJson);
+
     let csrfToken = getCookie("csrftoken");
 
     fetch(endpoint, {
@@ -461,10 +460,11 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
   });
 }
 
+// отпарвка операции по чекбоксу
 const chakboxInp = document.querySelectorAll(".checkbox-persent");
 if (chakboxInp) {
   chakboxInp.forEach((element) => {
-    console.log(chakboxInp);
+
     element.addEventListener("click", (event) => {
       const form = new FormData();
 
@@ -480,8 +480,7 @@ if (chakboxInp) {
         form.append("bank_in", +dataBank);
         betweenId = element.getAttribute("data-between-id");
         if (betweenId !== "None" && betweenId !== "" && betweenId !== "{}" && betweenId !== "0") {
-          console.log(element);
-          console.log(betweenId);
+     
           form.append("between_bank", betweenId);
         } else {
           const dataPeople = element.getAttribute("data-id-people");
@@ -496,7 +495,7 @@ if (chakboxInp) {
         let method;
         if (element.checked) {
           // Чекбокс установлен (нажат)
-          console.log("Чекбокс нажат");
+         
           if (
             (dataId != "") &
             (dataId != "None") &
@@ -512,7 +511,7 @@ if (chakboxInp) {
           }
         } else {
           // Чекбокс снят (отжат)
-          console.log("Чекбокс снят");
+          
           if (
             (dataId != "") &
             (dataId != "None") &
@@ -531,9 +530,9 @@ if (chakboxInp) {
         let object = {};
         form.forEach((value, key) => (object[key] = value));
         const dataJson = JSON.stringify(object);
-        console.log(dataJson);
+
         let csrfToken = getCookie("csrftoken");
-        console.log(betweenId);
+  
         if (betweenId !== "NONE_OPERATION") {
           fetch(endpoint, {
             method: method,
@@ -572,12 +571,13 @@ function checkPersentRate(element) {
     )
     : null;
   const persentSumm = persentSummElem.getAttribute("data-persent-use");
-  console.log(persentSumm);
+
   element.addEventListener("input", (event) => {
 
   })
 }
 
+// мнучовые суммы сдлать красными
 const currentUrl = window.location.href;
 const pathParts = window.location.pathname.split('/').filter(part => part !== '');
 const firstSegment = pathParts[0] || null; // если путь пустой, вернёт null
@@ -590,12 +590,12 @@ if (firstSegment == "bank") {
     const number = parseFloat(cleaned);
 
     if (isNaN(number)) {
-        console.log('Не удалось распознать число');
+
     } else if (number < 0) {
       element.style.setProperty('color', '#ff0000', 'important');
       element.style.fontWeight= 700;
     } else {
-        console.log('Число не отрицательное:', number);
+        
     }
   });
 
@@ -614,7 +614,7 @@ if (firstSegment == "bank") {
     const number = parseFloat(cleaned);
 
     if (isNaN(number)) {
-        console.log('Не удалось распознать число:', text);
+      
         return;
     }
 
@@ -628,4 +628,58 @@ if (firstSegment == "bank") {
 });
 
  
+}
+
+function checkPersentElement(element,input,btnAdd) {
+  console.log("!!!!!!!checkPersentElement!!!!!!!!!!",element);
+  const typePercent = element.getAttribute("data-type-percent");
+  console.log("!!!!!!!typePercent!!!!!!!!!!",typePercent);
+  if (typePercent) {
+    console.log(typePercent);
+    let month = element.getAttribute("data-month");
+    let year = element.getAttribute("data-year");
+    let persentSumm;
+    if (typePercent == "КВ $" || typePercent == "КВ ИП") {
+      if (typePercent == "КВ ИП") {
+        //  persentSumm = document.getElementById('cell_bonus_КВИПвсего')
+         persentSumm = document.querySelector(
+          `[data-cell-bonus="cell_bonus_КВИПвсего"][data-month="${month}"][data-year="${year}"]`
+        );
+      } else if (typePercent == "КВ $") {    
+         persentSumm = document.querySelector(
+          `[data-cell-bonus="cell_bonus_КВ$всего"][data-month="${month}"][data-year="${year}"]`
+        );
+        //  persentSumm = document.getElementById('cell_bonus_КВ$всего')
+      }
+      let summBonus = persentSumm.getAttribute("data-summ-bonus");
+      summBonus = summBonus.replace(/[^\d\.\,\-]/g, '').replace(',', '.');
+      summBonus = parseFloat(summBonus);
+      let persentBonus = persentSumm.getAttribute("data-persent-bonus");
+      persentBonus = persentBonus.replace(/[^\d\.\,\-]/g, '').replace(',', '.');
+      persentBonus = parseFloat(persentBonus);
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!persentBonus",persentBonus);
+      if (input) {
+        
+        let inpValue = input.value;
+        inpValue = inpValue.replace(/[^\d\.\,\-]/g, '').replace(',', '.');
+        inpValue = parseFloat(inpValue);
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!inpValue",inpValue);
+        let allSumBonus = persentBonus + inpValue;
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!allSumBonus",allSumBonus);
+        if (allSumBonus > 100) {
+          input.style.setProperty('color', '#ff0000', 'important');
+          input.style.fontWeight= 700;
+          btnAdd.style.pointerEvents = 'none';
+          btnAdd.style.opacity = '0.5';
+          btnAdd.style.cursor = 'not-allowed';
+        } else {
+          input.style.setProperty('color', '#000000', 'important');
+          input.style.fontWeight= 400;
+          btnAdd.style.pointerEvents = 'auto';
+          btnAdd.style.opacity = '1';
+          btnAdd.style.cursor = 'pointer';
+        }
+      }
+    }
+  }
 }

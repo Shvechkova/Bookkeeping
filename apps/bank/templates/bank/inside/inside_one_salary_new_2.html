@@ -41,11 +41,15 @@
                                 <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
                                 {% for month, month_data  in category.total.items %}
                                     <div class="oper-account-cell oper-account-month cell_bonus"
+                                        id="cell_bonus_{{ category.name|cut:" " }}"
+                                        data-cell-bonus="cell_bonus_{{ category.name|cut:" " }}"
                                         data-sub-categ-name="{{ category.category_id }}"
                                         data-year="{{ year_now }}"
                                         data-month="{{ month }}"
                                         data-sub-categ-id="{{ category.category_id }}"
                                         data-persent-use="{{ category.category_id }}"
+                                        data-summ-bonus="{{ month_data.summ_bonus|format_rub }}"
+                                        data-persent-bonus="{{ month_data.persent_bonus }}"
                                     >{{ month_data.amount_month|format_rub }} ₽
                           
                                         <div class="dop_info_bonus">
@@ -327,8 +331,9 @@
                                                                         data-operation-old-id="{{ month_data.operation_id }}"
                                                                         data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
                                                                 {% endif %}
-                                                                <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
-                                                                    data-id-people="{{ employee_data.employee_id }}"
+                                                                <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent  {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_"
+                                                                    data-type-percent="{{ category.name }}"
+                                                                data-id-people="{{ employee_data.employee_id }}"
                                                                     data-bank-in="{{ month_data.bank_in }}"
                                                                     data-bank-out="{{ month_data.bank_out }}"
                                                                     data-between-id="{{ month_data.between_id }}"
@@ -348,7 +353,8 @@
                                                                     {% endif %}
                                                                     data-prev-month="{{ month_data.expected|format_rub }}"
                                                                     data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}"
-                                                                    
+                                                                    data-year="{{ year_now }}"
+                                                                    data-month="{{month}}"
                                                                     
                                                                     >
                                                                     <!-- операция с процентами-->
@@ -360,8 +366,10 @@
                                                                             {% else %}
                                                                                 <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
                                                                                 <input type="text"
+                                                                                    
                                                                                     class="salary_employee_item_sums_inp"
-                                                                                    value="{{ month_data.percent|format_rub }}">
+                                                                                    value="{{ month_data.percent|format_rub }}"
+                                                                                    >
                                                                             {% endif %}
                                                                         {% else %}
                                                                             <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
