@@ -1,4 +1,6 @@
 import datetime
+from django.core.cache import cache
+import hashlib
 from django.db.models.functions import ExtractMonth
 from apps.bank.models import CATEGORY_OPERACCOUNT
 from apps.core.models import LogsError, Logsinfo
@@ -585,7 +587,7 @@ def fill_operations_arrays_ooo(
 
                 # операции расхода по договорам услуг
                 elif operation.suborder:
-                   
+
                     # расходы по договорам услуг
                     # Для SEO
                     if operation.suborder.month_bill.service.name == "SEO":
@@ -622,7 +624,7 @@ def fill_operations_arrays_ooo(
                     ] += operation.amount
 
                 elif operation.suborder_other:
-                  
+
                     # # Добавляем в общий итог по месяцу операции
                     arr_out_y["total_category"]["total"][month_name][
                         "amount_month"
@@ -945,7 +947,7 @@ def fill_operations_arrays_ooo(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                               
+
                                 last_balance = 0
                         arr_start_month_y["total"][month]["amount_month"] = last_balance
                     else:
@@ -1460,7 +1462,6 @@ def fill_operations_arrays_ooo(
 
             # операции расхода по договорам услуг
             elif operation.suborder:
-     
 
                 # расходы по договорам услуг
                 # Для SEO
@@ -1470,7 +1471,7 @@ def fill_operations_arrays_ooo(
                         operation.suborder.category_employee
                         and operation.suborder.category_employee.name == "ИП Галаев"
                     ):
-                      
+
                         arr_out["category"][0]["group"]["SEO"]["ИП Галаев"][month_name][
                             "amount_month"
                         ] += operation.amount
@@ -1823,7 +1824,7 @@ def fill_operations_arrays_ooo(
                                     last_month
                                 ]["amount_month"]
                             except Exception as e:
-                              
+
                                 prev_all_sum_month = 0
 
                 all_sum_month = (
@@ -1862,7 +1863,7 @@ def fill_operations_arrays_ooo(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                       
+
                                 last_balance = 0
                     arr_start_month["total"][month]["amount_month"] = last_balance
                 else:
@@ -2881,7 +2882,7 @@ def fill_operations_arrays_ip(
                                         last_month
                                     ]["amount_month"]
                                 except Exception as e:
-                               
+
                                     prev_all_sum_month = 0
 
                     nalog_real = arr_in_out_after_all_y["category"][2]["total"][month][
@@ -2912,7 +2913,7 @@ def fill_operations_arrays_ip(
                                         last_month
                                     ]["amount_month"]
                                 except Exception as e:
-                          
+
                                     last_balance = 0
                         arr_start_month_y["total"][month]["amount_month"] = last_balance
                     else:
@@ -3493,7 +3494,6 @@ def fill_operations_arrays_ip(
                             "вывод остатков ООО в Хранилище"
                         ][month_name]["operation_id"] = operation.id
 
-  
                         arr_keep_ip["category"][2]["total"][month_name][
                             "amount_month"
                         ] += operation.amount
@@ -3889,7 +3889,7 @@ def fill_operations_arrays_ip(
                                 ][last_month]["amount_month"]
 
                             except Exception as e:
-                        
+
                                 prev_all_sum_month = 0
 
                 nalog_real = arr_in_out_after_all["category"][2]["total"][month][
@@ -3921,7 +3921,7 @@ def fill_operations_arrays_ip(
                                     "amount_month"
                                 ]
                             except Exception as e:
-                            
+
                                 last_balance = 0
                     arr_start_month["total"][month]["amount_month"] = last_balance
                 else:
@@ -5042,7 +5042,7 @@ def fill_operations_arrays_nal(
                 ):
                     pass
                 else:
-     
+
                     arr_inside_all["category"][0]["total"]["total"][month_name][
                         "amount_month"
                     ] += operation.amount
@@ -5548,7 +5548,7 @@ def fill_operations_arrays_keep_banking(
     by_name_and_bank_in,
     is_old_oper,
     old_oper_arr,
-    arr_total_bonus_and_bank_and_servise
+    arr_total_bonus_and_bank_and_servise,
 ):
     between_id_to_ooo = cate_oper_beetwen_by_name.get("зачисление на ООО")
     between_id_to_ip = cate_oper_beetwen_by_name.get("зачисление на ИП")
@@ -5558,7 +5558,6 @@ def fill_operations_arrays_keep_banking(
     )
     between_id_from_keep_to_bonus_2 = cate_oper_beetwen_by_name.get("на выплату премий")
     between_id_nal_bonus = by_name_and_bank_in["ПРЕМИИ"][2]
-
 
     # Добавляем месяцы
     for i, month in enumerate(months_current_year):
@@ -5730,12 +5729,12 @@ def fill_operations_arrays_keep_banking(
                     ] += operation.amount
             if operation.salary.name == "Выдано в долг":
                 name_to_find = "в долг"
-      
+
                 item = next(
                     (x for x in arr_out["category"] if x["name"] == name_to_find),
                     None,
                 )
-        
+
                 if item:
                     item["total"][month_name]["amount_month"] += operation.amount
                     item["total"][month_name]["operation_id"] = operation.id
@@ -5763,7 +5762,7 @@ def fill_operations_arrays_keep_banking(
                         "amount_month"
                     ] += operation.amount
             elif operation.between_bank.name == "ПРЕМИИ":
-     
+
                 name_to_find = "с $"
                 group_dict = arr_bonus_all["category"][1]["group"]
                 item = group_dict.get(name_to_find)
@@ -5774,7 +5773,7 @@ def fill_operations_arrays_keep_banking(
                         "amount_month"
                     ] += operation.amount
             elif operation.between_bank.name == "на квартальную премию":
-     
+
                 name_to_find = "с $"
                 group_dict = arr_bonus_all["category"][0]["group"]
                 item = group_dict.get(name_to_find)
@@ -5835,7 +5834,6 @@ def fill_operations_arrays_keep_banking(
             elif operation.between_bank.name in [
                 "на квартальную премию собственникам",
             ]:
-   
 
                 name_to_find = "с ООО -> ИП"
                 group_dict = arr_bonus_all["category"][0]["group"]
@@ -5851,7 +5849,6 @@ def fill_operations_arrays_keep_banking(
             elif operation.between_bank.name in [
                 "ПРЕМИИ",
             ]:
-          
 
                 name_to_find = "с ООО -> ИП"
                 group_dict = arr_bonus_all["category"][1]["group"]
@@ -5899,7 +5896,6 @@ def fill_operations_arrays_keep_banking(
                 elif operation.between_bank.name in [
                     "на выплату премий (раз в квартал)",
                 ]:
-             
 
                     name_to_find = "на выплату премий (раз в квартал)"
                     group_dict = arr_bonus_all["category"][0]["group"]
@@ -5914,7 +5910,6 @@ def fill_operations_arrays_keep_banking(
                 elif operation.between_bank.name in [
                     "на выплату премий",
                 ]:
-            
 
                     name_to_find = "на выплату премий"
                     group_dict = arr_bonus_all["category"][1]["group"]
@@ -5950,31 +5945,59 @@ def fill_operations_arrays_keep_banking(
         bonus_total_1_sum = 0
         try:
             groups_dict = arr_bonus_all["category"][0]["group"]
-            required_groups = {"с $", "с ООО -> ИП", }
+            required_groups = {
+                "с $",
+                "с ООО -> ИП",
+            }
             for group_name in required_groups:
                 group_data = groups_dict.get(group_name)
                 if group_data and month in group_data:
                     bonus_total_1_sum += group_data[month].get("amount_month", 0)
-            bonus_total_1_sum -= arr_bonus_all["category"][0]["group"]["на выплату премий (раз в квартал)"][month]["amount_month"]
+            bonus_total_1_sum -= arr_bonus_all["category"][0]["group"][
+                "на выплату премий (раз в квартал)"
+            ][month]["amount_month"]
         except Exception as e:
             bonus_total_1_sum = 0
-            
+
         bonus_total_2_sum = 0
         try:
             groups_dict = arr_bonus_all["category"][1]["group"]
-            required_groups = {"с $", "с ООО -> ИП", }
+            required_groups = {
+                "с $",
+                "с ООО -> ИП",
+            }
             for group_name in required_groups:
                 group_data = groups_dict.get(group_name)
                 if group_data and month in group_data:
                     bonus_total_2_sum += group_data[month].get("amount_month", 0)
-            bonus_total_2_sum -= arr_bonus_all["category"][1]["group"]["на выплату премий"][month]["amount_month"]
+            bonus_total_2_sum -= arr_bonus_all["category"][1]["group"][
+                "на выплату премий"
+            ][month]["amount_month"]
         except Exception as e:
             bonus_total_2_sum = 0
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!bonus_total_1_sum",month, bonus_total_1_sum, bonus_total_2_sum)
-        
-        
-        arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"] = bonus_total_2_sum + arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"]
-        arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] = bonus_total_1_sum + arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"]
+        print(
+            "!!!!!!!!!!!!!!!!!!!!!!!!!!bonus_total_1_sum",
+            month,
+            bonus_total_1_sum,
+            bonus_total_2_sum,
+        )
+
+        arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+            "amount_month"
+        ] = (
+            bonus_total_2_sum
+            + arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                "amount_month"
+            ]
+        )
+        arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+            "amount_month"
+        ] = (
+            bonus_total_1_sum
+            + arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                "amount_month"
+            ]
+        )
 
         # ИТОГО Накопительные счета БЕЗ ПРЕМИЙ  + ПРЕМИИ отдельно
         for i, month in enumerate(months_current_year):
@@ -5983,12 +6006,12 @@ def fill_operations_arrays_keep_banking(
                 prev_all_sum_month = arr_stop_month_bank["total"][month_prev][
                     "amount_month"
                 ]
-                prev_all_sum_month_bonus_1 = arr_bonus_all["category"][0]["group"]["на конец месяца"][month_prev][
-                    "amount_month"
-                ]
-                prev_all_sum_month_bonus_2 = arr_bonus_all["category"][1]["group"]["на конец месяца"][month_prev][
-                    "amount_month"
-                ]
+                prev_all_sum_month_bonus_1 = arr_bonus_all["category"][0]["group"][
+                    "на конец месяца"
+                ][month_prev]["amount_month"]
+                prev_all_sum_month_bonus_2 = arr_bonus_all["category"][1]["group"][
+                    "на конец месяца"
+                ][month_prev]["amount_month"]
             else:
                 # Для самого последнего месяца (например, "Январь") — остаток на конец декабря прошлого года, если есть
                 prev_all_sum_month = 0
@@ -6008,8 +6031,12 @@ def fill_operations_arrays_keep_banking(
                             prev_all_sum_month = prev_year_data["arr_end_month_ip"][
                                 "total"
                             ][last_month]["amount_month"]
-                            prev_all_sum_month_bonus_1 = arr_bonus_all["category"][0]["group"]["на конец месяца"][last_month]["amount_month"]
-                            prev_all_sum_month_bonus_2 = arr_bonus_all["category"][1]["group"]["на конец месяца"][last_month]["amount_month"]
+                            prev_all_sum_month_bonus_1 = arr_bonus_all["category"][0][
+                                "group"
+                            ]["на конец месяца"][last_month]["amount_month"]
+                            prev_all_sum_month_bonus_2 = arr_bonus_all["category"][1][
+                                "group"
+                            ]["на конец месяца"][last_month]["amount_month"]
 
                         except Exception as e:
                             prev_all_sum_month_bonus_1 = 0
@@ -6020,7 +6047,6 @@ def fill_operations_arrays_keep_banking(
             all_sum_month_bonus_1 = prev_all_sum_month_bonus_1 + bonus_total_1_sum
             all_sum_month_bonus_2 = prev_all_sum_month_bonus_2 + bonus_total_2_sum
             arr_stop_month_bank["total"][month]["amount_month"] = all_sum_month
-
 
         # НАКОПИТЕЛЬНЫЕ СЧЕТА И НАЛИЧНЫЕ на начало месяца
         # получить следующий месяц
@@ -6043,19 +6069,31 @@ def fill_operations_arrays_keep_banking(
                             last_balance = category_list[3]["total"][last_month][
                                 "amount_month"
                             ]
-                            last_balance_bonus_1 = arr_bonus_all["category"][0]["group"]["на конец месяца"][last_month]["amount_month"]
-                            last_balance_bonus_2 = arr_bonus_all["category"][1]["group"]["на конец месяца"][last_month]["amount_month"]
-                            
+                            last_balance_bonus_1 = arr_bonus_all["category"][0][
+                                "group"
+                            ]["на конец месяца"][last_month]["amount_month"]
+                            last_balance_bonus_2 = arr_bonus_all["category"][1][
+                                "group"
+                            ]["на конец месяца"][last_month]["amount_month"]
+
                         except Exception as e:
                             last_balance = 0
                             last_balance_bonus_1 = 0
                             last_balance_bonus_2 = 0
                 # Записываем начало месяца
                 arr_start_month["total"][month]["amount_month"] = last_balance
-                arr_bonus_all["category"][0]["group"]["на начало месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][1]["group"]["на начало месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] = last_balance_bonus_1
-                arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] = last_balance_bonus_2
+                arr_bonus_all["category"][0]["group"]["на начало месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][1]["group"]["на начало месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                    "amount_month"
+                ] = last_balance_bonus_1
+                arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                    "amount_month"
+                ] = last_balance_bonus_2
 
                 # Пересчитываем конец месяца на основе нового начала месяца
                 # Категория 1
@@ -6067,12 +6105,23 @@ def fill_operations_arrays_keep_banking(
                         group_data = groups_dict.get(group_name)
                         if group_data and month in group_data:
                             delta += group_data[month].get("amount_month", 0)
-                    delta -= groups_dict.get("на выплату премий (раз в квартал)", {}).get(month, {}).get("amount_month", 0)
+                    delta -= (
+                        groups_dict.get("на выплату премий (раз в квартал)", {})
+                        .get(month, {})
+                        .get("amount_month", 0)
+                    )
                 except Exception:
                     delta = 0
-                arr_bonus_all["category"][0]["group"]["на конец месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] + delta
+                arr_bonus_all["category"][0]["group"]["на конец месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                        "amount_month"
+                    ]
+                    + delta
                 )
                 # Категория 2
                 try:
@@ -6083,12 +6132,23 @@ def fill_operations_arrays_keep_banking(
                         group_data = groups_dict.get(group_name)
                         if group_data and month in group_data:
                             delta2 += group_data[month].get("amount_month", 0)
-                    delta2 -= groups_dict.get("на выплату премий", {}).get(month, {}).get("amount_month", 0)
+                    delta2 -= (
+                        groups_dict.get("на выплату премий", {})
+                        .get(month, {})
+                        .get("amount_month", 0)
+                    )
                 except Exception:
                     delta2 = 0
-                arr_bonus_all["category"][1]["group"]["на конец месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] + delta2
+                arr_bonus_all["category"][1]["group"]["на конец месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                        "amount_month"
+                    ]
+                    + delta2
                 )
             else:
                 next_month = months_current_year[i + 1]
@@ -6096,13 +6156,25 @@ def fill_operations_arrays_keep_banking(
                     "total"
                 ][next_month]["amount_month"]
                 # Записываем начало месяца по премиям из конца следующего месяца
-                arr_bonus_all["category"][0]["group"]["на начало месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][1]["group"]["на начало месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][1]["group"]["на конец месяца"].get(next_month, {}).get("amount_month", 0)
+                arr_bonus_all["category"][0]["group"]["на начало месяца"].setdefault(
+                    month, {"amount_month": 0}
                 )
-                arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][0]["group"]["на конец месяца"].get(next_month, {}).get("amount_month", 0)
+                arr_bonus_all["category"][1]["group"]["на начало месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][1]["group"]["на конец месяца"]
+                    .get(next_month, {})
+                    .get("amount_month", 0)
+                )
+                arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][0]["group"]["на конец месяца"]
+                    .get(next_month, {})
+                    .get("amount_month", 0)
                 )
 
                 # Пересчитываем конец месяца на основе нового начала месяца
@@ -6115,12 +6187,23 @@ def fill_operations_arrays_keep_banking(
                         group_data = groups_dict.get(group_name)
                         if group_data and month in group_data:
                             delta += group_data[month].get("amount_month", 0)
-                    delta -= groups_dict.get("на выплату премий (раз в квартал)", {}).get(month, {}).get("amount_month", 0)
+                    delta -= (
+                        groups_dict.get("на выплату премий (раз в квартал)", {})
+                        .get(month, {})
+                        .get("amount_month", 0)
+                    )
                 except Exception:
                     delta = 0
-                arr_bonus_all["category"][0]["group"]["на конец месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] + delta
+                arr_bonus_all["category"][0]["group"]["на конец месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                        "amount_month"
+                    ]
+                    + delta
                 )
                 # Категория 2
                 try:
@@ -6131,34 +6214,83 @@ def fill_operations_arrays_keep_banking(
                         group_data = groups_dict.get(group_name)
                         if group_data and month in group_data:
                             delta2 += group_data[month].get("amount_month", 0)
-                    delta2 -= groups_dict.get("на выплату премий", {}).get(month, {}).get("amount_month", 0)
+                    delta2 -= (
+                        groups_dict.get("на выплату премий", {})
+                        .get(month, {})
+                        .get("amount_month", 0)
+                    )
                 except Exception:
                     delta2 = 0
-                arr_bonus_all["category"][1]["group"]["на конец месяца"].setdefault(month, {"amount_month": 0})
-                arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"] = (
-                    arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] + delta2
+                arr_bonus_all["category"][1]["group"]["на конец месяца"].setdefault(
+                    month, {"amount_month": 0}
+                )
+                arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+                    "amount_month"
+                ] = (
+                    arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                        "amount_month"
+                    ]
+                    + delta2
                 )
 
-       # ИТОГО по премиям (сумма категорий 1 и 2) за месяц
-        print("arr_bonus_all[total_category][total][month][amount_month]",arr_bonus_all["total_category"]["total"][month]["amount_month"]    )
-        
-        print("arr_bonus_all[category][0][group][на конец месяца][month][amount_month]",arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"])
-        print("arr_bonus_all[category][1][group][на конец месяца][month][amount_month]",arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"])
-        total_bonus = arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"]
-        print("total_bonus",total_bonus)
-        
+        # ИТОГО по премиям (сумма категорий 1 и 2) за месяц
+        print(
+            "arr_bonus_all[total_category][total][month][amount_month]",
+            arr_bonus_all["total_category"]["total"][month]["amount_month"],
+        )
+
+        print(
+            "arr_bonus_all[category][0][group][на конец месяца][month][amount_month]",
+            arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+                "amount_month"
+            ],
+        )
+        print(
+            "arr_bonus_all[category][1][group][на конец месяца][month][amount_month]",
+            arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+                "amount_month"
+            ],
+        )
+        total_bonus = (
+            arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+                "amount_month"
+            ]
+            + arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+                "amount_month"
+            ]
+        )
+        print("total_bonus", total_bonus)
+
         # arr_bonus_all["total_category"]["total"][month]["amount_month"] = total_bonus
 
-        print("arr_bonus_all[total_category][total][month][amount_month]2",arr_bonus_all["total_category"]["total"][month]["amount_month"]    )
-      
+        print(
+            "arr_bonus_all[total_category][total][month][amount_month]2",
+            arr_bonus_all["total_category"]["total"][month]["amount_month"],
+        )
+
     for i, month in enumerate(months_current_year):
-        
-        total_bonus = arr_bonus_all["category"][0]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на конец месяца"][month]["amount_month"] + arr_bonus_all["category"][0]["group"]["на начало месяца"][month]["amount_month"] + arr_bonus_all["category"][1]["group"]["на начало месяца"][month]["amount_month"] 
-        
+
+        total_bonus = (
+            arr_bonus_all["category"][0]["group"]["на конец месяца"][month][
+                "amount_month"
+            ]
+            + arr_bonus_all["category"][1]["group"]["на конец месяца"][month][
+                "amount_month"
+            ]
+            + arr_bonus_all["category"][0]["group"]["на начало месяца"][month][
+                "amount_month"
+            ]
+            + arr_bonus_all["category"][1]["group"]["на начало месяца"][month][
+                "amount_month"
+            ]
+        )
+
         arr_bonus_all["total_category"]["total"][month]["amount_month"] = total_bonus
         if arr_total_bonus_and_bank_and_servise:
-            arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] = arr_stop_month_bank["total"][month]["amount_month"] + total_bonus
-    
+            arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] = (
+                arr_stop_month_bank["total"][month]["amount_month"] + total_bonus
+            )
+
     return arr_start_month, arr_in, arr_out, arr_bonus_all
 
 
@@ -6188,7 +6320,7 @@ def fill_operations_arrays_salary(
     categ_emploue_percent_list,
 ):
     between_id_nal_to_bonus = cate_oper_beetwen_by_name.get("КВ с $")
-   
+
     year = year_now
     for i, month in enumerate(months_current_year):
         month_number = month_numbers[month]
@@ -6431,7 +6563,7 @@ def fill_operations_arrays_salary(
                         or item["name"] == "КВ ИП"
                         or item["name"] == "квартальная премия"
                     ):
-                       pass
+                        pass
 
                     else:
                         item["total"][month_name]["amount_month"] += operation.amount
@@ -6464,7 +6596,7 @@ def fill_operations_arrays_salary(
                         if parent_data_salary["name"] == "Долги":
                             pass
                         elif parent_data_salary["name"] == "Премии":
-                 
+
                             if operation.salary.name == "квартальная премия":
                                 employee_data["data_salary"][3]["category"][2]["total"][
                                     month_name
@@ -6507,7 +6639,6 @@ def fill_operations_arrays_salary(
                                 arr_total_salary["category"][1]["total"][month_name][
                                     "amount_month"
                                 ] += operation.amount
-                            
 
     # Рассчитываем накопительные остатки долга для каждого сотрудника
     for employee_id, employee_data in arr_employee.items():
@@ -6603,8 +6734,6 @@ def fill_operations_arrays_salary(
                 None,
             )
             if percent_obj:
-        
-            
 
                 arr_total_bonus["category"][0]["total"][month][
                     "persent_bonus"
@@ -6645,8 +6774,8 @@ def fill_operations_arrays_salary(
                         "amount_month"
                     ] += sum_kv_nal_to_front
                     arr_total_salary["category"][2]["total"][month][
-                                    "amount_month"
-                                ] += sum_kv_nal_to_front
+                        "amount_month"
+                    ] += sum_kv_nal_to_front
                     employee_data["data_salary"][0]["total"][month][
                         "amount_month"
                     ] += sum_kv_nal_to_front
@@ -6675,7 +6804,7 @@ def fill_operations_arrays_salary(
                 None,
             )
             if percent_obj:
-     
+
                 arr_total_bonus["category"][1]["total"][month][
                     "persent_bonus"
                 ] += percent_obj["percent"]
@@ -6715,8 +6844,8 @@ def fill_operations_arrays_salary(
                         "amount_month"
                     ] += sum_kv_nal_to_front
                     arr_total_salary["category"][3]["total"][month][
-                                    "amount_month"
-                                ] += sum_kv_nal_to_front
+                        "amount_month"
+                    ] += sum_kv_nal_to_front
                     employee_data["data_salary"][0]["total"][month][
                         "amount_month"
                     ] += sum_kv_nal_to_front
@@ -6742,7 +6871,7 @@ def fill_operations_arrays_salary(
     #     None,
     # )
     # if percent_obj:
-    
+
     #     arr_total_bonus["category"][1]["total"][month][
     #         "persent_bonus"
     #     ] += percent_obj["percent"]
@@ -6827,9 +6956,9 @@ def fill_operations_storage_servise(
             "month_number": MONTHS_RU.index(month) + 1,
         }
         for category in arr_buget["category"]:
-     
+
             if category["name"] == "Поступления:":
-            
+
                 category["group"]["$"][month] = {
                     "amount_month": 0,
                     "month_number": MONTHS_RU.index(month) + 1,
@@ -6966,7 +7095,7 @@ def fill_operations_storage_servise(
                             ][last_month]["amount_month"]
 
                         except Exception as e:
-                    
+
                             prev_all_sum_month = 0
 
             arr_buget["total_category"]["total"][month]["amount_month"] = (
@@ -6993,7 +7122,7 @@ def fill_operations_storage_servise(
                                 "amount_month"
                             ]
                         except Exception as e:
-                       
+
                             last_balance = 0
                 arr_buget["category"][0]["total"][month]["amount_month"] = last_balance
             else:
@@ -7001,11 +7130,13 @@ def fill_operations_storage_servise(
                 arr_buget["category"][0]["total"][month]["amount_month"] = arr_buget[
                     "total_category"
                 ]["total"][next_month]["amount_month"]
-    
-        # arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] += arr_buget["total_category"]["total"][month]["amount_month"] 
+
+        # arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] += arr_buget["total_category"]["total"][month]["amount_month"]
     for i, month in enumerate(months_current_year):
         if arr_total_bonus_and_bank_and_servise:
-            arr_total_bonus_and_bank_and_servise["total"][month]["amount_month"] += arr_buget["total_category"]["total"][month]["amount_month"] 
+            arr_total_bonus_and_bank_and_servise["total"][month][
+                "amount_month"
+            ] += arr_buget["total_category"]["total"][month]["amount_month"]
     return arr_service, arr_buget
 
 
@@ -7083,7 +7214,6 @@ def fill_operations_storage_servise_client(
         # Добавляем копию в общий массив
         arr_clients_all.append(arr_client_copy)
 
-
     # распределение операций
     for operation in operations:
         month_name = MONTHS_RU[operation.data.month - 1]
@@ -7095,5 +7225,49 @@ def fill_operations_storage_servise_client(
     return arr_clients_all
 
 
-def cashe_or_calculate(key_prefix, calculate_func, ):
-    pass
+def cashe_or_calculate(
+    key_prefix,  # key_prefix="bank_id_year_now"
+    calculate_func,
+    func_args=None,  # func_args=(arg1, arg2, ...),
+    func_kwargs=None,  # func_kwargs={...},
+    version_keys=None,  # version_keys=[year, bank_id],
+    timeout=60 * 15,  # 15 минут  timeout=900,
+    use_versioning=False,
+):
+    """
+    Универсальная функция кэширования.
+
+    :param key_prefix: префикс ключа (например, "storage", "report", "salary")
+    :param calculate_func: функция, которая медленно вычисляет данные
+    :param func_args: позиционные аргументы для функции
+    :param func_kwargs: именованные аргументы для функции
+    :param version_keys: список значений, от которых зависит результат (год, банк, клиент.id и т.д.)
+    :param timeout: время жизни кэша
+    :param use_versioning: использовать версионирование вместо delete (альтернатива)
+    :return: результат функции
+    """
+    func_args = func_args or ()
+    func_kwargs = func_kwargs or {}
+    version_keys = version_keys or []
+
+    # Шаг 1: Генерируем ключ на основе префикса и параметров
+    key_str = f"{key_prefix}:" + ":".join(map(str, version_keys))
+    cache_key = f"universal_cache:{key_str}"
+
+    # Дополнительно: хэшируем, если ключ слишком длинный
+    if len(cache_key) > 200:
+        h = hashlib.md5(key_str.encode()).hexdigest()
+        cache_key = f"universal_cache:{key_prefix}:{h}"
+
+    # Шаг 2: Попробуем получить из кэша
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    # Шаг 3: Вычисляем
+    result = calculate_func(*func_args, **func_kwargs)
+
+    # Шаг 4: Сохраняем
+    cache.set(cache_key, result, timeout=timeout)
+
+    return result

@@ -47,3 +47,12 @@ services:
     ports:
       - 89:8080
 
+  redisinsight:
+    container_name: redisinsight
+    image: redis/redisinsight:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+    ports:
+      - "5540:5540"
+
