@@ -7093,3 +7093,7 @@ def fill_operations_storage_servise_client(
             pass
 
     return arr_clients_all
+
+
+def cashe_or_calculate(key_prefix, calculate_func, ):
+    pass
