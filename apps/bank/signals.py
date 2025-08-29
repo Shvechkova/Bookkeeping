@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 
 from apps.bank.models import CategOperationsBetweenBank
-from apps.core.cashe.manager import cache_manager 
+from apps.core.cache.manager import cache_manager 
 from apps.operation.models import Operation   # ← импортируем правильно   
 
 # Список банков, которые нужно отслеживать

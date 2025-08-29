@@ -1,6 +1,6 @@
 import datetime
 from django.shortcuts import render
-from apps.core.cashe.manager import cache_manager
+from apps.core.cache.manager import cache_manager
 from django.contrib.auth.models import AnonymousUser
 import logging
 from django.db.models.functions import ExtractMonth
@@ -3514,18 +3514,36 @@ def storage_all(request):
     }
     
     
-    arr_service, arr_buget = fill_operations_storage_servise(
-        arr_service,
-        arr_buget,
-        year_now,
-        months_current_year,
-        month_numbers,
-        operations,
-        cate_oper_beetwen_by_name,
-        old_oper_arr=None,
-        arr_total_bonus_and_bank_and_servise=arr_total_bonus_and_bank_and_servise,
-    )
+    # arr_service, arr_buget = fill_operations_storage_servise(
+    #     arr_service,
+    #     arr_buget,
+    #     year_now,
+    #     months_current_year,
+    #     month_numbers,
+    #     operations,
+    #     cate_oper_beetwen_by_name,
+    #     old_oper_arr=None,
+    #     arr_total_bonus_and_bank_and_servise=arr_total_bonus_and_bank_and_servise,
+    # )
     
+    
+    #  Кэшированный вызов
+    arr_service, arr_buget = cache_manager.storage.servise.get(
+    calculate_func=fill_operations_storage_servise,
+    version_keys=[year_now, bank.id],  # ← только для ключа: cm:storage:servise:2025:4
+    func_args=[
+        arr_service,                    # 1
+        arr_buget,                      # 2
+        year_now,                           # 3: year_now
+        months_current_year,            # 4
+        month_numbers,                  # 5
+        operations,                     # 6
+        cate_oper_beetwen_by_name,     # 7
+        None,                           # 8: old_oper_arr
+        None,                           # 9: arr_total_bonus_and_bank_and_servise
+    ],
+    func_kwargs={}
+)
     
     
     context = {
@@ -3859,33 +3877,8 @@ def storage_servise(request):
         },
     }
     
-    # #  Универсальное кэширование
-    # arr_service, arr_buget = cashe_or_calculate(
-    #     key_prefix="storage_servise",
-    #     version_keys=[year_now, bank_id],
-    #     calculate_func=fill_operations_storage_servise,
-    #     func_args=[
-    #         arr_service,
-    #         arr_buget,
-    #         year_now,
-    #         months_current_year,
-    #         month_numbers,
-    #         operations,
-    #         cate_oper_beetwen_by_name,
-    #         None,
-    #         None,
-    #     ],
-    #     timeout=60 * 50
-    # )
-
-    # context = {
-    #     "arr_service": arr_service,
-    #     "arr_buget": arr_buget,
-    #     "year_now": year_now,
-    #     "bank": bank_id,
-    #     "months_current_year": months_current_year,
-    # }
-     # 🚀 Кэшированный вызов
+ 
+     #  Кэшированный вызов
     arr_service, arr_buget = cache_manager.storage.servise.get(
     calculate_func=fill_operations_storage_servise,
     version_keys=[year_now, bank_id],  # ← только для ключа: cm:storage:servise:2025:4
