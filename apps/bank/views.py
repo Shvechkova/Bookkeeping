@@ -2431,18 +2431,21 @@ def outside_ooo(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
-    operations_by_year_mini = get_operations_by_year_mini(
-        old_oper_arr,
-        key_arr=[
-            "arr_in",
-            "arr_out",
-            "arr_in_out_all",
-            "arr_inside_all",
-            "arr_in_out_after_all",
-            "arr_in_out_after_all_total",
-            "arr_start_month",
-        ],
-    )
+    if old_oper_arr:
+        operations_by_year_mini = get_operations_by_year_mini(
+            old_oper_arr,
+            key_arr=[
+                "arr_in",
+                "arr_out",
+                "arr_in_out_all",
+                "arr_inside_all",
+                "arr_in_out_after_all",
+                "arr_in_out_after_all_total",
+                "arr_start_month",
+            ],
+        )
+    else:
+        operations_by_year_mini = {}
 
     # Пример для формирования и чтения кеша для банка
     cache_key = f"bank_{bank.id}_context_{year_now}"
@@ -2864,23 +2867,25 @@ def outside_ip(request):
         is_old_oper=False,
         old_oper_arr=old_oper_arr,
     )
+    if old_oper_arr:
+        operations_by_year_mini = get_operations_by_year_mini(
+            old_oper_arr,
+            key_arr=[
+                "arr_start_month",
+                "arr_inside_all",
+                "arr_out",
+                "arr_in_out_all",
+                "arr_in",
+                "arr_in_out_after_all",
+                "arr_summ_to_persent",
+                "arr_keep",
+                "arr_end_month",
+                    "arr_real_diff",
+            ],
+        )
+    else:
+        operations_by_year_mini = {}
 
-    operations_by_year_mini = get_operations_by_year_mini(
-        old_oper_arr,
-        key_arr=[
-            "arr_start_month",
-            "arr_inside_all",
-            "arr_out",
-            "arr_in_out_all",
-            "arr_in",
-            "arr_in_out_after_all",
-            "arr_summ_to_persent",
-            "arr_keep",
-            "arr_end_month",
-            "arr_real_diff",
-        ],
-    )
-    (operations_by_year_mini)
     context = {
         "title": title,
         "type_url": type_url,
@@ -3193,18 +3198,22 @@ def outside_nal(request):
         old_oper_arr=old_oper_arr,
     )
 
-    operations_by_year_mini = get_operations_by_year_mini(
-        old_oper_arr,
-        key_arr=[
-            "arr_in",
-            "arr_out",
-            "arr_in_out_all",
-            "arr_real_diff",
-            "arr_inside_all",
-            "arr_summ_to_persent",
-            "arr_keep",
-        ],
-    )
+    if old_oper_arr:
+        operations_by_year_mini = get_operations_by_year_mini(
+            old_oper_arr,
+            key_arr=[
+                "arr_in",
+                "arr_out",
+                "arr_in_out_all",
+                "arr_real_diff",
+                "arr_inside_all",
+                "arr_summ_to_persent",
+                "arr_keep",
+            ],
+        )
+    else:
+        operations_by_year_mini = {}
+
     context = {
         "title": title,
         "year_now": year_now,

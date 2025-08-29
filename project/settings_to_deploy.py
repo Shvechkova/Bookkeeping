@@ -17,21 +17,21 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Инициализация окружения и чтение .env (сначала из корня, затем из docker/.env, если есть)
-# env = environ.Env()
-# environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 environ.Env.read_env(os.path.join(BASE_DIR, "docker/.env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", default="django-insecure-placeholder")
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-placeholder")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
-# DEBUG = env.bool("DEBUG", default=True# DEBUG = False
-DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default="localhost 127.0.0.1 [::1]")
+# # DEBUG = env.bool("DEBUG", default=TrueDEBUG = False
+DJANGO_ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="localhost 127.0.0.1 [::1]")
 # ALLOWED_HOSTS = ["127.0.0.1", "localhost", "bookkeeping.shvechkova.ru", "5.23.51.25"]
+ALLOWED_HOSTS = [host for host in DJANGO_ALLOWED_HOSTS.split() if host]
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
 # Application definition
@@ -51,10 +51,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
 ]
-if DEBUG:
-    INSTALLED_APPS += [
-        "debug_toolbar",
-    ]
+# if DEBUG:
+#     INSTALLED_APPS += [
+#         "debug_toolbar",
+#     ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -66,10 +66,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-if DEBUG:
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
+# if DEBUG:
+#     MIDDLEWARE += [
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",
+#     ]
 
 
 ROOT_URLCONF = "project.urls"
@@ -99,7 +99,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Автоматически выбираем базу данных в зависимости от окружения
-if os.environ.get("USE_SQLITE", default="False").lower() == "true":
+if env("USE_SQLITE", default="False").lower() == "true":
     # Используем SQLite для локальной разработки и передачи приложения
     DATABASES = {
         'default': {
@@ -114,11 +114,11 @@ else:
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.mysql",
-                "NAME": os.environ.get("DB_NAME"),
-                "USER": os.environ.get("DB_USER"),
-                "PASSWORD": os.environ.get("DB_PASSWORD"),
-                "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
-                "PORT": os.environ.get("DB_PORT", default="3306"),
+                "NAME": env("DB_NAME"),
+                "USER": env("DB_USER"),
+                "PASSWORD": env("DB_PASSWORD"),
+                "HOST": env("DB_HOST", default="127.0.0.1"),
+                "PORT": env("DB_PORT", default="3306"),
                 # "CONN_MAX_AGE": 60,
                 # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
             }

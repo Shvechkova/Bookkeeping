@@ -1,6 +1,6 @@
-cd /d C:\project\Bookkeeping
-pyinstaller run_app.spec
 
+pyinstaller run_app.spec
+pyinstaller run_app_admin_fixed.spec
 
 
 
@@ -121,3 +121,10 @@ pyinstaller --clean --onefile run_app.py ^
   --hidden-import apps.service.api ^
   --hidden-import apps.service.api.serializers ^
   --hidden-import apps.service.api.view_sets
+
+
+
+
+".venv\Scripts\activate.bat"
+  ".\.venv\Scripts\Activate.ps1"
+    pyinstaller run_app_admin_fixed.spec

@@ -6,6 +6,7 @@ import os
 import sys
 
 # Настраиваем Django для корректного сбора статики
+# Важно: при сборке анализ делаем на базовых settings, но рантайм-хук переключит на settings_to_deploy
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 
 # Импортируем Django только если он доступен
@@ -18,6 +19,7 @@ except Exception as e:
 
 datas = [
     ('project/settings.py', 'project'),
+    ('project/settings_to_deploy.py', 'project'),
     ('project/urls.py', 'project'),
     ('project/wsgi.py', 'project'),
     ('.env', '.'),
@@ -35,7 +37,7 @@ datas = [
 binaries = []
 hiddenimports = [
     'environ', 'pymysql', 'MySQLdb', 
-    'project.urls', 'project.wsgi', 
+    'project.urls', 'project.wsgi', 'project.settings_to_deploy',
     'apps.bank', 'apps.bank.admin', 'apps.bank.apps', 'apps.bank.models', 'apps.bank.urls', 'apps.bank.views', 'apps.bank.api', 'apps.bank.api.serializers', 'apps.bank.api.view_sets', 'apps.bank.templatetags', 'apps.bank.templatetags.dict_filters', 
     'apps.client', 'apps.client.admin', 'apps.client.apps', 'apps.client.models', 'apps.client.urls', 'apps.client.views', 'apps.client.api', 'apps.client.api.serializers', 'apps.client.api.view_sets', 
     'apps.core', 'apps.core.admin', 'apps.core.apps', 'apps.core.models', 'apps.core.urls', 'apps.core.views', 'apps.core.middleware', 'apps.core.templatetags', 'apps.core.templatetags.category_service', 'apps.core.templatetags.convert_list_to_string', 'apps.core.templatetags.dict_extras', 'apps.core.templatetags.format_filters', 'apps.core.templatetags.suborders_extras', 
@@ -119,7 +121,7 @@ a = Analysis(
     hiddenimports=hiddenimports,
     hookspath=['pyi_hooks'],
     hooksconfig={},
-    runtime_hooks=['runtime_django_settings.py'],
+    runtime_hooks=['runtime_django_settings_deploy.py'],
     excludes=['debug_toolbar', 'celery', 'redis', 'psycopg2'],
     noarchive=False,
     optimize=0,
@@ -132,7 +134,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='run_app_admin_fixed',
+    name='bookkeeping-lemur',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
