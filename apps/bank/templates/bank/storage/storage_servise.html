@@ -17,89 +17,9 @@
         <a class="menu_service" href="{% url 'bank:storage_servise' %}">По месяцам</a>
       {% endif %}
     </li>
-    {% comment %} <li class="header_nav-link">
-      {% url 'bank:storage_servise_client' as the_url %}
-      {% if request.path == the_url %}
-        <span class="menu-active menu-active_service">По клиентам</span>
-      {% else %}
-        <a class="menu_service" href="{% url 'bank:storage_servise_client' %}">По клиентам</a>
-      {% endif %}
-    </li> {% endcomment %}
+
   </ul>
-  {% comment %} <section class="oper_account">
-        <div class="category-block">
-            <div class="oper-account-grid">
-                <div class="oper-account-row oper-account-total">
-                    <div class="oper-account-cell oper-account-num"></div>
-                    <div class="oper-account-cell outside_name_title"></div>
-                    {% for month in months_current_year %}
-                        <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% for category in arr_service.category %}
-            <div class="category-block">
-                <div class="oper-account-grid">
-                    <div class="oper-account-row">
-                        <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
-                        <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
-                        {% for month, month_data  in category.total.items %}
-                            {% if  month_data.is_make_operations %}
-                                <div class="salary_employee_item_wrapper  nalog_item_wrapper oper-account-cell oper-account-value ">
-                                    <div class=" {% if month_data.type_operations == "percent" %} inp_operation_percent {% else %} inp_operation {% endif %} inp_operation_bank salary_employee_item_sum_nalog salary_employee_item_sums salary-category-month-row salary-employee-smal-row salary-employee_additional_{{ employee.employee }}_{{ year_data.year|cut:" " }}" data-bank-in="{{ bank }}" data-bank-out="{{ month_data.bank_out }}" data-between-id="{{ month_data.between_id }}" tupe-operations="{{ month_data.type_operations }}" data-sub-categ-name="{{ service_name }}" data-sub-categ-id="{{ month_data.id_groupe }}" data-operation-data-month="{{ month_data.date_start|date:'m' }}" data-operation-data-year="{{ month_data.date_start|date:'Y' }}" data-operation-old-id="{{ month_data.operation_id|default:'0' }}" data-prev-month="{{ month_data.expected|format_rub }}" data-operation-data-start-all_2="{{ month_data.date_start|date:'Y-m-d' }}">
-                                        <!-- операция с процентами-->
-                                        {% if month_data.percent %}
-                                            {% if month_data.percent > 0 %}
-                                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
-                                                <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.percent|format_rub }}">
-                                            {% else %}
-                                                <span class="salary_employee_item_sums_text oper-account-cell-zero">0 ₽</span>
-                                                <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.expected|format_rub }}">
-                                            {% endif %}
-                                            <!-- операция с суммами-->
-                                        {% else %}
-                                            {% if month_data.amount_month > 0 %}
-                                                <p class="salary_employee_item_sums_text">{{ month_data.amount_month|format_rub }} ₽</p>
-                                                <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.amount_month|format_rub }}">
-                                            {% else %}
-                                                <span class="salary_employee_item_sums_text oper-account-cell-zero">0 ₽</span>
-                                                <input type="text" class="salary_employee_item_sums_inp" value="{{ month_data.expected|format_rub }}">
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                    <div class="btn_add_operation_bank btn_add_operation_salary btn_add_operation_nalog ">ОК</div>
-                                </div>
-                            {% else %}
-                                <div class="oper-account-cell oper-account-value" data-month-number="{{ month_data.month_number }}">
-                                    <div class="invoice_month_item_text">
-                                        {% if month_data.amount_month > 0 %}
-                                            <p>{{ month_data.amount_month|format_rub }} ₽</p>
-                                        {% else %}
-                                            <p>{{ month_data.amount_month|format_rub }} ₽</p>
-                                        {% endif %}
-                                        {% if month_data.history_comment %}
-                                            <div class="comment_storage">
-                                                <div class="comment_operation">?</div>
-                                                <div class="comment_operation_hidden_wrap">
-                                                    {% for comm in month_data.history_comment %}
-                                                        <div class="comment_operation_hidden">
-                                                         
-                                                            <div class="previous_operation_comment">{{ comm }}</div>
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-  </section> {% endcomment %}
+
   <div class="inside_wr">
     <div class="section_oper_wr outside_wr">
       <div class="">
@@ -120,12 +40,7 @@
             </div>
           </div>
           {% for category in arr_buget.category %}
-            <!-- Заголовки -->
-            {% comment %} <div class="oper-account-row oper-account-header">
-              <div class="oper-account-cell outside_name_title">
-                <div class="category-title">{{ category.name }}</div>
-              </div>
-            </div> {% endcomment %}
+
             {% if category.name == 'на начало месяца' %}
               {% for group_name, group_data in category.items %}
                 <div class="" data-attr-shrink-item-vert="">
