@@ -9,6 +9,13 @@
   display: flex;
   background: none;
   align-items: center;
+  hyphens: auto;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  -webkit-hyphenate-character: "\2010";
+  -webkit-hyphenate-limit-after: 1;
+  -webkit-hyphenate-limit-before: 3;
+  -moz-hyphens: auto;
 }
 
 .invoice_month_line {
@@ -212,12 +219,14 @@
   /* margin: 0 auto; */
   max-width: max-content;
 }
-.oper_account_nalog{
+
+.oper_account_nalog {
   display: flex;
   flex-direction: column;
-  
+
 }
-.oper_account_nalog_total_year > :first-child {
+
+.oper_account_nalog_total_year> :first-child {
   margin-right: 3.125rem;
 }
 
@@ -228,7 +237,7 @@
 .category-title {
   font-size: 1.25rem;
   font-weight: 700;
- 
+
 }
 
 .oper-account-grid {
@@ -341,7 +350,7 @@
 .salary-employee-smal-row {
   width: 7.5rem;
   height: 2.75rem;
-  
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -369,7 +378,7 @@
 
 .salary-total-row {
   gap: 5rem;
-  font-weight: 700!important;
+  font-weight: 700 !important;
 }
 
 .salary-employee-num {
@@ -407,62 +416,73 @@
   z-index: 100;
   /* background-color: white; */
 }
-.salary-header-old-year{
+
+.salary-header-old-year {
   /* margin-left: -10px;
   padding-left: 10px; */
   border-top-left-radius: 1.5625rem;
   border-top-right-radius: 1.5625rem;
   border-radius: 1.5625rem;
 }
-.bg-need-spase{
-   margin-top: -3.75rem!important;
-   padding-top: 3.75rem;
-}
-.salary-totals .salary-total-row{
-  /* background-color: #FFF; */
-}
-.salary-total-row{
-  font-weight: 500!important;
-}
-.salary-total-row-no-bg{
-  background-color: #FFF!important;
+
+.bg-need-spase {
+  margin-top: -3.75rem !important;
+  padding-top: 3.75rem;
 }
 
-.employee-total-year, .category-total-year {
+.salary-totals .salary-total-row {
+  /* background-color: #FFF; */
+}
+
+.salary-total-row {
+  font-weight: 500 !important;
+}
+
+.salary-total-row-no-bg {
+  background-color: #FFF !important;
+}
+
+.employee-total-year,
+.category-total-year {
   font-size: 0.9rem;
   color: #666;
   margin-left: 0.5rem;
 }
+
 .employee-total-year {
   font-weight: bold;
 }
-.shrink-item-vert{
-cursor: pointer;
-}
-.cursor-pointer{
+
+.shrink-item-vert {
   cursor: pointer;
 }
 
-.wrapper_nalog_all{
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.wrapper_nalog_all {
   display: flex;
 }
-.section_oper_wr_year_title{
+
+.section_oper_wr_year_title {
   top: -0.625rem;
   position: absolute;
 }
 
-.fw-700{
-  font-weight: 700!important;
+.fw-700 {
+  font-weight: 700 !important;
 }
 
-.mb_20px{
+.mb_20px {
   margin-bottom: 2.5rem;
 }
-.mb_10px{
+
+.mb_10px {
   margin-bottom: 1.25rem;
 }
 
-.add-bill-wrap{
+.add-bill-wrap {
   display: flex;
   align-items: center;
   gap: 0.625rem;
