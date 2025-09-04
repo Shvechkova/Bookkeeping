@@ -106,8 +106,7 @@
                             {% endif %}
                             <!-- ООО -->
                             {% if salary_block.name == "ООО" %}
-                                <section class="oper_account background-salary-employee salary_{{ employee_data.employee_id }}" "data-attr-shrink-item-vert="salary_{{ employee_data.employee_name }}"
-                                    >
+                                <section class="oper_account background-salary-employee salary_{{ employee_data.employee_id }}" data-attr-shrink-item-vert="salary_{{ employee_data.employee_name }}">
                                     {% for category in salary_block.category %}
                                         <div class="">
                                             <div class="oper-account-grid">
@@ -309,7 +308,7 @@
                                                                     <input data-summ="{{ month_data.amount_month|format_rub }}"
                                                                            data-id-people="{{ employee_data.employee_id }}"
                                                                            data-sub-categ-name="{{ category.category_id }}"
-                                                                           class='checkbox-persent'
+                                                                           class="checkbox-persent"
                                                                            type="checkbox"
                                                                            value="1"
                                                                            {% if month_data.chek %}checked{% endif %}
@@ -409,8 +408,7 @@
                             <!-- долги -->
                             {% if salary_block.name == "Долги" %}
                                 <section class="oper_account background-salary-employee salary_{{ employee_data.employee_id }}"
-                                    <section class="oper_account background-salary-employee salary_{{ employee_data.employee_id }}"
-                                             data-attr-shrink-item-vert="salary_{{ employee_data.employee_id }}">
+                                         data-attr-shrink-item-vert="salary_{{ employee_data.employee_id }}">
                                         {% for category in salary_block.category %}
                                             <div class="">
                                                 <div class="oper-account-grid">
