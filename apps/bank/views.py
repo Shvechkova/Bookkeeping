@@ -48,7 +48,7 @@ from django.core.cache import cache
 # Внутренние счета
 def inside(request):
     debag = DEBUG
-    print("debag", debag)
+ 
     title = "Внутренние счета"
     type_url = "inside"
     context = {
@@ -4195,8 +4195,28 @@ def salary_new_2(request):
                 "name": "ИТОГО кварт. премия",
                 "total": {},
             },
+            # {
+            #     "name": "Итого общий долг",
+            #     "total": {},
+            # },
+        ],
+        "total": {},
+    }
+    
+    arr_total_salary_debt = {
+        "name": "ИТОГО ВСЕ ДОЛГИ",
+        "category": [
+           
             {
                 "name": "Итого общий долг",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО выдано в долг",
+                "total": {},
+            },
+            {
+                "name": "ИТОГО возврат долга",
                 "total": {},
             },
         ],
@@ -4254,7 +4274,7 @@ def salary_new_2(request):
         data__year__gte=year_now,
     )
 
-    arr_salary_employees, arr_total_salary, arr_total_bonus = (
+    arr_salary_employees, arr_total_salary, arr_total_bonus, arr_total_salary_debt = (
         fill_operations_arrays_salary(
             employee_now_year,
             operations,
@@ -4269,6 +4289,7 @@ def salary_new_2(request):
             all_categories_qs,
             all_categories_bank,
             arr_total_employee,
+            arr_total_salary_debt,
             categ_percent_kv_nal,
             categ_percent_kv_ip,
             categ_percent_kv_storage,
@@ -4290,6 +4311,7 @@ def salary_new_2(request):
         "arr_salary_employees": arr_salary_employees,
         "arr_total_salary": arr_total_salary,
         "arr_total_bonus": arr_total_bonus,
+        "arr_total_salary_debt": arr_total_salary_debt,
     }
 
     return render(request, "bank/inside/inside_one_salary_new_2.html", context)

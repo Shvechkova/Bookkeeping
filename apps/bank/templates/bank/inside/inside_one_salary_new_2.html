@@ -501,7 +501,7 @@
                     {% endwith %}
                 {% endfor %}
                 <!--итого за год-->
-                <div class=" background-salary-total">
+                <div class="  background-bank-storage-nal">
                     <div class="">
                         <div class="oper-account-grid">
                             <div class="oper-account-row oper-account-total">
@@ -514,6 +514,34 @@
                         </div>
                     </div>
                     {% for category in arr_total_salary.category %}
+                        <div class="">
+                            <div class="oper-account-grid">
+                                <div class="oper-account-row">
+                                    <div class="oper-account-cell oper-account-num">{{ forloop.counter|stringformat:"02d" }}.</div>
+                                    <div class="oper-account-cell outside_name_title">{{ category.name }}</div>
+                                    {% for month, month_data  in category.total.items %}
+                                        <div class="oper-account-cell oper-account-month">{{ month_data.amount_month|format_rub }} ₽</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!--итого за год долги-->
+                <div class=" background-salary-total">
+                    <div class="">
+                        <div class="oper-account-grid">
+                            <div class="oper-account-row oper-account-total">
+                                <div class="oper-account-cell oper-account-num"></div>
+                                <div class="oper-account-cell outside_name_title">ИТОГО ДОЛГИ</div>
+                                {% for month  in months_current_year %}
+                                    <div class="oper-account-cell oper-account-month">{{ month }} {{ year_now }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% for category in arr_total_salary_debt.category %}
                         <div class="">
                             <div class="oper-account-grid">
                                 <div class="oper-account-row">

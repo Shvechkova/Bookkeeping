@@ -461,3 +461,9 @@ cursor: pointer;
 .mb_10px{
   margin-bottom: 1.25rem;
 }
+
+.add-bill-wrap{
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
