@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import environ
 import os
 from pathlib import Path
@@ -30,9 +31,12 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default="django-insecure-placeholder")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
 # DEBUG = env.bool("DEBUG", default=True# DEBUG = False
-DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default="localhost 127.0.0.1 [::1]")
-# ALLOWED_HOSTS = ["127.0.0.1", "localhost", "bookkeeping.shvechkova.ru", "5.23.51.25"]
+DJANGO_ALLOWED_HOSTS = "localhost 127.0.0.1 [::1] dyugaev.beget.tech"
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "83.222.24.50","dyugaev.beget.tech"]
+
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
+
+
 
 # Application definition
 
@@ -62,7 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    'apps.core.middleware.LoginRequiredMiddleware',  # <-- мой middleware
+    "apps.core.middleware.LoginRequiredMiddleware",  # <-- мой middleware
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -78,7 +82,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            # BASE_DIR / "apps/core/templates",
+            BASE_DIR / "apps/core/templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -87,6 +91,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.media",
             ],
         },
     },
@@ -97,42 +102,66 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-# Автоматически выбираем базу данных в зависимости от окружения
-if os.environ.get("USE_SQLITE", default="False").lower() == "true":
-    # Используем SQLite для локальной разработки и передачи приложения
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
+        "PORT": os.environ.get("DB_PORT", default="5432"),
+       
+        # 'CONN_MAX_AGE': 60,
     }
-    print("Using SQLite database for local development")
-else:
-    # Используем MySQL для production
-    try:
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.mysql",
-                "NAME": os.environ.get("DB_NAME"),
-                "USER": os.environ.get("DB_USER"),
-                "PASSWORD": os.environ.get("DB_PASSWORD"),
-                "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
-                "PORT": os.environ.get("DB_PORT", default="3306"),
-                # "CONN_MAX_AGE": 60,
-                # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
-            }
-        }
-        print("Using MySQL database for production")
-    except Exception as e:
-        print(f"MySQL connection failed: {e}")
-        print("Falling back to SQLite database")
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": os.environ.get("DB_NAME"),
+#         "USER": os.environ.get("DB_USER"),
+#         "PASSWORD": os.environ.get("DB_PASSWORD"),
+#         "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
+#         "PORT": os.environ.get("DB_PORT", default="3306"),
+#         # "CONN_MAX_AGE": 60,
+#         # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+#     }
+# }
+
+
+# # Автоматически выбираем базу данных в зависимости от окружения
+# if os.environ.get("USE_SQLITE", default="False").lower() == "true":
+#     # Используем SQLite для локальной разработки и передачи приложения
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+#     print("Using SQLite database for local development")
+# else:
+#     # Используем postgress для production
+#     try:
+#         DATABASES = {
+#             "default": {
+#                 "ENGINE": "django.db.backends.mysql",
+#                 "NAME": os.environ.get("DB_NAME"),
+#                 "USER": os.environ.get("DB_USER"),
+#                 "PASSWORD": os.environ.get("DB_PASSWORD"),
+#                 "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
+#                 "PORT": os.environ.get("DB_PORT", default="3306"),
+#                 # "CONN_MAX_AGE": 60,
+#                 # "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+#             }
+#         }
+#         print("Using MySQL database for production")
+#     except Exception as e:
+#         print(f"MySQL connection failed: {e}")
+#         print("Falling back to SQLite database")
+#         DATABASES = {
+#             'default': {
+#                 'ENGINE': 'django.db.backends.sqlite3',
+#                 'NAME': BASE_DIR / 'db.sqlite3',
+#             }
+#         }
 
 
 # Password validation
@@ -176,16 +205,16 @@ else:
     # В exe используем папку PyInstaller
     import tempfile
     import sys
-    
+
     # Получаем путь к временной папке PyInstaller
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         # Если запущено как exe
         base_path = sys._MEIPASS
         STATIC_ROOT = os.path.join(base_path, "django_static")
     else:
         # Если запущено как Python скрипт
         STATIC_ROOT = os.path.join(tempfile.gettempdir(), "django_static/")
-    
+
     STATIC_URL = "static/"
 
 # Добавляем пути к статике приложений для exe
@@ -198,8 +227,8 @@ STATICFILES_DIRS = [
 
 # Настройки для поиска статики в exe
 STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
 # Принудительно устанавливаем DEBUG=False для exe
@@ -239,5 +268,17 @@ DECIMAL_SEPARATOR = "."
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 
-MONTHS_RU = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-          "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+MONTHS_RU = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+]
