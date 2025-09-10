@@ -3,7 +3,7 @@ services:
 
   web:
     build: ./python/
-    command: python ./Bookkeeping/manage.py runserver 0.0.0.0:3000
+    command: python manage.py runserver 0.0.0.0:3000
     volumes:
       - ../:/home/sites/Bookkeeping/
     ports:
@@ -15,7 +15,7 @@ services:
     container_name: celery
     build: ./python/
     command: >
-      sh -c "cd Bookkeeping/ && celery -A project worker -l info"
+      sh -c "celery -A project worker -l info"
     volumes:
       - ../:/home/sites/Bookkeeping/
     ports:
@@ -27,7 +27,7 @@ services:
     container_name: celery-beat
     build: ./python/
     command: >
-      sh -c "cd Bookkeeping/ && celery -A project beat -l info"
+      sh -c "celery -A project beat -l info"
     volumes:
       - ../:/home/sites/Bookkeeping/
     depends_on:

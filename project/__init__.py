@@ -1,6 +1,6 @@
-import pymysql
+# import pymysql
 
-pymysql.install_as_MySQLdb()
+# pymysql.install_as_MySQLdb()
 
 # Условный импорт Celery для совместимости с exe
 try:
