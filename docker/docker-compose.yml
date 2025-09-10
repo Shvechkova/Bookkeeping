@@ -1,49 +1,73 @@
-version: '3.7'
 services:
 
   web:
     build: ./python/
-    command: python manage.py runserver 0.0.0.0:3000
+    command: python ./manage.py runserver 0.0.0.0:8000
     volumes:
-      - ../:/home/sites/Bookkeeping/
+      - ../:/home/sites/Bookkeeping
     ports:
-      - 3000:3000
-    # env_file:
-    #   - ./.env
+      - 8000:8000
+    env_file:
+      - ./.env
 
-  celery:
-    container_name: celery
-    build: ./python/
-    command: >
-      sh -c "celery -A project worker -l info"
-    volumes:
-      - ../:/home/sites/Bookkeeping/
-    ports:
-      - "5566:5566"
-    depends_on:
-      - redis
 
-  celery-beat:
-    container_name: celery-beat
-    build: ./python/
-    command: >
-      sh -c "celery -A project beat -l info"
-    volumes:
-      - ../:/home/sites/Bookkeeping/
-    depends_on:
-      - redis
-      - celery
+  # celery:
+  #   container_name: celery
+  #   build: ./python/
+  #   command: >
+  #     sh -c "celery -A project worker -l info"
+  #   volumes:
+  #     - ../:/home/sites/Bookkeeping/
+  #   ports:
+  #     - "5566:5566"
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   env_file:
+  #     - ./.env
 
-  redis:
-    container_name: redis
-    image: redis
-    ports:
-        - "6379:6379"    
+  # celery-beat:
+  #   container_name: celery-beat
+  #   build: ./python/
+  #   command: >
+  #     sh -c "celery -A project beat -l info"
+  #   volumes:
+  #     - ../:/home/sites/Bookkeeping/
+  #   depends_on:
+  #     - redis
+  #     - celery
+    
+  #   env_file:
+  #     - ./.env
 
+  # redis:
+  #   container_name: redis
+  #   image: redis
+  #   ports:
+  #       - "6379:6379"    
+
+  
+  
   adminer:
     container_name: adminer
     image: adminer
     restart: always
     ports:
       - 89:8080
+
+#  postgres:
+#    image: postgres:16
+#    container_name: postgres
+#    restart: always
+#    environment:
+#      - POSTGRES_DB=bookkeeping
+#      - POSTGRES_USER=bookkeeping
+#      - POSTGRES_PASSWORD=bookkeeping
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - pg_data:/var/lib/postgresql/data
+
+#volumes:
+#  pg_data:
 

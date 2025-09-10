@@ -104,11 +104,12 @@ WSGI_APPLICATION = "project.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
-        "HOST": os.environ.get("DB_HOST", default="127.0.0.1"),
-        "PORT": os.environ.get("DB_PORT", default="5432"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
        
         # 'CONN_MAX_AGE': 60,
     }
@@ -197,9 +198,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+FORCE_SCRIPT_NAME = "/bookkeeping"
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")  # если без https
+
+STATIC_URL = "/bookkeeping/static/"
+MEDIA_URL = "/bookkeeping/media/"
+
 # Для exe используем относительный путь
 if os.path.exists(os.path.join(BASE_DIR, "static")):
-    STATIC_URL = "static/"
+    # STATIC_URL = "static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 else:
     # В exe используем папку PyInstaller
@@ -232,11 +240,14 @@ STATICFILES_FINDERS = [
 ]
 
 # Принудительно устанавливаем DEBUG=False для exe
-if not os.path.exists(os.path.join(BASE_DIR, "manage.py")):
-    DEBUG = False
+# В контейнере и при развёртывании путь к manage.py находится на уровень выше BASE_DIR
+manage_py_candidate = os.path.join(BASE_DIR.parent, "manage.py")
+if not os.path.exists(manage_py_candidate):
+    # Если manage.py не найден рядом с проектом, оставляем DEBUG согласно окружению
+    DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
+# MEDIA_URL = "/media/"
 
 
 CACHES = {
