@@ -17,6 +17,11 @@ class LoginRequiredMiddleware:
         if request.path.startswith('/static/') or request.path.startswith('/media/'):
             return self.get_response(request)
 
+        # Пропускаем API без обязательной авторизации через админку
+        # Работает как для "/api/...", так и для "/bookkeeping/api/..."
+        if request.path.startswith('/api/') or request.path.startswith('/bookkeeping/api/'):
+            return self.get_response(request)
+
         # Дополнительные пути без входа (если нужно)
         if request.path in allowed_paths or request.path.startswith('/admin/login'):
             return self.get_response(request)
