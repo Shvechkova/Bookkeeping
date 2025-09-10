@@ -36,7 +36,16 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", "83.222.24.50","dyugaev.beget.tech"]
 
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://83.222.24.50",
+    # если перейдёте на https — добавьте:
+    # "https://83.222.24.50",
+    # если есть домен(ы) — добавьте его:
+    # "http://ваш.домен",
+    # "https://ваш.домен",
+]
+CSRF_COOKIE_SECURE = False
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
 
 # Application definition
 
