@@ -8,7 +8,11 @@ venv.bak/
 motrumvenv/
 
 # Python
+
 __pycache__/
+*.pyc
+*.env
+*.env1
 *.py[cod]
 *$py.class
 *.so
