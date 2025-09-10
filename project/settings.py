@@ -205,39 +205,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")  # если без 
 STATIC_URL = "/bookkeeping/static/"
 MEDIA_URL = "/bookkeeping/media/"
 
-# Для exe используем относительный путь
-if os.path.exists(os.path.join(BASE_DIR, "static")):
-    # STATIC_URL = "static/"
-    STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-else:
-    # В exe используем папку PyInstaller
-    import tempfile
-    import sys
-
-    # Получаем путь к временной папке PyInstaller
-    if getattr(sys, "frozen", False):
-        # Если запущено как exe
-        base_path = sys._MEIPASS
-        STATIC_ROOT = os.path.join(base_path, "django_static")
-    else:
-        # Если запущено как Python скрипт
-        STATIC_ROOT = os.path.join(tempfile.gettempdir(), "django_static/")
-
-    STATIC_URL = "static/"
-
-# Добавляем пути к статике приложений для exe
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "apps/core/static"),
-    os.path.join(BASE_DIR, "apps/bank/static"),
-    os.path.join(BASE_DIR, "apps/client/static"),
-    os.path.join(BASE_DIR, "apps/service/static"),
-]
-
-# Настройки для поиска статики в exe
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
+# STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# MEDIA_URL = "/media/"
 
 # Принудительно устанавливаем DEBUG=False для exe
 # В контейнере и при развёртывании путь к manage.py находится на уровень выше BASE_DIR
@@ -246,8 +217,7 @@ if not os.path.exists(manage_py_candidate):
     # Если manage.py не найден рядом с проектом, оставляем DEBUG согласно окружению
     DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-# MEDIA_URL = "/media/"
+
 
 
 CACHES = {
