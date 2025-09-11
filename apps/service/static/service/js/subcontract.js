@@ -98,7 +98,7 @@ function createInputSubcontract(element, elem) {
         }
       }
       let subcontractCategory = el.value;
-      let endpoint = "/api/v1/adv-platform/" + subcontractCategory + "/";
+      let endpoint = "/api-bookkeeping/v1/adv-platform/" + subcontractCategory + "/";
       // let endpoint =
       //   "/service/api/subcontract-category
       fetch(endpoint, {
@@ -368,7 +368,7 @@ function addSubcontractFetch(idBill, elem) {
       }
     });
 
-    const endpoint = "/api/v1/subcontract/upd_subs/";
+    const endpoint = "/api-bookkeeping/v1/subcontract/upd_subs/";
     let csrfToken = getCookie("csrftoken");
     let data = JSON.stringify(arrSubcontarctAll);
     console.log();
@@ -437,7 +437,7 @@ function getOldSumcintract(idBill, element, elem,title) {
   console.log("title",title)
   preloaderModal((isLoading = true), (isLoaded = false));
 
-  const endpoint = "/api/v1/subcontract/" + idBill + "/subcontract_li/";
+  const endpoint = "/api-bookkeeping/v1/subcontract/" + idBill + "/subcontract_li/";
   console.log(endpoint)
   let csrfToken = getCookie("csrftoken");
   fetch(endpoint, {
@@ -458,7 +458,7 @@ function getOldSumcintract(idBill, element, elem,title) {
         return;
       } else {
         console.log("else")
-        let endpoint = "/api/v1/adv-platform/adv/";
+        let endpoint = "/api-bookkeeping/v1/adv-platform/adv/";
         fetch(endpoint, {
           method: "get",
         })
@@ -515,7 +515,7 @@ function getOldSumcintract(idBill, element, elem,title) {
                 replaceNam();
               } else {
                 // старые субконтракты для категории другое
-                let endpoint = "/api/v1/adv-platform/other/";
+                let endpoint = "/api-bookkeeping/v1/adv-platform/other/";
                 fetch(endpoint, {
                   method: "get",
                 })
@@ -652,7 +652,7 @@ function getOldSumcintract(idBill, element, elem,title) {
 
 // категории субконтрактов если есть заполненные
 function FetchCatSubsOther() {
-  let endpoint = "/api/v1/adv-platform/other/";
+  let endpoint = "/api-bookkeeping/v1/adv-platform/other/";
   fetch(endpoint, {
     method: "get",
   })
@@ -668,7 +668,7 @@ function DelSubcontr(element, elem) {
     item.addEventListener("click", () => {
       idOperation = item.getAttribute("data-id-peration");
 
-      endpoint = "/api/v1/subcontract/" + idOperation + "/";
+      endpoint = "/api-bookkeeping/v1/subcontract/" + idOperation + "/";
 
       let csrfToken = getCookie("csrftoken");
 

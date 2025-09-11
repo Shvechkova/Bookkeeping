@@ -31,7 +31,7 @@ if (addOperationEntry) {
       getOldOperation(element, elem);
 
       getInfoBillOperation(element);
-      const endpointOperation = "/api/v1/operation/operation_save/";
+      const endpointOperation = "/api-bookkeeping/v1/operation/operation_save/";
       addFetchOperationEntry(element, endpointOperation, elem);
 
       // валидация радиокнопок
@@ -234,7 +234,7 @@ function getOldOperation(element, elem) {
     const dataJson = JSON.stringify(object2);
     console.log(dataJson)
     let csrfToken = getCookie("csrftoken");
-    fetch("/api/v1/operation/operation_entry_list/", {
+    fetch("/api-bookkeeping/v1/operation/operation_entry_list/", {
       method: "POST",
       body: dataJson,
       headers: {
@@ -364,7 +364,7 @@ function DelOperationServise(element) {
       const dataJson = JSON.stringify(object);
       preloaderModal((isLoading = true), (isLoaded = false));
       
-      endpoint = "/api/v1/operation/operation_delete/";
+      endpoint = "/api-bookkeeping/v1/operation/operation_delete/";
       let csrfToken = getCookie("csrftoken");
 
       fetch(endpoint, {

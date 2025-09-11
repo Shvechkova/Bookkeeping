@@ -41,7 +41,7 @@ if (addOperationOut) {
       // получение старых операций
 
       // const endpointOperation = "/operations/api/operation/operation_out/";
-      const endpointOperation = "/api/v1/operation/operation_save/";
+      const endpointOperation = "/api-bookkeeping/v1/operation/operation_save/";
       addFetchOperationOut(element, endpointOperation, elem);
 
       // валидация радиокнопок
@@ -268,7 +268,7 @@ function newOperationOut(element, elem) {
     preloaderModal((isLoading = true), (isLoaded = false));
     let csrfToken = getCookie("csrftoken");
     console.log("222222222222222222222222")
-    fetch("/api/v1/operation/operation_out_filter/", {
+    fetch("/api-bookkeeping/v1/operation/operation_out_filter/", {
       method: "POST",
       body: dataJson,
       headers: {
@@ -412,7 +412,7 @@ function DelOperationOut(element) {
         "id": +idOperation,
       };
       // endpoint = "/operations/api/operation/" + idOperation + "/";
-      endpoint = "/api/v1/operation/operation_delete/";
+      endpoint = "/api-bookkeeping/v1/operation/operation_delete/";
       let csrfToken = getCookie("csrftoken");
       const dataJson = JSON.stringify(object);
       fetch(endpoint, {

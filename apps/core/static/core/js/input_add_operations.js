@@ -231,15 +231,15 @@ function addSalaryOperation(element, btnAdd, pageName) {
     ) {
       if (dataAmount == 0) {
         form.append("id", dataId);
-        endpoint = "/api/v1/operation/" + dataId + "/";
+        endpoint = "/api-bookkeeping/v1/operation/" + dataId + "/";
         method = "DELETE";
       } else {
         form.append("id", dataId);
-        endpoint = "/api/v1/operation/" + dataId + "/";
+        endpoint = "/api-bookkeeping/v1/operation/" + dataId + "/";
         method = "UPDATE";
       }
     } else {
-      endpoint = "/api/v1/operation/operation_save/";
+      endpoint = "/api-bookkeeping/v1/operation/operation_save/";
       method = "POST";
     }
 
@@ -412,10 +412,10 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
         (dataId != 0)
       ) {
         form.append("id", dataId);
-        endpoint = "/api/v1/percentemployee/" + dataId + "/";
+        endpoint = "/api-bookkeeping/v1/percentemployee/" + dataId + "/";
         method = "UPDATE";
       } else {
-        endpoint = "/api/v1/percentemployee/";
+        endpoint = "/api-bookkeeping/v1/percentemployee/";
         method = "POST";
       }
     }
@@ -427,10 +427,10 @@ function addSalaryOperationPercent(element, btnAdd, pageName) {
         (dataId != 0)
       ) {
         form.append("id", dataId);
-        endpoint = "/api/v1/percentgroupbank/" + dataId + "/";
+        endpoint = "/api-bookkeeping/v1/percentgroupbank/" + dataId + "/";
         method = "UPDATE";
       } else {
-        endpoint = "/api/v1/percentgroupbank/";
+        endpoint = "/api-bookkeeping/v1/percentgroupbank/";
         method = "POST";
       }
     }
@@ -503,10 +503,10 @@ if (chakboxInp) {
             (dataId != 0)
           ) {
             form.append("id", dataId);
-            endpoint = "/api/v1/operation/" + dataId + "/";
+            endpoint = "/api-bookkeeping/v1/operation/" + dataId + "/";
             method = "UPDATE";
           } else {
-            endpoint = "/api/v1/operation/operation_save/";
+            endpoint = "/api-bookkeeping/v1/operation/operation_save/";
             method = "POST";
           }
         } else {
@@ -519,10 +519,10 @@ if (chakboxInp) {
             (dataId != 0)
           ) {
             form.append("id", dataId);
-            endpoint = "/api/v1/operation/" + dataId + "/";
+            endpoint = "/api-bookkeeping/v1/operation/" + dataId + "/";
             method = "DELETE";
           } else {
-            endpoint = "/api/v1/operation/operation_save/";
+            endpoint = "/api-bookkeeping/v1/operation/operation_save/";
             method = "POST";
           }
         }

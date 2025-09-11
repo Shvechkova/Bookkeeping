@@ -52,7 +52,7 @@ if (addOperationOutPeople) {
 // если есть несколько сбконтрактов
 function FetchInfosubsPeople(element, elem) {
   let idBill = element.getAttribute("data-bill-month-id");
-  const endpoint = "/api/v1/subcontract/" + idBill + "/subcontract_li/";
+  const endpoint = "/api-bookkeeping/v1/subcontract/" + idBill + "/subcontract_li/";
   // const endpoint = "/service/api/subcontract/" + idBill + "/subcontract_li/";
 
   fetch(endpoint, {
@@ -65,7 +65,7 @@ function FetchInfosubsPeople(element, elem) {
     .then((data) => {
       console.log(data);
       // let endpoint = "/service/api/subcontract-category-other/";
-      let endpoint = "/api/v1/adv-platform/other/";
+      let endpoint = "/api-bookkeeping/v1/adv-platform/other/";
       fetch(endpoint, {
         method: "get",
       })
@@ -373,7 +373,7 @@ function AddOperationOtherOut(element, elem) {
 
     let csrfToken = getCookie("csrftoken");
     // const endpoint = "/operations/api/operation/";
-    const endpoint= "/api/v1/operation/operation_save/";
+    const endpoint= "/api-bookkeeping/v1/operation/operation_save/";
     fetch(endpoint, {
       method: "POST",
       body: dataJson,
@@ -438,7 +438,7 @@ function NewOperationOutOther(element) {
     const dataJson = JSON.stringify(object2);
 
     let csrfToken = getCookie("csrftoken");
-    fetch("/api/v1/operation/operation_out_filter/", {
+    fetch("/api-bookkeeping/v1/operation/operation_out_filter/", {
       method: "POST",
       body: dataJson,
       headers: {
@@ -579,7 +579,7 @@ function DelOperationOutOther(element) {
         "id": +idOperation,
       };
       // endpoint = "/operations/api/operation/" + idOperation + "/";
-      endpoint = "/api/v1/operation/operation_delete/";
+      endpoint = "/api-bookkeeping/v1/operation/operation_delete/";
       let csrfToken = getCookie("csrftoken");
       const dataJson = JSON.stringify(object);
       fetch(endpoint, {

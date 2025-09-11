@@ -51,7 +51,7 @@ if (addBill) {
 // получение доступных клиентов для категории сервиса
 function getClientFilterCategory(pageName, dataBill, elem) {
   const endpoint =
-    "/api/v1/client/client_filter_list/?service=" + pageName;
+    "/api-bookkeeping/v1/client/client_filter_list/?service=" + pageName;
   const select = document.querySelector(".modal-client");
 
   fetch(endpoint, {
@@ -78,7 +78,7 @@ function getClientFilterCategory(pageName, dataBill, elem) {
       select.addEventListener("change", (event) => {
         let clientId = select.value;
         const endpoint =
-          "/api/v1/contract/contract_filter_list/?service=" + pageName;
+          "/api-bookkeeping/v1/contract/contract_filter_list/?service=" + pageName;
         fetch(endpoint + "&client=" + clientId, {
           method: "get",
         })
@@ -204,7 +204,7 @@ function addMonthBill(dataBill, elem, el) {
     const dataJson = JSON.stringify(object);
 
     let csrfToken = getCookie("csrftoken");
-    fetch("/api/v1/service_month_client/", {
+    fetch("/api-bookkeeping/v1/service_month_client/", {
       method: "POST",
       body: dataJson,
       headers: {
@@ -283,7 +283,7 @@ function updBillChange(idBill, service_name, elem) {
   // replaceNam()
   const battonAddchange = document.querySelector(".client-contract_change");
   battonAddchange.addEventListener("click", () => {
-    const endpoint = "/api/v1/service_month_client/" + idBill + "/";
+    const endpoint = "/api-bookkeeping/v1/service_month_client/" + idBill + "/";
     const data = new FormData();
 
     let nameClientBillModal = document.querySelector(
@@ -347,7 +347,7 @@ if (btnDelBill) {
       // preloaderModal(isLoading=false,isLoaded=true)
       const idBill = element.getAttribute("data-id-bill");
       let csrfToken = getCookie("csrftoken");
-      endpoint = "/api/v1/service_month_client/" + idBill + "/";
+      endpoint = "/api-bookkeeping/v1/service_month_client/" + idBill + "/";
       fetch(endpoint, {
         method: "DELETE",
         headers: {

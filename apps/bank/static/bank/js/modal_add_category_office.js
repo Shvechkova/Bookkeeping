@@ -75,7 +75,7 @@ function addCategoryOperationFetch(battonAdd, element, modalWindow,elem) {
     console.log(dataJson);
 
     let csrfToken = getCookie("csrftoken");
-    endpoint = "/api/v1/groupeoperaccount/";
+    endpoint = "/api-bookkeeping/v1/groupeoperaccount/";
     fetch(endpoint, {
       method: "POST",
       body: dataJson,

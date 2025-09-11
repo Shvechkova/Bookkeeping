@@ -212,13 +212,12 @@ if PROD:
     MEDIA_URL = "/bookkeeping/media/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static/")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-    API_URL_PREFIX = "bookkeeping/api"
+    
 else:
     STATIC_URL = "static/"
     MEDIA_URL = "/media/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static/")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-    API_URL_PREFIX = "api"
 
 # Принудительно устанавливаем DEBUG=False для exe
 # В контейнере и при развёртывании путь к manage.py находится на уровень выше BASE_DIR

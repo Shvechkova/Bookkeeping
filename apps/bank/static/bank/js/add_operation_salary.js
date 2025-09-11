@@ -99,10 +99,10 @@
 //     let method 
 //     if (dataId != "" & dataId != "None" & dataId != "{}"){
 //       form.append("id", dataId);
-//       endpoint = "/api/v1/operation/" + dataId +"/"
+//       endpoint = "/api-bookkeeping/v1/operation/" + dataId +"/"
 //       method = "UPDATE"
 //     } else {
-//       endpoint = "/api/v1/operation/operation_save/"
+//       endpoint = "/api-bookkeeping/v1/operation/operation_save/"
 //       method = "POST"
 //     }
 

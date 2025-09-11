@@ -31,9 +31,9 @@ const modal_add_client = document.querySelector(
         validate(elem, ".modal_add_contract_btn");
       });
       // добавление изменение клиента контракта
-      const endpointClient = "/api/v1/client/";
-      const endpointContact = "/api/v1/contract/";
-      const endpointContractAll = "/api/v1/contract/create_contracts/";
+      const endpointClient = "/api-bookkeeping/v1/client/";
+      const endpointContact = "/api-bookkeeping/v1/contract/";
+      const endpointContractAll = "/api-bookkeeping/v1/contract/create_contracts/";
       const optionsMethod = "POST";
   
       addNewClient(
@@ -48,7 +48,7 @@ const modal_add_client = document.querySelector(
   
   // менеджеры из базы
   function addManager(selected, boss, divWrapper) {
-    const endpoint = "/api/v1/employee/responsible_list/";
+    const endpoint = "/api-bookkeeping/v1/employee/responsible_list/";
     let select;
     
   
@@ -132,7 +132,7 @@ const modal_add_client = document.querySelector(
   
   function addmanagerContract(selected, boss, divWrapper) {
     console.log("addmanagerContract JS");
-    const endpoint = "/api/v1/employee/manager_list/";
+    const endpoint = "/api-bookkeeping/v1/employee/manager_list/";
     let select;
     select = document.querySelector(".modal-manager_client");
     if (selected > 0) {
@@ -174,7 +174,7 @@ const modal_add_client = document.querySelector(
   function addService(selectInput, selected, instans) {
     const select = selectInput;
     new selectOption("modal-select", "0", "", "Услуга").appendTo(select);
-    const instance = "/api/v1/service/";
+    const instance = "/api-bookkeeping/v1/service/";
   
     fetch(instance, {
       method: "GET",
@@ -416,10 +416,10 @@ const modal_add_client = document.querySelector(
       });
       const idClient = element.getAttribute("data-client-id");
   
-      const endpointClient = "/api/v1/client/" + idClient + "/";
-      const endpointContact = "/api/v1/contract/";
+      const endpointClient = "/api-bookkeeping/v1/client/" + idClient + "/";
+      const endpointContact = "/api-bookkeeping/v1/contract/";
       //  + contractId + "/"
-      const endpointContractAll = "/api/v1/contract/upd_contracts/";
+      const endpointContractAll = "/api-bookkeeping/v1/contract/upd_contracts/";
       const optionsMethod = "PUT";
   
       addNewClient(
@@ -449,7 +449,7 @@ const modal_add_client = document.querySelector(
     //  preloaderModal(isLoading = true,isLoaded = false);
   
     // сами контраты получение
-    const endpoint = "/api/v1/contract/" + idClient + "/contract_li/";
+    const endpoint = "/api-bookkeeping/v1/contract/" + idClient + "/contract_li/";
     fetch(endpoint, {
       method: "get",
     })
@@ -506,7 +506,7 @@ const modal_add_client = document.querySelector(
       })
       .then((data) => {
         
-        fetch("/api/v1/client/" + idClient + "/manager_li/", {
+        fetch("/api-bookkeeping/v1/client/" + idClient + "/manager_li/", {
           method: "get",
         })
           .then((response) => response.json())

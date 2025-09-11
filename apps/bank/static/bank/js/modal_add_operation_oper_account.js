@@ -117,7 +117,7 @@ function getSumOldOperAccountOperation(element, elem) {
 
   let csrfToken = getCookie("csrftoken");
 
-  fetch("/api/v1/operation/operation_out_filter/", {
+  fetch("/api-bookkeeping/v1/operation/operation_out_filter/", {
     method: "POST",
     body: dataJson,
     headers: {
@@ -179,7 +179,7 @@ function getSumOldOperAccountOperation(element, elem) {
       let object = {};
       form.forEach((value, key) => (object[key] = value));
       const dataJson = JSON.stringify(object);
-      fetch("/api/v1/operation/operation_out_filter/", {
+      fetch("/api-bookkeeping/v1/operation/operation_out_filter/", {
         method: "POST",
         body: dataJson,
         headers: {
@@ -275,7 +275,7 @@ function DeOperAccountlOperation(element) {
 
       const dataJson = JSON.stringify(object);
       // endpoint = "/operations/api/operation/" + idOperation + "/";
-      endpoint = "/api/v1/operation/operation_delete/";
+      endpoint = "/api-bookkeeping/v1/operation/operation_delete/";
       let csrfToken = getCookie("csrftoken");
 
       fetch(endpoint, {
@@ -393,7 +393,7 @@ function addFethOperationOperAcc(element, elem) {
     const dataJson = JSON.stringify(object);
 
     let csrfToken = getCookie("csrftoken");
-    fetch("/api/v1/operation/operation_save/", {
+    fetch("/api-bookkeeping/v1/operation/operation_save/", {
       method: "POST",
       body: dataJson,
       headers: {

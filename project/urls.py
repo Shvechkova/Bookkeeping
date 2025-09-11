@@ -29,8 +29,8 @@ urlpatterns = [
     path("operation/", include("apps.operation.urls", namespace="operation")),
     path("bank/", include("apps.bank.urls", namespace="bank")),
     
-    # path("api/", include(router.urls)),
-    path(f"{API_PREFIX}/", include(router.urls)),
+    path("api-bookkeeping/", include(router.urls)),
+    # path(f"{API_PREFIX}/", include(router.urls)),
 
 ]
 
