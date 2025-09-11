@@ -581,8 +581,9 @@ function checkPersentRate(element) {
 const currentUrl = window.location.href;
 const pathParts = window.location.pathname.split('/').filter(part => part !== '');
 const firstSegment = pathParts[0] || null; // если путь пустой, вернёт null
+const twotSegment = pathParts[1] || null; // если путь пустой, вернёт null
 
-if (firstSegment == "bank") {
+if (firstSegment == "bank" || twotSegment == "bank") {
   const salary_employee_item_sums_text = document.querySelectorAll(".salary_employee_item_sums_text");
   salary_employee_item_sums_text.forEach((element) => {
     const text = element.textContent.trim();
