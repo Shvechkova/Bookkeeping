@@ -30,6 +30,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default="django-insecure-placeholder")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
+PROD = os.environ.get("PROD", "False").lower() in ("true", "1", "t")
 # DEBUG = env.bool("DEBUG", default=True# DEBUG = False
 DJANGO_ALLOWED_HOSTS = "localhost 127.0.0.1 [::1] dyugaev.beget.tech"
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "83.222.24.50","dyugaev.beget.tech"]
@@ -37,13 +38,9 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", "83.222.24.50","dyugaev.beget.tech"]
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://83.222.24.50",
-    # если перейдёте на https — добавьте:
-    # "https://83.222.24.50",
-    # если есть домен(ы) — добавьте его:
-    # "http://ваш.домен",
-    # "https://ваш.домен",
+    "http://83.222.24.50",  
 ]
+
 CSRF_COOKIE_SECURE = False
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
 
@@ -206,18 +203,20 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+if PROD:
+    FORCE_SCRIPT_NAME = "/bookkeeping"
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")  # если без https
 
-FORCE_SCRIPT_NAME = "/bookkeeping"
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")  # если без https
-
-STATIC_URL = "/bookkeeping/static/"
-MEDIA_URL = "/bookkeeping/media/"
-
-# STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-# MEDIA_URL = "/media/"
+    STATIC_URL = "/bookkeeping/static/"
+    MEDIA_URL = "/bookkeeping/media/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+else:
+    STATIC_URL = "static/"
+    MEDIA_URL = "/media/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Принудительно устанавливаем DEBUG=False для exe
 # В контейнере и при развёртывании путь к manage.py находится на уровень выше BASE_DIR

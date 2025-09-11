@@ -220,7 +220,7 @@ function addFetchOperationOut(element, endpoint, elem) {
           const windowContent = document.getElementById(elem);
           alertSuccess(windowContent);
           const timerId = setTimeout(() => {
-            // location.reload();
+            location.reload();
           }, 200);
         } else {
           const windowContent = document.getElementById(elem);
