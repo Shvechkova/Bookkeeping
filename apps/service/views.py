@@ -15,6 +15,7 @@ from apps.service.models import (
     SubcontractMonth,
 )
 from django.db.models.functions import Round
+from project.settings import MONTHS_RU
 
 # Create your views here.
 def service_all(request):
@@ -331,14 +332,10 @@ def service_one(request, slug):
         #     grouped[suborder.category_employee.name].append(suborder)
   
 
-    import pymorphy3
-
-    morph = pymorphy3.MorphAnalyzer(lang="ru")
-
     service_month_invoice = itertools.groupby(
         service_month_invoice,
         lambda t: [
-            morph.parse(t.month.strftime("%B"))[0].normal_form.title(),
+            MONTHS_RU[t.month.month - 1],
             t.month.strftime("%Y"),
         ],
     )
