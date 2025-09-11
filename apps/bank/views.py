@@ -86,6 +86,7 @@ def oper_accaunt(request):
         .prefetch_related()
         .order_by("-data")
     )
+    print(operations)
     operations_old = (
         Operation.objects.filter(
             operaccount__isnull=False, data__year__lt=year_now, bank_in__in=bank_id
@@ -148,7 +149,9 @@ def oper_accaunt(request):
     # Группируем операции
     for operation in operations:
 
-        month_name = morph.parse(operation.data.strftime("%B"))[0].normal_form.title()
+        # Получаем номер месяца и используем MONTHS_RU для получения правильного названия
+        month_number = operation.data.month
+        month_name = MONTHS_RU[month_number - 1]
 
         account = operation.operaccount
         category_id = account.category
@@ -357,7 +360,6 @@ def oper_accaunt(request):
             year_info["categories"].append(category_info)
 
         operations_old_arr.append(year_info)
-
     context = {
         "title": title,
         "type_url": type_url,
