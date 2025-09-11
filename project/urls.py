@@ -18,6 +18,7 @@ router.registry.extend(service_router.registry)
 router.registry.extend(operation_router.registry)
 router.registry.extend(bank_router.registry)
 
+API_PREFIX = getattr(settings, 'API_URL_PREFIX', 'api')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,8 +29,9 @@ urlpatterns = [
     path("operation/", include("apps.operation.urls", namespace="operation")),
     path("bank/", include("apps.bank.urls", namespace="bank")),
     
-    path("api/", include(router.urls)),
     # path("api/", include(router.urls)),
+    path(f"{API_PREFIX}/", include(router.urls)),
+
 ]
 
 # Добавляем URL для статики в exe
